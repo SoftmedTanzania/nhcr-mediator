@@ -1,5 +1,6 @@
 # National Health Client Registry Mediator
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a1052124d49b41ce82d9530f68593ada)](https://app.codacy.com/gh/SoftmedTanzania/nhcr-mediator?utm_source=github.com&utm_medium=referral&utm_content=SoftmedTanzania/nhcr-mediator&utm_campaign=Badge_Grade)
 [![Java CI Badge](https://github.com/SoftmedTanzania/nhcr-mediator/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/SoftmedTanzania/nhcr-mediator/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 [![Coverage Status](https://coveralls.io/repos/github/SoftmedTanzania/nhcr-mediator/badge.svg?branch=development)](https://coveralls.io/github/SoftmedTanzania/nhcr-mediator?branch=development)
 
