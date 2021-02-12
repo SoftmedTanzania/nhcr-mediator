@@ -5,49 +5,49 @@
     {
       "mrn": "52c9fa36-6b7f-483f-8c4a-1ad033e78618",
       "PostOrUpdate": "P",
-      "firstname": "Mohamed",
-      "middlename": "Abdallah",
-      "lastname": "Tluway",
-      "othername": "Mkali",
+      "firstname": "fname",
+      "middlename": "mname",
+      "lastname": "lname",
+      "othername": "oname",
       "uln": "981426-6090",
       "ids": [
         {
-          "id": "06108133-18158-34499-44",
+          "id": "12345",
           "type": "NATIONAL_ID"
         },
         {
-          "id": "T-2143-1382-688-4",
+          "id": "12345",
           "type": "VOTERS_ID"
         },
         {
-          "id": "4004504459",
+          "id": "12345",
           "type": "DRIVERS_LICENSE_ID"
         },
         {
-          "id": "826164-9305",
+          "id": "12345",
           "type": "RITA_ID"
         }
       ],
       "programs": [
         {
-          "id": "343433443",
+          "id": "12345",
           "name": "CTC"
         },
         {
-          "id": "677655677",
+          "id": "12345",
           "name": "TB"
         },
         {
-          "id": "677655677",
+          "id": "12345",
           "name": "RCH"
         },
         {
-          "id": "677655677",
+          "id": "12345",
           "name": "MAT"
         }
       ],
       "insurance": {
-        "id": "123123123",
+        "id": "12345",
         "name": "NHIF"
       },
       "sex": "FEMALE",
