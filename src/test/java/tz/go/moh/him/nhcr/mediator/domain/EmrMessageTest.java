@@ -7,7 +7,7 @@ import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
 /**
  * Contains tests for the {@link EmrMessage} class.
  */
-public class EmrMessageTests {
+public class EmrMessageTest {
 
     /**
      * Tests the serialization of an EMR message.
