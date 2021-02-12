@@ -9,6 +9,7 @@ public class HL7v2MessageBuilderUtils {
 
     /**
      * Creates an ADT A04 message.
+     *
      * @return Returns the created ADT A04 message.
      */
     public static ADT_A04 createAdtA04() {
