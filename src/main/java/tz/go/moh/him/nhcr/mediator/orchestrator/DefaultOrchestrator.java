@@ -1,28 +1,36 @@
-package tz.go.moh.him.nhcr.mediator;
+package tz.go.moh.him.nhcr.mediator.orchestrator;
 
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 
+/**
+ * Represents a default orchestrator.
+ */
 public class DefaultOrchestrator extends UntypedActor {
-    LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-    private final MediatorConfig config;
-
-
-    public DefaultOrchestrator(MediatorConfig config) {
-        this.config = config;
+    /**
+     * Initializes a new instance of the {@link DefaultOrchestrator} class.
+     *
+     * @param config The configuration.
+     */
+    public DefaultOrchestrator(@SuppressWarnings("unused") MediatorConfig config) {
     }
 
+    /**
+     * Handles the received message.
+     *
+     * @param msg The received message.
+     */
     @Override
-    public void onReceive(Object msg) throws Exception {
+    public void onReceive(Object msg) {
         if (msg instanceof MediatorHTTPRequest) {
-            FinishRequest finishRequest = new FinishRequest("A message from my new mediator!", "text/plain", HttpStatus.SC_OK);
-            ((MediatorHTTPRequest) msg).getRequestHandler().tell(finishRequest, getSelf());
+            ((MediatorHTTPRequest) msg).getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());
         } else {
             unhandled(msg);
         }

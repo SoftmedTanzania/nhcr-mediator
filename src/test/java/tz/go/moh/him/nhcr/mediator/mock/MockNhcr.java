@@ -1,27 +1,20 @@
 package tz.go.moh.him.nhcr.mediator.mock;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.openhim.mediator.engine.testing.MockHTTPConnector;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 
 /**
  * Represents a mock destination.
  */
-public class MockDestination extends MockHTTPConnector {
+public class MockNhcr extends MockHTTPConnector {
 
     /**
-     * Initializes a new instance of the {@link MockDestination} class.
+     * Initializes a new instance of the {@link MockNhcr} class.
      */
-    public MockDestination() {
+    public MockNhcr() {
     }
 
     /**
@@ -61,6 +54,6 @@ public class MockDestination extends MockHTTPConnector {
      */
     @Override
     public void executeOnReceive(MediatorHTTPRequest msg) {
-        
+
     }
 }

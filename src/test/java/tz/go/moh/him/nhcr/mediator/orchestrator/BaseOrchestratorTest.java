@@ -1,4 +1,4 @@
-package tz.go.moh.him.hfr.mediator.orchestrator;
+package tz.go.moh.him.nhcr.mediator.orchestrator;
 
 import akka.actor.ActorSystem;
 import akka.testkit.JavaTestKit;
@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.testing.MockLauncher;
 import org.openhim.mediator.engine.testing.TestingUtils;
-import tz.go.moh.him.hfr.mediator.mock.MockDestination;
+import tz.go.moh.him.nhcr.mediator.mock.MockNhcr;
 
 import java.io.File;
 import java.io.InputStream;
@@ -110,7 +110,7 @@ public abstract class BaseOrchestratorTest {
     public void before() {
         List<MockLauncher.ActorToLaunch> actorsToLaunch = new LinkedList<>();
 
-        actorsToLaunch.add(new MockLauncher.ActorToLaunch("http-connector", MockDestination.class));
+        actorsToLaunch.add(new MockLauncher.ActorToLaunch("mllp-connector", MockNhcr.class));
 
         TestingUtils.launchActors(system, configuration.getName(), actorsToLaunch);
     }
