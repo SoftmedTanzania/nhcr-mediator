@@ -134,7 +134,7 @@ public class MediatorMain {
 
         final MediatorServer server = new MediatorServer(system, config);
 
-        //setup shutdown hook
+        // setup shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutting down mediator");
             server.stop();

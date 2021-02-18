@@ -1,6 +1,5 @@
 package tz.go.moh.him.nhcr.mediator.orchestrator;
 
-import akka.actor.UntypedActor;
 import org.apache.http.HttpStatus;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
@@ -9,27 +8,25 @@ import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 /**
  * Represents a default orchestrator.
  */
-public class DefaultOrchestrator extends UntypedActor {
+public class DefaultOrchestrator extends BaseOrchestrator {
 
     /**
      * Initializes a new instance of the {@link DefaultOrchestrator} class.
      *
      * @param config The configuration.
      */
-    public DefaultOrchestrator(@SuppressWarnings("unused") MediatorConfig config) {
+    public DefaultOrchestrator(MediatorConfig config) {
+        super(config);
     }
 
     /**
      * Handles the received message.
      *
-     * @param msg The received message.
+     * @param request The request.
+     * @throws Exception if an exception occurs.
      */
     @Override
-    public void onReceive(Object msg) {
-        if (msg instanceof MediatorHTTPRequest) {
-            ((MediatorHTTPRequest) msg).getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());
-        } else {
-            unhandled(msg);
-        }
+    protected void onReceiveRequestInternal(MediatorHTTPRequest request) throws Exception {
+        request.getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());
     }
 }
