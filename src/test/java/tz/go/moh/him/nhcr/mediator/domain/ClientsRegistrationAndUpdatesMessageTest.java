@@ -17,7 +17,7 @@ import java.util.Arrays;
 /**
  * Contains tests for the {@link EmrClientsRegistrationAndUpdatesMessage} class.
  */
-public class EmrClientsRegistrationAndUpdatesMessageTest {
+public class ClientsRegistrationAndUpdatesMessageTest {
 
     /**
      * The Gson object.
@@ -30,8 +30,8 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
     @Before
     public void beforeClass() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
-        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateDeserializer());
+        gsonBuilder.registerTypeAdapter(Client.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
+        gsonBuilder.registerTypeAdapter(Client.PostOrUpdate.class, new AttributePostOrUpdateDeserializer());
         gson = gsonBuilder.create();
     }
 
@@ -40,7 +40,7 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
      */
     @Test
     public void testEmrClientRegistrationAndUpdatesMessageDeserialization() {
-        InputStream stream = EmrClientsRegistrationAndUpdatesMessageTest.class.getClassLoader().getResourceAsStream("register_client.json");
+        InputStream stream = ClientsRegistrationAndUpdatesMessageTest.class.getClassLoader().getResourceAsStream("register_client.json");
 
         Assert.assertNotNull(stream);
 
@@ -59,9 +59,8 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         Assert.assertEquals("Mirembe MHH", emrClientsRegistrationAndUpdatesMessage.getSendingFacility());
         Assert.assertEquals("Blaj9747", emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode());
         Assert.assertEquals("AFYA CARE", emrClientsRegistrationAndUpdatesMessage.getOid());
-        Assert.assertEquals("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis", emrClientsRegistrationAndUpdatesMessage.getToken());
 
-        EmrClientsRegistrationAndUpdatesMessage.Client client = emrClientsRegistrationAndUpdatesMessage.getClients().get(0);
+        Client client = emrClientsRegistrationAndUpdatesMessage.getClients().get(0);
         Assert.assertEquals("52c9fa36-6b7f-483f-8c4a-1ad033e78618", client.getMrn());
         Assert.assertEquals("P", client.getPostOrUpdate().getValue());
         Assert.assertEquals("fname", client.getFirstName());
@@ -108,36 +107,35 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         emrClientsRegistrationAndUpdatesMessage.setSendingFacility("Mirembe MHH");
         emrClientsRegistrationAndUpdatesMessage.setFacilityHfrCode("Blaj9747");
         emrClientsRegistrationAndUpdatesMessage.setOid("AFYA CARE");
-        emrClientsRegistrationAndUpdatesMessage.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis");
 
-        EmrClientsRegistrationAndUpdatesMessage.Client client = new EmrClientsRegistrationAndUpdatesMessage.Client();
+        Client client = new Client();
         client.setMrn("52c9fa36-6b7f-483f-8c4a-1ad033e78618");
 
-        client.setPostOrUpdate(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.POST);
+        client.setPostOrUpdate(Client.PostOrUpdate.POST);
         client.setFirstName("fname");
         client.setMiddleName("mname");
         client.setLastName("lname");
         client.setOtherName("oname");
         client.setUln("981426-6090");
 
-        EmrClientsRegistrationAndUpdatesMessage.Id nationalId = new EmrClientsRegistrationAndUpdatesMessage.Id();
+        ClientId nationalId = new ClientId();
         nationalId.setId("12345");
         nationalId.setType("NATIONAL_ID");
         client.setIds(Arrays.asList(nationalId));
 
-        EmrClientsRegistrationAndUpdatesMessage.Program ctcProgram = new EmrClientsRegistrationAndUpdatesMessage.Program();
+        ClientProgram ctcProgram = new ClientProgram();
         ctcProgram.setId("12345");
         ctcProgram.setName("CTC");
         client.setPrograms(Arrays.asList(ctcProgram));
 
-        EmrClientsRegistrationAndUpdatesMessage.Insurance insurance = new EmrClientsRegistrationAndUpdatesMessage.Insurance();
+        ClientInsurance insurance = new ClientInsurance();
         insurance.setId("12345");
         insurance.setName("NHIF");
         client.setInsurance(insurance);
         client.setSex("FEMALE");
         client.setDob("2020-03-15");
 
-        EmrClientsRegistrationAndUpdatesMessage.Address address = new EmrClientsRegistrationAndUpdatesMessage.Address();
+        ClientAddress address = new ClientAddress();
         address.setRegion("Manyara");
         address.setCouncil("Kiteto");
         address.setWard("Ayasanda");
@@ -147,7 +145,7 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         client.setResidentialAddress(address);
         client.setPlaceOfBirth(address);
 
-        EmrClientsRegistrationAndUpdatesMessage.Linkage linkage = new EmrClientsRegistrationAndUpdatesMessage.Linkage();
+        ClientLinkage linkage = new ClientLinkage();
         linkage.setId("12232131");
         linkage.setSourceOfId("NATIONAL_ID");
         linkage.setTypeOfLinkage("Parent");
@@ -166,7 +164,6 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         Assert.assertTrue(json.contains("Mirembe MHH"));
         Assert.assertTrue(json.contains("Blaj9747"));
         Assert.assertTrue(json.contains("AFYA CARE"));
-        Assert.assertTrue(json.contains("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis"));
 
         Assert.assertTrue(json.contains("52c9fa36-6b7f-483f-8c4a-1ad033e78618"));
         Assert.assertTrue(json.contains("P"));

@@ -4,16 +4,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import tz.go.moh.him.nhcr.mediator.domain.EmrClientsRegistrationAndUpdatesMessage;
+import tz.go.moh.him.nhcr.mediator.domain.Client;
 
 import java.lang.reflect.Type;
 
 /**
- * Gson Custom Json Serializer for {@link EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate} enums
+ * Gson Custom Json Serializer for {@link Client.PostOrUpdate} enums
  */
-public class AttributePostOrUpdateSerializer implements JsonSerializer<EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate> {
+public class AttributePostOrUpdateSerializer implements JsonSerializer<Client.PostOrUpdate> {
     @Override
-    public JsonElement serialize(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate postOrUpdate, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(Client.PostOrUpdate postOrUpdate, Type type, JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(postOrUpdate.getValue());
     }
 }

@@ -1,5 +1,6 @@
 package tz.go.moh.him.nhcr.mediator.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -10,26 +11,23 @@ public class EmrMessage {
     /**
      * The sending facility.
      */
-    @SerializedName("SendingFacility")
+    @SerializedName("sendingFacility")
+    @JsonProperty("sendingFacility")
     private String sendingFacility;
 
     /**
      * The facility HFR code.
      */
-    @SerializedName("FacilityHFRCode")
+    @SerializedName("facilityHFRCode")
+    @JsonProperty("facilityHFRCode")
     private String facilityHfrCode;
 
     /**
      * The sending facility OID.
      */
     @SerializedName("oid")
+    @JsonProperty("oid")
     private String oid;
-
-    /**
-     * The sending facility security token.
-     */
-    @SerializedName("token")
-    private String token;
 
     /**
      * Initializes a new instance of the {@link EmrMessage} class.
@@ -43,12 +41,11 @@ public class EmrMessage {
      * @param sendingFacility The sending facility.
      * @param facilityHfrCode The facility HFR code.
      */
-    public EmrMessage(String sendingFacility, String facilityHfrCode, String oid, String token) {
+    public EmrMessage(String sendingFacility, String facilityHfrCode, String oid) {
         this();
         this.setSendingFacility(sendingFacility);
         this.setFacilityHfrCode(facilityHfrCode);
         this.setOid(oid);
-        this.setToken(token);
     }
 
     /**
@@ -103,23 +100,5 @@ public class EmrMessage {
      */
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    /**
-     * Gets the facility NHCR security token.
-     *
-     * @return Returns the facility NHCR security token.
-     */
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * Sets the facility NHCR security token.
-     *
-     * @param token The facility NHCR security token.
-     */
-    public void setToken(String token) {
-        this.token = token;
     }
 }

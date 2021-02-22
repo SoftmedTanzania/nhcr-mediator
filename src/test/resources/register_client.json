@@ -1,16 +1,16 @@
 {
-  "SendingFacility": "Mirembe MHH",
-  "FacilityHFRCode": "Blaj9747",
+  "sendingFacility": "Mirembe MHH",
+  "facilityHFRCode": "Blaj9747",
   "oid": "AFYA CARE",
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis",
   "clients": [
     {
       "mrn": "52c9fa36-6b7f-483f-8c4a-1ad033e78618",
-      "PostOrUpdate": "P",
-      "firstname": "fname",
-      "middlename": "mname",
-      "lastname": "lname",
-      "othername": "oname",
+      "postOrUpdate": "P",
+      "firstName": "fname",
+      "middleName": "mname",
+      "lastName": "lname",
+      "otherName": "oname",
       "uln": "981426-6090",
       "ids": [
         {
@@ -54,35 +54,35 @@
       },
       "sex": "FEMALE",
       "dob": "2020-03-15",
-      "permanent_address": {
+      "permanentAddress": {
         "region": "Manyara",
         "council": "Kiteto",
         "ward": "Ayasanda",
         "village": "Robayambao"
       },
-      "residential_address": {
+      "residentialAddress": {
         "region": "Manyara",
         "council": "Kiteto",
         "ward": "Ayasanda",
         "village": "Robayambao"
       },
-      "place_of_birth": {
+      "placeOfBirth": {
         "region": "Arusha",
         "council": "Arusha Urban"
       },
-      "country_code": "255",
-      "phone_number": "0754886287",
-      "family_linkages": {
+      "countryCode": "255",
+      "phoneNumber": "0754886287",
+      "familyLinkages": {
         "id": "12232131",
-        "source_of_id": "NATIONAL_ID",
-        "type_of_linkage": "Parent"
+        "sourceOfId": "NATIONAL_ID",
+        "typeOfLinkage": "Parent"
       },
-      "other_linkages": {
+      "otherLinkages": {
         "id": "12232131",
-        "source_of_id": "NATIONAL_ID",
-        "type_of_linkage": "Treatment Supporter"
+        "sourceOfId": "NATIONAL_ID",
+        "typeOfLinkage": "Treatment Supporter"
       },
-      "place_encountered": "101335-8",
+      "placeEncountered": "101335-8",
       "status": 0,
       "createdAt": "2020-06-02T07:07:20.000Z"
     }
