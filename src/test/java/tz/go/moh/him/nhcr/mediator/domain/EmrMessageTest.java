@@ -16,11 +16,12 @@ public class EmrMessageTest {
     public void testEmrMessageSerialization() {
         JsonSerializer serializer = new JsonSerializer();
 
-        EmrMessage message = new EmrMessage("Mirembe MHH", "Blaj9747");
+        EmrMessage message = new EmrMessage("Mirembe MHH", "Blaj9747", "AFYA CARE");
 
         String actual = serializer.serializeToString(message);
 
         Assert.assertTrue(actual.contains(message.getFacilityHfrCode()));
         Assert.assertTrue(actual.contains(message.getSendingFacility()));
+        Assert.assertTrue(actual.contains(message.getOid()));
     }
 }

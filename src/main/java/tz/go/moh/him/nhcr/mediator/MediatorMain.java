@@ -5,7 +5,11 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.openhim.mediator.engine.*;
+import org.openhim.mediator.engine.MediatorConfig;
+import org.openhim.mediator.engine.MediatorServer;
+import org.openhim.mediator.engine.RegistrationConfig;
+import org.openhim.mediator.engine.RoutingTable;
+import org.openhim.mediator.engine.StartupActorsConfig;
 import tz.go.moh.him.nhcr.mediator.orchestrator.DefaultOrchestrator;
 import tz.go.moh.him.nhcr.mediator.orchestrator.NhcrOrchestrator;
 
@@ -16,7 +20,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class MediatorMain {
-
     /**
      * Represents the mediator registration info.
      */

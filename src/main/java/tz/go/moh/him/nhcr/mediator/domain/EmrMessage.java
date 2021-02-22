@@ -1,6 +1,7 @@
 package tz.go.moh.him.nhcr.mediator.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an EMR message.
@@ -10,14 +11,23 @@ public class EmrMessage {
     /**
      * The sending facility.
      */
-    @JsonProperty("SendingFacility")
+    @SerializedName("sendingFacility")
+    @JsonProperty("sendingFacility")
     private String sendingFacility;
 
     /**
      * The facility HFR code.
      */
-    @JsonProperty("FacilityHFRCode")
+    @SerializedName("facilityHFRCode")
+    @JsonProperty("facilityHFRCode")
     private String facilityHfrCode;
+
+    /**
+     * The sending facility OID.
+     */
+    @SerializedName("oid")
+    @JsonProperty("oid")
+    private String oid;
 
     /**
      * Initializes a new instance of the {@link EmrMessage} class.
@@ -31,10 +41,11 @@ public class EmrMessage {
      * @param sendingFacility The sending facility.
      * @param facilityHfrCode The facility HFR code.
      */
-    public EmrMessage(String sendingFacility, String facilityHfrCode) {
+    public EmrMessage(String sendingFacility, String facilityHfrCode, String oid) {
         this();
         this.setSendingFacility(sendingFacility);
         this.setFacilityHfrCode(facilityHfrCode);
+        this.setOid(oid);
     }
 
     /**
@@ -71,5 +82,23 @@ public class EmrMessage {
      */
     public void setFacilityHfrCode(String facilityHfrCode) {
         this.facilityHfrCode = facilityHfrCode;
+    }
+
+    /**
+     * Gets the facility NHCR OID.
+     *
+     * @return Returns the facility NHCR OID.
+     */
+    public String getOid() {
+        return oid;
+    }
+
+    /**
+     * Sets the facility NHCR OID.
+     *
+     * @param oid The facility NHCR oid.
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
     }
 }
