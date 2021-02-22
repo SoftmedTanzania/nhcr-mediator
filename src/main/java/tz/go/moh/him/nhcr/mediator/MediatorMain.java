@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class MediatorMain {
-
     /**
      * Represents the mediator registration info.
      */
