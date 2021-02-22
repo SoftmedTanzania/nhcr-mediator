@@ -17,7 +17,7 @@ public class AttributePostOrUpdateDeserializer implements JsonDeserializer<EmrCl
             throws JsonParseException {
         EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate[] postOrUpdates = EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.values();
         for (EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate postOrUpdate : postOrUpdates) {
-            if (postOrUpdate.getValue() == json.getAsCharacter())
+            if (postOrUpdate.getValue().equals(json.getAsString()))
                 return postOrUpdate;
         }
         return null;
