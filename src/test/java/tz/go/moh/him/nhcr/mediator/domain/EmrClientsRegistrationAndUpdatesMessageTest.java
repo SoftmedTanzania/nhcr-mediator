@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateDeserializer;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSerializer;
@@ -17,6 +18,23 @@ import java.util.Arrays;
  * Contains tests for the {@link EmrClientsRegistrationAndUpdatesMessage} class.
  */
 public class EmrClientsRegistrationAndUpdatesMessageTest {
+
+    /**
+     * The Gson object.
+     */
+    private Gson gson;
+
+    /**
+     * Runs initialization before each class execution.
+     */
+    @Before
+    public void beforeClass() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
+        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateDeserializer());
+        gson = gsonBuilder.create();
+    }
+
     /**
      * Tests the deserialization of an EMR Client Registration and Updates message.
      */
@@ -35,10 +53,6 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         }
 
         Assert.assertNotNull(data);
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateDeserializer());
-        Gson gson = gsonBuilder.create();
 
         EmrClientsRegistrationAndUpdatesMessage emrClientsRegistrationAndUpdatesMessage = gson.fromJson(data, EmrClientsRegistrationAndUpdatesMessage.class);
 
@@ -145,14 +159,6 @@ public class EmrClientsRegistrationAndUpdatesMessageTest {
         client.setStatus("0");
         client.setCreatedAt("2020-06-02T07:07:20.000Z");
         emrClientsRegistrationAndUpdatesMessage.setClients(Arrays.asList(client));
-
-
-
-
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(EmrClientsRegistrationAndUpdatesMessage.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
-        Gson gson = gsonBuilder.create();
 
         //Serializing the object into a json
         String json = gson.toJson(emrClientsRegistrationAndUpdatesMessage);
