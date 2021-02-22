@@ -150,12 +150,14 @@ public class Client {
      * Status
      */
     @SerializedName("status")
+    @JsonProperty("status")
     private String status;
 
     /**
      * Date createdAt
      */
     @SerializedName("createdAt")
+    @JsonProperty("createdAt")
     private String createdAt;
 
     public String getMrn() {
