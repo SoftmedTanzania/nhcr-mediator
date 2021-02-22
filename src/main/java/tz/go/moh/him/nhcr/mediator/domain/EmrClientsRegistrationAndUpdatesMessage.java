@@ -1,429 +1,359 @@
 package tz.go.moh.him.nhcr.mediator.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 /**
- * Represents an EMR message.
+ * Represents an EMR EmrClientsRegistrationAndUpdates message.
  */
-public class EmrClientsRegistrationAndUpdatesMessage {
-
+public class EmrClientsRegistrationAndUpdatesMessage extends EmrMessage {
     /**
-     * The sending facility.
+     * The registered or updated clients list.
      */
-    @JsonProperty("SendingFacility")
-    private String sendingFacility;
+    @SerializedName("clients")
+    private List<Client> clients;
 
     /**
-     * The sending facility OID.
-     */
-    @JsonProperty("OID")
-    private String oid;
-
-    /**
-     * The sending facility security token.
-     */
-    @JsonProperty("securityToken")
-    private String token;
-
-    /**
-     * The facility HFR code.
-     */
-    @JsonProperty("FacilityHFRCode")
-    private String facilityHfrCode;
-
-
-    /**
-     * The client medical registration number.
-     */
-    @JsonProperty("mrn")
-    private String mrn;
-
-    /**
-     * The client medical registration number.
-     */
-    @JsonProperty("PostOrUpdate")
-    private PostOrUpdate postOrUpdate;
-
-    /**
-     * Client's first name
-     */
-    @JsonProperty("firstame")
-    private String firstName;
-
-    /**
-     * Client's middle name
-     */
-    @JsonProperty("middlename")
-    private String middleName;
-
-    /**
-     * Client's last name
-     */
-    @JsonProperty("lastname")
-    private String lastName;
-
-    /**
-     * Client's other name
-     */
-    @JsonProperty("othername")
-    private String otherName;
-
-    /**
-     * Client's uln
-     */
-    @JsonProperty("uln")
-    private String uln;
-
-    /**
-     * Client's ids list
-     */
-    @JsonProperty("ids")
-    private List<Id> ids;
-
-    /**
-     * Client's program ids list
-     */
-    @JsonProperty("programs")
-    private List<Program> programs;
-
-    /**
-     * Client's insurance
-     */
-    @JsonProperty("insurance")
-    private Insurance insurance;
-
-    /**
-     * Client's permanent Address
-     */
-    @JsonProperty("permanent_address")
-    private Address permanentAddress;
-
-    /**
-     * Client's residential Address
-     */
-    @JsonProperty("residential_address")
-    private Address residentialAddress;
-
-    /**
-     * Client's Place of Birth
-     */
-    @JsonProperty("place_of_birth")
-    private Address placeOfBirth;
-
-    /**
-     * Client's Phone number country code
-     */
-    @JsonProperty("country_code")
-    private String countryCode;
-
-    /**
-     * Client's Phone number
-     */
-    @JsonProperty("phone_number")
-    private String phoneNumber;
-
-    /**
-     * Client's Family Linkage e.g Parent, Sibling e.t.c
-     */
-    @JsonProperty("family_linkages")
-    private Linkage familyLinkages;
-
-    /**
-     * Client's Other Linkage Next of Kin
-     */
-    @JsonProperty("other_linkages")
-    private Linkage otherLinkages;
-
-    /**
-     * Client's Sex
-     */
-    @JsonProperty("sex")
-    private String sex;
-
-    /**
-     * Client's Date of Birth
-     */
-    @JsonProperty("dob")
-    private String dob;
-
-    /**
-     * HFR code of the facility that originally encountered
-     */
-    @JsonProperty("place_encountered")
-    private String placeEncountered;
-
-    /**
-     * Status
-     */
-    @JsonProperty("status")
-    private String status;
-
-    /**
-     * Date createdAt
-     */
-    @JsonProperty("createdAt")
-    private String createdAt;
-
-
-    /**
-     * Initializes a new instance of the {@link EmrClientsRegistrationAndUpdatesMessage} class.
-     */
-    public EmrClientsRegistrationAndUpdatesMessage() {
-    }
-
-    /**
-     * Initializes a new instance of the {@link EmrClientsRegistrationAndUpdatesMessage} class.
+     * Gets the registered or updated clients list.
      *
-     * @param sendingFacility The sending facility.
-     * @param facilityHfrCode The facility HFR code.
+     * @return the registered or updated clients list.
      */
-    public EmrClientsRegistrationAndUpdatesMessage(String sendingFacility, String facilityHfrCode) {
-        this();
-        this.setSendingFacility(sendingFacility);
-        this.setFacilityHfrCode(facilityHfrCode);
+    public List<Client> getClients() {
+        return clients;
     }
 
     /**
-     * Gets the sending facility.
+     * Sets the registered or updated clients list.
      *
-     * @return Returns the sending facliity.
+     * @param clients Sets the registered or updated clients list.
      */
-    public String getSendingFacility() {
-        return sendingFacility;
-    }
-
-    /**
-     * Sets the sending facility.
-     *
-     * @param sendingFacility The sending facility.
-     */
-    public void setSendingFacility(String sendingFacility) {
-        this.sendingFacility = sendingFacility;
-    }
-
-    /**
-     * Gets the facility HFR code.
-     *
-     * @return Returns the facility HFR code.
-     */
-    public String getFacilityHfrCode() {
-        return facilityHfrCode;
-    }
-
-    /**
-     * Sets the facility HFR code.
-     *
-     * @param facilityHfrCode The facility HFR code.
-     */
-    public void setFacilityHfrCode(String facilityHfrCode) {
-        this.facilityHfrCode = facilityHfrCode;
-    }
-
-    public String getOid() {
-        return oid;
-    }
-
-    public void setOid(String oid) {
-        this.oid = oid;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getMrn() {
-        return mrn;
-    }
-
-    public void setMrn(String mrn) {
-        this.mrn = mrn;
-    }
-
-    public PostOrUpdate getPostOrUpdate() {
-        return postOrUpdate;
-    }
-
-    public void setPostOrUpdate(PostOrUpdate postOrUpdate) {
-        this.postOrUpdate = postOrUpdate;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getOtherName() {
-        return otherName;
-    }
-
-    public void setOtherName(String otherName) {
-        this.otherName = otherName;
-    }
-
-    public String getUln() {
-        return uln;
-    }
-
-    public void setUln(String uln) {
-        this.uln = uln;
-    }
-
-    public List<Id> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Id> ids) {
-        this.ids = ids;
-    }
-
-    public List<Program> getPrograms() {
-        return programs;
-    }
-
-    public void setPrograms(List<Program> programs) {
-        this.programs = programs;
-    }
-
-    public Insurance getInsurance() {
-        return insurance;
-    }
-
-    public void setInsurance(Insurance insurance) {
-        this.insurance = insurance;
-    }
-
-    public Address getPermanentAddress() {
-        return permanentAddress;
-    }
-
-    public void setPermanentAddress(Address permanentAddress) {
-        this.permanentAddress = permanentAddress;
-    }
-
-    public Address getResidentialAddress() {
-        return residentialAddress;
-    }
-
-    public void setResidentialAddress(Address residentialAddress) {
-        this.residentialAddress = residentialAddress;
-    }
-
-    public Address getPlaceOfBirth() {
-        return placeOfBirth;
-    }
-
-    public void setPlaceOfBirth(Address placeOfBirth) {
-        this.placeOfBirth = placeOfBirth;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Linkage getFamilyLinkages() {
-        return familyLinkages;
-    }
-
-    public void setFamilyLinkages(Linkage familyLinkages) {
-        this.familyLinkages = familyLinkages;
-    }
-
-    public Linkage getOtherLinkages() {
-        return otherLinkages;
-    }
-
-    public void setOtherLinkages(Linkage otherLinkages) {
-        this.otherLinkages = otherLinkages;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getDob() {
-        return dob;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public String getPlaceEncountered() {
-        return placeEncountered;
-    }
-
-    public void setPlaceEncountered(String placeEncountered) {
-        this.placeEncountered = placeEncountered;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
     }
 
     public enum PostOrUpdate {
-        POST('P'), UPDATE('U');
+        POST("P"), UPDATE("U");
 
-        private final Character value;
+        private final String value;
 
-        PostOrUpdate(Character value) {
+        PostOrUpdate(String value) {
             this.value = value;
         }
 
-        public Character getValue() {
+        public String getValue() {
             return value;
+        }
+    }
+
+    public static class Client {
+        /**
+         * The client medical registration number.
+         */
+        @SerializedName("mrn")
+        private String mrn;
+
+        /**
+         * The client medical registration number.
+         */
+        @SerializedName("PostOrUpdate")
+        private PostOrUpdate postOrUpdate;
+
+        /**
+         * Client's first name
+         */
+        @SerializedName("firstname")
+        private String firstName;
+
+        /**
+         * Client's middle name
+         */
+        @SerializedName("middlename")
+        private String middleName;
+
+        /**
+         * Client's last name
+         */
+        @SerializedName("lastname")
+        private String lastName;
+
+        /**
+         * Client's other name
+         */
+        @SerializedName("othername")
+        private String otherName;
+
+        /**
+         * Client's uln
+         */
+        @SerializedName("uln")
+        private String uln;
+
+        /**
+         * Client's ids list
+         */
+        @SerializedName("ids")
+        private List<Id> ids;
+
+        /**
+         * Client's program ids list
+         */
+        @SerializedName("programs")
+        private List<Program> programs;
+
+        /**
+         * Client's insurance
+         */
+        @SerializedName("insurance")
+        private Insurance insurance;
+
+        /**
+         * Client's permanent Address
+         */
+        @SerializedName("permanent_address")
+        private Address permanentAddress;
+
+        /**
+         * Client's residential Address
+         */
+        @SerializedName("residential_address")
+        private Address residentialAddress;
+
+        /**
+         * Client's Place of Birth
+         */
+        @SerializedName("place_of_birth")
+        private Address placeOfBirth;
+
+        /**
+         * Client's Phone number country code
+         */
+        @SerializedName("country_code")
+        private String countryCode;
+
+        /**
+         * Client's Phone number
+         */
+        @SerializedName("phone_number")
+        private String phoneNumber;
+
+        /**
+         * Client's Family Linkage e.g Parent, Sibling e.t.c
+         */
+        @SerializedName("family_linkages")
+        private Linkage familyLinkages;
+
+        /**
+         * Client's Other Linkage Next of Kin
+         */
+        @SerializedName("other_linkages")
+        private Linkage otherLinkages;
+
+        /**
+         * Client's Sex
+         */
+        @SerializedName("sex")
+        private String sex;
+
+        /**
+         * Client's Date of Birth
+         */
+        @SerializedName("dob")
+        private String dob;
+
+        /**
+         * HFR code of the facility that originally encountered
+         */
+        @SerializedName("place_encountered")
+        private String placeEncountered;
+
+        /**
+         * Status
+         */
+        @SerializedName("status")
+        private String status;
+
+        /**
+         * Date createdAt
+         */
+        @SerializedName("createdAt")
+        private String createdAt;
+
+        public String getMrn() {
+            return mrn;
+        }
+
+        public void setMrn(String mrn) {
+            this.mrn = mrn;
+        }
+
+        public PostOrUpdate getPostOrUpdate() {
+            return postOrUpdate;
+        }
+
+        public void setPostOrUpdate(PostOrUpdate postOrUpdate) {
+            this.postOrUpdate = postOrUpdate;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getMiddleName() {
+            return middleName;
+        }
+
+        public void setMiddleName(String middleName) {
+            this.middleName = middleName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getOtherName() {
+            return otherName;
+        }
+
+        public void setOtherName(String otherName) {
+            this.otherName = otherName;
+        }
+
+        public String getUln() {
+            return uln;
+        }
+
+        public void setUln(String uln) {
+            this.uln = uln;
+        }
+
+        public List<Id> getIds() {
+            return ids;
+        }
+
+        public void setIds(List<Id> ids) {
+            this.ids = ids;
+        }
+
+        public List<Program> getPrograms() {
+            return programs;
+        }
+
+        public void setPrograms(List<Program> programs) {
+            this.programs = programs;
+        }
+
+        public Insurance getInsurance() {
+            return insurance;
+        }
+
+        public void setInsurance(Insurance insurance) {
+            this.insurance = insurance;
+        }
+
+        public Address getPermanentAddress() {
+            return permanentAddress;
+        }
+
+        public void setPermanentAddress(Address permanentAddress) {
+            this.permanentAddress = permanentAddress;
+        }
+
+        public Address getResidentialAddress() {
+            return residentialAddress;
+        }
+
+        public void setResidentialAddress(Address residentialAddress) {
+            this.residentialAddress = residentialAddress;
+        }
+
+        public Address getPlaceOfBirth() {
+            return placeOfBirth;
+        }
+
+        public void setPlaceOfBirth(Address placeOfBirth) {
+            this.placeOfBirth = placeOfBirth;
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        public void setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+        }
+
+        public Linkage getFamilyLinkages() {
+            return familyLinkages;
+        }
+
+        public void setFamilyLinkages(Linkage familyLinkages) {
+            this.familyLinkages = familyLinkages;
+        }
+
+        public Linkage getOtherLinkages() {
+            return otherLinkages;
+        }
+
+        public void setOtherLinkages(Linkage otherLinkages) {
+            this.otherLinkages = otherLinkages;
+        }
+
+        public String getSex() {
+            return sex;
+        }
+
+        public void setSex(String sex) {
+            this.sex = sex;
+        }
+
+        public String getDob() {
+            return dob;
+        }
+
+        public void setDob(String dob) {
+            this.dob = dob;
+        }
+
+        public String getPlaceEncountered() {
+            return placeEncountered;
+        }
+
+        public void setPlaceEncountered(String placeEncountered) {
+            this.placeEncountered = placeEncountered;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
         }
     }
 
@@ -569,16 +499,19 @@ public class EmrClientsRegistrationAndUpdatesMessage {
         /**
          * Id value of the Linked client
          */
+        @SerializedName("id")
         private String id;
 
         /**
          * Issuing authority name of the Id
          */
+        @SerializedName("source_of_id")
         private String sourceOfId;
 
         /**
          * Type of Linkage
          */
+        @SerializedName("type_of_linkage")
         private String typeOfLinkage;
 
         public String getId() {

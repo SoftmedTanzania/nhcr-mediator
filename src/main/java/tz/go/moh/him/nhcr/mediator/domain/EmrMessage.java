@@ -1,6 +1,6 @@
 package tz.go.moh.him.nhcr.mediator.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an EMR message.
@@ -10,14 +10,26 @@ public class EmrMessage {
     /**
      * The sending facility.
      */
-    @JsonProperty("SendingFacility")
+    @SerializedName("SendingFacility")
     private String sendingFacility;
 
     /**
      * The facility HFR code.
      */
-    @JsonProperty("FacilityHFRCode")
+    @SerializedName("FacilityHFRCode")
     private String facilityHfrCode;
+
+    /**
+     * The sending facility OID.
+     */
+    @SerializedName("oid")
+    private String oid;
+
+    /**
+     * The sending facility security token.
+     */
+    @SerializedName("token")
+    private String token;
 
     /**
      * Initializes a new instance of the {@link EmrMessage} class.
@@ -31,10 +43,12 @@ public class EmrMessage {
      * @param sendingFacility The sending facility.
      * @param facilityHfrCode The facility HFR code.
      */
-    public EmrMessage(String sendingFacility, String facilityHfrCode) {
+    public EmrMessage(String sendingFacility, String facilityHfrCode, String oid, String token) {
         this();
         this.setSendingFacility(sendingFacility);
         this.setFacilityHfrCode(facilityHfrCode);
+        this.setOid(oid);
+        this.setToken(token);
     }
 
     /**
@@ -71,5 +85,41 @@ public class EmrMessage {
      */
     public void setFacilityHfrCode(String facilityHfrCode) {
         this.facilityHfrCode = facilityHfrCode;
+    }
+
+    /**
+     * Gets the facility NHCR OID.
+     *
+     * @return Returns the facility NHCR OID.
+     */
+    public String getOid() {
+        return oid;
+    }
+
+    /**
+     * Sets the facility NHCR OID.
+     *
+     * @param oid The facility NHCR oid.
+     */
+    public void setOid(String oid) {
+        this.oid = oid;
+    }
+
+    /**
+     * Gets the facility NHCR security token.
+     *
+     * @return Returns the facility NHCR security token.
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * Sets the facility NHCR security token.
+     *
+     * @param token The facility NHCR security token.
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 }
