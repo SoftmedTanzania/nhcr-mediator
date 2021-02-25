@@ -58,7 +58,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
 
         Assert.assertEquals("Mirembe MHH", emrClientsRegistrationAndUpdatesMessage.getSendingFacility());
         Assert.assertEquals("Blaj9747", emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode());
-        Assert.assertEquals("AFYA CARE", emrClientsRegistrationAndUpdatesMessage.getOid());
+        Assert.assertEquals("1.2.3.1.4.545", emrClientsRegistrationAndUpdatesMessage.getOid());
 
         Client client = emrClientsRegistrationAndUpdatesMessage.getClients().get(0);
         Assert.assertEquals("52c9fa36-6b7f-483f-8c4a-1ad033e78618", client.getMrn());
