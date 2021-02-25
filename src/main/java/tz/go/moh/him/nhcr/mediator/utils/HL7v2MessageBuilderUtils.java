@@ -52,9 +52,6 @@ public class HL7v2MessageBuilderUtils {
         ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", "A01", "P");
 
-        //The ZXT Segment
-        ZXT zxt = adt.getZXT();
-
         //Populating the MSH Segment
         populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, Calendar.getInstance().getTime(), securityAccessToken, messageControlId);
 
