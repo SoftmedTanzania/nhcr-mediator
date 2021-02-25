@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * Contains tests for the {@link HL7v2MessageBuilderUtils} class.
  */
-public class HL7v2MessageBuilderTests {
+public class HL7v2MessageBuilderUtilsTest {
     /**
      * The Gson object.
      */
