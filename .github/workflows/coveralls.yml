@@ -21,7 +21,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn test
       - name: Set branch name and PR number
         id: refs
         env:
