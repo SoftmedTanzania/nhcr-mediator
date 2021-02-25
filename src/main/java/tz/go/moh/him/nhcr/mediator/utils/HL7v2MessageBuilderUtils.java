@@ -299,9 +299,9 @@ public class HL7v2MessageBuilderUtils {
         context.setModelClassFactory(cmf);
 
         //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
-        zxtA01Hl7Message = zxtA01Hl7Message.replace("ADT^A01", "ZXT^A01");
+        String hl7MessageString = zxtA01Hl7Message.replace("ADT^A01", "ZXT^A01");
 
-        ZXT_A01 zxtA01 = (ZXT_A01) parser.parse(zxtA01Hl7Message);
+        ZXT_A01 zxtA01 = (ZXT_A01) parser.parse(hl7MessageString);
 
         //Reverting back the message MSH.9 Message type to the original ADT^A01.
         zxtA01.getMSH().getMessageType().getMessageType().setValue("ADT");
