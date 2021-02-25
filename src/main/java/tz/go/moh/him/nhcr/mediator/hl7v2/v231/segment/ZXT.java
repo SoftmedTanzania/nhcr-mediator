@@ -43,15 +43,19 @@ public class ZXT extends AbstractSegment {
 
     /**
      * Create an accessor for each field
+     *
+     * @return The Voters Id
      */
-    public ST getVotersId() throws HL7Exception {
+    public ST getVotersId() {
         return (ST) this.getTypedField(1, 0);
     }
 
     /**
      * Create an accessor for each field
+     *
+     * @return The RitaId Object
      */
-    public RitaID getRitaId() throws HL7Exception {
+    public RitaID getRitaId() {
         return (RitaID) this.getTypedField(2, 0);
     }
 }

@@ -11,7 +11,8 @@ import java.util.Arrays;
 @SuppressWarnings("serial")
 public class ZXT_A01 extends ADT_A01 {
     /**
-     * Constructor
+     * The constructor
+     * @throws HL7Exception The thrown exception
      */
     public ZXT_A01() throws HL7Exception {
         this(new DefaultModelClassFactory());
@@ -21,6 +22,9 @@ public class ZXT_A01 extends ADT_A01 {
      * Constructor
      * <p>
      * We always have to have a constructor with this one argument
+     *
+     * @param factory The Model factory used
+     * @throws HL7Exception The exception thrown
      */
     public ZXT_A01(ModelClassFactory factory) throws HL7Exception {
         super(factory);
@@ -41,6 +45,9 @@ public class ZXT_A01 extends ADT_A01 {
 
     /**
      * Add an accessor for the ZXT segment
+     *
+     * @return The ZXT segment
+     * @throws HL7Exception The exception thrown
      */
     public ZXT getZXT() throws HL7Exception {
         return (ZXT) get("ZXT");

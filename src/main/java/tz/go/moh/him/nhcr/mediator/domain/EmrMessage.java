@@ -47,6 +47,7 @@ public class EmrMessage {
      *
      * @param sendingFacility The sending facility.
      * @param facilityHfrCode The facility HFR code.
+     * @param oid             The facility oid.
      */
     public EmrMessage(String sendingFacility, String facilityHfrCode, String oid) {
         this();
