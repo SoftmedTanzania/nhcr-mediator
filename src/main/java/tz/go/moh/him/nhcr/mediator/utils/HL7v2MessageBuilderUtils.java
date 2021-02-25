@@ -1,18 +1,17 @@
 package tz.go.moh.him.nhcr.mediator.utils;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.Segment;
-import ca.uhn.hl7v2.model.v231.message.ADT_A01;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.segment.EVN;
 import ca.uhn.hl7v2.model.v231.segment.IN1;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 import ca.uhn.hl7v2.model.v231.segment.PID;
-import ca.uhn.hl7v2.model.v231.segment.Zxx;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientId;
 import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
+import tz.go.moh.him.nhcr.mediator.hl7v2.message.ZXT_A01;
+import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -32,7 +31,7 @@ public class HL7v2MessageBuilderUtils {
     }
 
     /**
-     * Creates an ADT A01 message.
+     * Creates an ZXT A01 message.
      *
      * @param sendingFacility      The sending facility.
      * @param facilityHfrCode      The facility HFR code.
@@ -41,11 +40,14 @@ public class HL7v2MessageBuilderUtils {
      * @param receivingApplication The receiving Application.
      * @param securityAccessToken  The sending facility security token.
      * @param client               the client registered
-     * @return Returns the created ADT A01 message.
+     * @return Returns the created ZXT A01 message.
      */
-    public static ADT_A01 createAdtA01(String sendingFacility, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, Client client) throws IOException, HL7Exception {
-        ADT_A01 adt = new ADT_A01();
+    public static ZXT_A01 createZxtA01(String sendingFacility, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, Client client) throws IOException, HL7Exception {
+        ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", "A01", "P");
+
+        //The ZXT Segment
+        ZXT zxt = adt.getZXT();
 
         /*
          * Populate the MSH Segment
@@ -140,7 +142,10 @@ public class HL7v2MessageBuilderUtils {
                 pid.getNationality().getIdentifier().setValue(clientId.getId());
             } else if (clientId.getType().equalsIgnoreCase("RITA_ID")) {
                 //Populating Rita Birth Certificate ID
-                //TODO implement saving Birth Certificate in the Z Segment
+                zxt.getRitaId().getId().setValue(clientId.getId());
+                zxt.getRitaId().getCountryCode().setValue("TZA");
+                zxt.getRitaId().getIdType().setValue("BTH_CRT");
+                zxt.getRitaId().getCountryName().setValue("Tanzania");
             }
         }
 
@@ -155,6 +160,6 @@ public class HL7v2MessageBuilderUtils {
         }
 
 
-        return new ADT_A01();
+        return adt;
     }
 }
