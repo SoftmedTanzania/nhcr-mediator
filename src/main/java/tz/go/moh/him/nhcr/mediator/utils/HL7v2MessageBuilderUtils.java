@@ -1,6 +1,7 @@
 package tz.go.moh.him.nhcr.mediator.utils;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.segment.EVN;
 import ca.uhn.hl7v2.model.v231.segment.IN1;
@@ -9,12 +10,14 @@ import ca.uhn.hl7v2.model.v231.segment.PID;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientId;
+import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
 import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
 import tz.go.moh.him.nhcr.mediator.hl7v2.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Represents an HL7v2 message builder utility.
@@ -33,133 +36,230 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Creates an ZXT A01 message.
      *
-     * @param sendingFacility      The sending facility.
+     * @param sendingApplication   The sending Application.
      * @param facilityHfrCode      The facility HFR code.
      * @param facilityOid          The sending facility OID.
      * @param receivingFacility    The receiving facility.
      * @param receivingApplication The receiving Application.
      * @param securityAccessToken  The sending facility security token.
-     * @param client               the client registered
+     * @param messageControlId     The number or other identifier that uniquely identifies the message
+     * @param client               The emr client object
      * @return Returns the created ZXT A01 message.
+     * @throws IOException  The IOException thrown
+     * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String sendingFacility, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, Client client) throws IOException, HL7Exception {
+    public static ZXT_A01 createZxtA01(String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", "A01", "P");
 
         //The ZXT Segment
         ZXT zxt = adt.getZXT();
 
-        /*
-         * Populate the MSH Segment
-         */
-        MSH mshSegment = adt.getMSH();
-        mshSegment.getSendingApplication().getNamespaceID().setValue(facilityOid);
-        mshSegment.getSendingFacility().getNamespaceID().setValue(facilityHfrCode);
+        //Populating the MSH Segment
+        populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, Calendar.getInstance().getTime(), securityAccessToken, messageControlId);
+
+        //Populating the EVN Segment
+        populateEvnSegment(adt, Calendar.getInstance().getTime());
+
+        //Populating the PID Segment
+        populatePidSegment(adt, client, facilityOid);
+
+        //Populating IN1 Segment
+        if (client.getInsurance() != null) {
+            populateIn1Segment(adt, client.getInsurance());
+        }
+
+        String ritaId = null;
+        String votersId = null;
+        for (ClientId clientId : client.getIds()) {
+            if (clientId.getType().equalsIgnoreCase("VOTERS_ID")) {
+                votersId = clientId.getId();
+            } else if (clientId.getType().equalsIgnoreCase("RITA_ID")) {
+                ritaId = clientId.getId();
+            }
+        }
+        //Populating the ZTX Segment
+        populateZxtSegment(adt, votersId, ritaId);
+
+
+        return adt;
+    }
+
+
+    /**
+     * Populates the MSH Segment
+     *
+     * @param zxtA01               The ZXT_A01 message
+     * @param sendingApplication   The sending Application.
+     * @param sendingFacility      The sending Facility.
+     * @param receivingApplication The receiving Application.
+     * @param receivingFacility    The receiving Facility.
+     * @param dateTimeOfTheMessage The date time of the message.
+     * @param security             The security access token
+     * @param messageControlId     The message control ID
+     * @return The MSH segment
+     * @throws DataTypeException The exception thrown
+     */
+    private static MSH populateMshSegment(ZXT_A01 zxtA01,
+                                          String sendingApplication,
+                                          String sendingFacility,
+                                          String receivingApplication,
+                                          String receivingFacility,
+                                          Date dateTimeOfTheMessage,
+                                          String security,
+                                          String messageControlId
+    ) throws DataTypeException {
+        MSH mshSegment = zxtA01.getMSH();
+        mshSegment.getSendingApplication().getNamespaceID().setValue(sendingApplication);
+        mshSegment.getSendingFacility().getNamespaceID().setValue(sendingFacility);
         mshSegment.getReceivingApplication().getNamespaceID().setValue(receivingApplication);
         mshSegment.getReceivingFacility().getNamespaceID().setValue(receivingFacility);
-        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(Calendar.getInstance());
-        mshSegment.getSecurity().setValue(securityAccessToken);
+        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(dateTimeOfTheMessage);
+        mshSegment.getSecurity().setValue(security);
         mshSegment.getVersionID().getVersionID().setValue("2.3.1");
+        mshSegment.getProcessingID().getProcessingID().setValue("P");
+        mshSegment.getMessageControlID().setValue(messageControlId);
 
+        return mshSegment;
+    }
 
-        /*
-         * Populate the EVN Segment
-         */
-        EVN evnSegment = adt.getEVN();
-        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(Calendar.getInstance());
+    /**
+     * Populates the EVN Segment
+     *
+     * @param zxtA01           The ZXT_A01 message
+     * @param recordedDateTime The recorded date time
+     * @return The EVN segment
+     * @throws DataTypeException The exception thrown
+     */
+    private static EVN populateEvnSegment(ZXT_A01 zxtA01, Date recordedDateTime) throws DataTypeException {
+        EVN evnSegment = zxtA01.getEVN();
+        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(recordedDateTime);
 
+        return evnSegment;
+    }
 
-        /*
-         * Populate the PID Segment
-         */
-        PID pid = adt.getPID();
+    /**
+     * @param zxtA01            The ZXT_A01 message
+     * @param client            The emr client object
+     * @param assigningFacility The Patient Identifier assigning Facility
+     * @return The PID segment
+     * @throws HL7Exception The exception thrown
+     */
+    private static PID populatePidSegment(ZXT_A01 zxtA01, Client client, String assigningFacility) throws HL7Exception {
+        //The PID segment
+        PID pidSegment = zxtA01.getPID();
 
         // Populating the PID.3
         for (int i = 0; i < client.getPrograms().size(); i++) {
             //Populating the client ids.
             ClientProgram clientProgram = client.getPrograms().get(i);
-            pid.getPatientIdentifierList(i).getID().setValue(clientProgram.getId());
-            pid.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getName());
-            pid.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(facilityHfrCode);
+            pidSegment.getPatientIdentifierList(i).getID().setValue(clientProgram.getId());
+            pidSegment.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getName());
+            pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(assigningFacility);
         }
 
         //Populating the client names.
-        pid.getPatientName(0).getFamilyLastName().getFamilyName().setValue(client.getLastName());
-        pid.getPatientName(0).getGivenName().setValue(client.getFirstName());
-        pid.getPatientName(0).getMiddleInitialOrName().setValue(client.getMiddleName());
-        pid.getPatientName(0).getNameTypeCode().setValue("L");
+        pidSegment.getPatientName(0).getFamilyLastName().getFamilyName().setValue(client.getLastName());
+        pidSegment.getPatientName(0).getGivenName().setValue(client.getFirstName());
+        pidSegment.getPatientName(0).getMiddleInitialOrName().setValue(client.getMiddleName());
+        pidSegment.getPatientName(0).getNameTypeCode().setValue("L");
 
         //Populating the client date of birth.
-        pid.getDateTimeOfBirth().getTimeOfAnEvent().setValue(Utils.checkDateFormatStrings(client.getDob()));
+        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(Utils.checkDateFormatStrings(client.getDob()));
 
         //Populating the client sex.
         if (client.getSex().equalsIgnoreCase("male")) {
-            pid.getSex().setValue("M");
+            pidSegment.getSex().setValue("M");
         } else if (client.getSex().equalsIgnoreCase("female")) {
-            pid.getSex().setValue("F");
+            pidSegment.getSex().setValue("F");
         } else {
             throw new ArgumentException();
         }
         //Populating other client's names.
-        pid.getPatientAlias(0).getGivenName().setValue(client.getOtherName());
+        pidSegment.getPatientAlias(0).getGivenName().setValue(client.getOtherName());
 
         int patientAddressIndex = 0;
         if (client.getResidentialAddress() != null) {
             //Populating Residential Address
             String councilWardVillage = client.getResidentialAddress().getCouncil() + "*" + client.getResidentialAddress().getWard() + "*" + client.getResidentialAddress().getVillage();
-            pid.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
-            pid.getPatientAddress(patientAddressIndex).getCity().setValue(client.getResidentialAddress().getRegion());
-            pid.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getResidentialAddress().getRegion());
-            pid.getPatientAddress(patientAddressIndex).getAddressType().setValue("H");
+            pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
+            pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getResidentialAddress().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getResidentialAddress().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("H");
             patientAddressIndex++;
         }
 
         if (client.getPermanentAddress() != null) {
             //Populating Permanent Address
             String councilWardVillage = client.getPermanentAddress().getCouncil() + "*" + client.getPermanentAddress().getWard() + "*" + client.getPermanentAddress().getVillage();
-            pid.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
-            pid.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
-            pid.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPermanentAddress().getRegion());
-            pid.getPatientAddress(patientAddressIndex).getAddressType().setValue("P");
+            pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
+            pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPermanentAddress().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("P");
         }
 
         //Populating phone number
-        pid.getPhoneNumberHome(0).getTelecommunicationUseCode().setValue("PRN");
-        pid.getPhoneNumberHome(0).getTelecommunicationEquipmentType().setValue("PH");
-        pid.getPhoneNumberHome(0).getAreaCityCode().setValue(client.getCountryCode());
-        pid.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber());
+        pidSegment.getPhoneNumberHome(0).getTelecommunicationUseCode().setValue("PRN");
+        pidSegment.getPhoneNumberHome(0).getTelecommunicationEquipmentType().setValue("PH");
+        pidSegment.getPhoneNumberHome(0).getAreaCityCode().setValue(client.getCountryCode());
+        pidSegment.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber());
 
         //Populating uln
-        pid.getSSNNumberPatient().setValue(client.getUln());
+        pidSegment.getSSNNumberPatient().setValue(client.getUln());
 
         for (ClientId clientId : client.getIds()) {
             if (clientId.getType().equalsIgnoreCase("DRIVERS_LICENSE_ID")) {
                 //Populating drivers license
-                pid.getDriverSLicenseNumberPatient().getDriverSLicenseNumber().setValue(clientId.getId());
+                pidSegment.getDriverSLicenseNumberPatient().getDriverSLicenseNumber().setValue(clientId.getId());
             } else if (clientId.getType().equalsIgnoreCase("NATIONAL_ID")) {
                 //Populating national ID
-                pid.getCitizenship(0).getIdentifier().setValue(clientId.getId());
-                pid.getNationality().getIdentifier().setValue(clientId.getId());
-            } else if (clientId.getType().equalsIgnoreCase("RITA_ID")) {
-                //Populating Rita Birth Certificate ID
-                zxt.getRitaId().getId().setValue(clientId.getId());
-                zxt.getRitaId().getCountryCode().setValue("TZA");
-                zxt.getRitaId().getIdType().setValue("BTH_CRT");
-                zxt.getRitaId().getCountryName().setValue("Tanzania");
+                pidSegment.getCitizenship(0).getIdentifier().setValue(clientId.getId());
+                pidSegment.getNationality().getIdentifier().setValue(clientId.getId());
             }
         }
 
-        /*
-         * Populating IN1 Segment
-         */
-        if (client.getInsurance() != null) {
-            IN1 in1Segment = adt.getIN1IN2IN3().getIN1();
-            in1Segment.getSetIDIN1().setValue("1");
-            in1Segment.getInsuredSIDNumber(0).getID().setValue(client.getInsurance().getId()); //TODO have a discussion on this
-            in1Segment.getInsuranceCompanyName(0).getOrganizationName().setValue(client.getInsurance().getName());
+        return pidSegment;
+    }
+
+    /**
+     * Populates the IN1 Segment
+     *
+     * @param zxtA01    The ZXT_A01 message
+     * @param insurance The client insurance object
+     * @return The IN1 Segment
+     * @throws DataTypeException The exception thrown
+     */
+    private static IN1 populateIn1Segment(ZXT_A01 zxtA01, ClientInsurance insurance) throws DataTypeException {
+        IN1 in1Segment = zxtA01.getIN1IN2IN3().getIN1();
+        in1Segment.getSetIDIN1().setValue("1");
+        in1Segment.getInsuredSIDNumber(0).getID().setValue(insurance.getId()); //TODO have a discussion on this
+        in1Segment.getInsuranceCompanyName(0).getOrganizationName().setValue(insurance.getName());
+
+        return in1Segment;
+    }
+
+
+    /**
+     * Populates the ZXT Segment
+     *
+     * @param zxtA01  The ZXT_A01 message
+     * @param votesId The Client's Voters Id
+     * @param ritaId  The Client's Rita ID
+     * @return The ZXT Segment
+     * @throws HL7Exception The Exception thrown
+     */
+    private static ZXT populateZxtSegment(ZXT_A01 zxtA01, String votesId, String ritaId) throws HL7Exception {
+        ZXT zxtSegment = zxtA01.getZXT();
+        if (votesId != null)
+            zxtSegment.getVotersId().setValue(votesId);
+
+        if (ritaId != null) {
+            zxtSegment.getRitaId().getId().setValue(ritaId);
+            zxtSegment.getRitaId().getIdType().setValue("BTH_CRT");
+            zxtSegment.getRitaId().getCountryName().setValue("Tanzania");
+            zxtSegment.getRitaId().getCountryCode().setValue("TZA");
         }
 
-
-        return adt;
+        return zxtSegment;
     }
 }
