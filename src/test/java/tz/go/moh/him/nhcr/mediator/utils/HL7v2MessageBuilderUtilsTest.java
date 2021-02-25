@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Contains tests for the {@link HL7v2MessageBuilderUtils} class.
@@ -62,7 +63,13 @@ public class HL7v2MessageBuilderUtilsTest {
 
         EmrClientsRegistrationAndUpdatesMessage message = gson.fromJson(registerClientJsonPayload, EmrClientsRegistrationAndUpdatesMessage.class);
 
+
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
         Date recordedDate = new Date(2021, Calendar.FEBRUARY, 25, 0, 0);
+
+
+
         ZXT_A01 zxtA01 = HL7v2MessageBuilderUtils.createZxtA01(
                 message.getSendingApplication(),
                 message.getFacilityHfrCode(),
