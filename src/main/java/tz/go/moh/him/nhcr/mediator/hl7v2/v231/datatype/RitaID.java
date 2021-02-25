@@ -1,4 +1,4 @@
-package tz.go.moh.him.nhcr.mediator.hl7v2.datatype;
+package tz.go.moh.him.nhcr.mediator.hl7v2.v231.datatype;
 
 
 import ca.uhn.hl7v2.model.AbstractComposite;

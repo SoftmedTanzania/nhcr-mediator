@@ -17,8 +17,8 @@ import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientId;
 import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
 import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
-import tz.go.moh.him.nhcr.mediator.hl7v2.message.ZXT_A01;
-import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.io.IOException;
 import java.util.Date;
@@ -295,10 +295,18 @@ public class HL7v2MessageBuilderUtils {
         Parser parser = context.getPipeParser();
 
         //Creating a custom model class factory for the custom ZTX_A01 message
-        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2.message");
+        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2");
         context.setModelClassFactory(cmf);
 
+        //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
         zxtA01Hl7Message = zxtA01Hl7Message.replace("ADT^A01", "ZXT^A01");
-        return (ZXT_A01) parser.parse(zxtA01Hl7Message);
+
+        ZXT_A01 zxtA01 = (ZXT_A01) parser.parse(zxtA01Hl7Message);
+
+        //Reverting back the message MSH.9 Message type to the original ADT^A01.
+        zxtA01.getMSH().getMessageType().getMessageType().setValue("ADT");
+        zxtA01.getMSH().getMessageType().getTriggerEvent().setValue("A01");
+
+        return zxtA01;
     }
 }

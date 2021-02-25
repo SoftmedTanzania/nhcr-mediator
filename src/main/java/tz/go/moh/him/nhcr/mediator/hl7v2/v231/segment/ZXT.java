@@ -1,4 +1,4 @@
-package tz.go.moh.him.nhcr.mediator.hl7v2.segment;
+package tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.AbstractSegment;
@@ -6,7 +6,7 @@ import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Type;
 import ca.uhn.hl7v2.model.v231.datatype.ST;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import tz.go.moh.him.nhcr.mediator.hl7v2.datatype.RitaID;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.datatype.RitaID;
 
 public class ZXT extends AbstractSegment {
     public ZXT(Group parent, ModelClassFactory factory) {

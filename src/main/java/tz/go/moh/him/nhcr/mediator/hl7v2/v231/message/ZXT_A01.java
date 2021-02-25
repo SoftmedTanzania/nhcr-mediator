@@ -1,10 +1,10 @@
-package tz.go.moh.him.nhcr.mediator.hl7v2.message;
+package tz.go.moh.him.nhcr.mediator.hl7v2.v231.message;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v231.message.ADT_A01;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.util.Arrays;
 
@@ -33,7 +33,7 @@ public class ZXT_A01 extends ADT_A01 {
         int index = indexOfIn1 + 1;
 
         Class<ZXT> type = ZXT.class;
-        boolean required = true;
+        boolean required = false;
         boolean repeating = false;
 
         this.add(type, required, repeating, index);
@@ -43,7 +43,7 @@ public class ZXT_A01 extends ADT_A01 {
      * Add an accessor for the ZXT segment
      */
     public ZXT getZXT() throws HL7Exception {
-        return getTyped("ZXT", ZXT.class);
+        return (ZXT) get("ZXT");
     }
 
 }

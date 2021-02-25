@@ -11,7 +11,7 @@ import org.junit.Test;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientsRegistrationAndUpdatesMessageTest;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsRegistrationAndUpdatesMessage;
-import tz.go.moh.him.nhcr.mediator.hl7v2.message.ZXT_A01;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateDeserializer;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSerializer;
 
@@ -51,7 +51,7 @@ public class HL7v2MessageBuilderTests {
     }
 
     /**
-     * Tests the message builder.
+     * Tests creating of ZXT_A01.
      */
     @Test
     public void testCreateZxtA01() throws IOException, HL7Exception {
@@ -84,37 +84,22 @@ public class HL7v2MessageBuilderTests {
     }
 
     /**
-     * Tests the message builder.
+     * Tests parsing ZxtA01 Message.
      */
     @Test
-    public void testParseZxtA01Message() throws IOException, HL7Exception {
-        InputStream registerClientJsonPayloadStream = ClientsRegistrationAndUpdatesMessageTest.class.getClassLoader().getResourceAsStream("register_client.json");
-
-        Assert.assertNotNull(registerClientJsonPayloadStream);
-        String registerClientJsonPayload = IOUtils.toString(registerClientJsonPayloadStream);
-
-        EmrClientsRegistrationAndUpdatesMessage message = gson.fromJson(registerClientJsonPayload, EmrClientsRegistrationAndUpdatesMessage.class);
-
-        Date recordedDate = new Date(2021, Calendar.FEBRUARY, 25, 0, 0);
-        ZXT_A01 zxtA01 = HL7v2MessageBuilderUtils.createZxtA01(
-                message.getSendingApplication(),
-                message.getFacilityHfrCode(),
-                message.getOid(),
-                "NHCR",
-                "NHCR",
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis",
-                "1",
-                recordedDate,
-                message.getClients().get(0)
-        );
-
-
+    public void testParsingAndEncodingZxtA01Message() throws IOException, HL7Exception {
         InputStream streamHl7Message = ClientsRegistrationAndUpdatesMessageTest.class.getClassLoader().getResourceAsStream("hl7v2_registration_message");
 
         Assert.assertNotNull(streamHl7Message);
 
-        String expectedHl7Message = IOUtils.toString(streamHl7Message).replaceAll("\\n", "\r");
+        String expectedHl7MessageString = IOUtils.toString(streamHl7Message).replaceAll("\\n", "\r");
 
-        Assert.assertEquals(zxtA01, HL7v2MessageBuilderUtils.parseZxtA01Message(expectedHl7Message));
+        ZXT_A01 zxtA01 = HL7v2MessageBuilderUtils.parseZxtA01Message(expectedHl7MessageString);
+
+        Assert.assertNotNull(zxtA01);
+
+        String encodedMessageString = HL7v2MessageBuilderUtils.encodeZxtA01Message(zxtA01);
+
+        Assert.assertEquals(expectedHl7MessageString, encodedMessageString);
     }
 }
