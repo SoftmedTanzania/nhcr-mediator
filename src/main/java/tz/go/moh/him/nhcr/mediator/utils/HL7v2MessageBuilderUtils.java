@@ -165,7 +165,7 @@ public class HL7v2MessageBuilderUtils {
         pidSegment.getPatientName(0).getNameTypeCode().setValue("L");
 
         //Populating the client date of birth.
-        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(Utils.checkDateFormatStrings(client.getDob()));
+        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(DateUtils.checkDateFormatStrings(client.getDob()));
 
         //Populating the client sex.
         if (client.getSex().equalsIgnoreCase("male")) {

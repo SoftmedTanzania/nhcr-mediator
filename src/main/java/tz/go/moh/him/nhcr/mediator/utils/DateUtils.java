@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class Utils {
+public class DateUtils {
     /**
      * Handles checking for the correct date string format from a variety of formats
      *
