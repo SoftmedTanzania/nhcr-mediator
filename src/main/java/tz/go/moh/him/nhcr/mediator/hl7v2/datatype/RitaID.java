@@ -17,7 +17,7 @@ public class RitaID extends AbstractComposite {
     }
 
     private void init() {
-        this.data = new Type[9];
+        this.data = new Type[5];
         this.data[0] = new ST(this.getMessage());
         this.data[1] = new IS(this.getMessage());
         this.data[2] = new IS(this.getMessage());

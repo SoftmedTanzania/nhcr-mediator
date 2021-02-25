@@ -21,7 +21,6 @@ import tz.go.moh.him.nhcr.mediator.hl7v2.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -48,20 +47,21 @@ public class HL7v2MessageBuilderUtils {
      * @param receivingApplication The receiving Application.
      * @param securityAccessToken  The sending facility security token.
      * @param messageControlId     The number or other identifier that uniquely identifies the message
+     * @param recodedDate          The recoded date
      * @param client               The emr client object
      * @return Returns the created ZXT A01 message.
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Client client) throws HL7Exception, IOException {
+    public static ZXT_A01 createZxtA01(String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", "A01", "P");
 
         //Populating the MSH Segment
-        populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, Calendar.getInstance().getTime(), securityAccessToken, messageControlId);
+        populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
 
         //Populating the EVN Segment
-        populateEvnSegment(adt, Calendar.getInstance().getTime());
+        populateEvnSegment(adt, recodedDate);
 
         //Populating the PID Segment
         populatePidSegment(adt, client, facilityOid);
@@ -292,13 +292,13 @@ public class HL7v2MessageBuilderUtils {
      */
     public static ZXT_A01 parseZxtA01Message(String zxtA01Hl7Message) throws HL7Exception {
         HapiContext context = new DefaultHapiContext();
+        Parser parser = context.getPipeParser();
 
         //Creating a custom model class factory for the custom ZTX_A01 message
         ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2.message");
         context.setModelClassFactory(cmf);
 
-        Parser parser = context.getPipeParser();
-
+        zxtA01Hl7Message = zxtA01Hl7Message.replace("ADT^A01", "ZXT^A01");
         return (ZXT_A01) parser.parse(zxtA01Hl7Message);
     }
 }

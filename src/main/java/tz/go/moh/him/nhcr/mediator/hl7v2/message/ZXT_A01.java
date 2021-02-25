@@ -8,6 +8,7 @@ import tz.go.moh.him.nhcr.mediator.hl7v2.segment.ZXT;
 
 import java.util.Arrays;
 
+@SuppressWarnings("serial")
 public class ZXT_A01 extends ADT_A01 {
     /**
      * Constructor
@@ -26,7 +27,7 @@ public class ZXT_A01 extends ADT_A01 {
 
         // Now, let's add the ZXT segment at the right spot
         String[] segmentNames = getNames();
-        int indexOfIn1 = Arrays.asList(segmentNames).indexOf("IN1");
+        int indexOfIn1 = Arrays.asList(segmentNames).indexOf("IN1IN2IN3");
 
         // Put the ZXT segment right after the IN1 segment
         int index = indexOfIn1 + 1;

@@ -23,6 +23,13 @@ public class EmrMessage {
     private String facilityHfrCode;
 
     /**
+     * The sending Application.
+     */
+    @SerializedName("sendingApplication")
+    @JsonProperty("sendingApplication")
+    private String sendingApplication;
+
+    /**
      * The sending facility OID.
      */
     @SerializedName("oid")
@@ -100,5 +107,23 @@ public class EmrMessage {
      */
     public void setOid(String oid) {
         this.oid = oid;
+    }
+
+    /**
+     * Gets the sending Application.
+     *
+     * @return Returns the sending Application.
+     */
+    public String getSendingApplication() {
+        return sendingApplication;
+    }
+
+    /**
+     * Sets the sending Application
+     *
+     * @param sendingApplication The sending Application
+     */
+    public void setSendingApplication(String sendingApplication) {
+        this.sendingApplication = sendingApplication;
     }
 }

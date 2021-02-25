@@ -57,7 +57,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         EmrClientsRegistrationAndUpdatesMessage emrClientsRegistrationAndUpdatesMessage = gson.fromJson(data, EmrClientsRegistrationAndUpdatesMessage.class);
 
         Assert.assertEquals("Mirembe MHH", emrClientsRegistrationAndUpdatesMessage.getSendingFacility());
-        Assert.assertEquals("Blaj9747", emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode());
+        Assert.assertEquals("104962-6", emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode());
         Assert.assertEquals("1.2.3.1.4.545", emrClientsRegistrationAndUpdatesMessage.getOid());
 
         Client client = emrClientsRegistrationAndUpdatesMessage.getClients().get(0);
