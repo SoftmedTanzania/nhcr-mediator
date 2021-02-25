@@ -1,12 +1,17 @@
 package tz.go.moh.him.nhcr.mediator.utils;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.segment.EVN;
 import ca.uhn.hl7v2.model.v231.segment.IN1;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 import ca.uhn.hl7v2.model.v231.segment.PID;
+import ca.uhn.hl7v2.parser.CustomModelClassFactory;
+import ca.uhn.hl7v2.parser.ModelClassFactory;
+import ca.uhn.hl7v2.parser.Parser;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientId;
@@ -235,7 +240,6 @@ public class HL7v2MessageBuilderUtils {
         return in1Segment;
     }
 
-
     /**
      * Populates the ZXT Segment
      *
@@ -258,5 +262,43 @@ public class HL7v2MessageBuilderUtils {
         }
 
         return zxtSegment;
+    }
+
+    /**
+     * Encodes the ZXT_A01 message into a HL7v2 message string
+     *
+     * @param zxtA01 The ZXT_A01 message
+     * @return The HL7v2 encoded string
+     * @throws HL7Exception The exception thrown
+     */
+    public static String encodeZxtA01Message(ZXT_A01 zxtA01) throws HL7Exception {
+        HapiContext context = new DefaultHapiContext();
+
+        //Creating a custom model class factory for the custom ZTX_A01 message
+        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2.message");
+        context.setModelClassFactory(cmf);
+
+        Parser parser = context.getPipeParser();
+
+        return parser.encode(zxtA01);
+    }
+
+    /**
+     * Parses the HL7v2 message string to a ZXT_A01 message
+     *
+     * @param zxtA01Hl7Message The HL7v2 encoded string
+     * @return The ZXT_A01 Message Object
+     * @throws HL7Exception The exception thrown
+     */
+    public static ZXT_A01 parseZxtA01Message(String zxtA01Hl7Message) throws HL7Exception {
+        HapiContext context = new DefaultHapiContext();
+
+        //Creating a custom model class factory for the custom ZTX_A01 message
+        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2.message");
+        context.setModelClassFactory(cmf);
+
+        Parser parser = context.getPipeParser();
+
+        return (ZXT_A01) parser.parse(zxtA01Hl7Message);
     }
 }
