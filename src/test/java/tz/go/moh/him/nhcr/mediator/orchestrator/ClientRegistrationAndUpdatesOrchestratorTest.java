@@ -12,7 +12,6 @@ import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
 import java.io.InputStream;
@@ -23,7 +22,7 @@ import java.util.Collections;
  * Contains tests for the {@link DefaultOrchestrator} class.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({HL7v2MessageBuilderUtils.class, MllpUtils.class})
+@PrepareForTest(MllpUtils.class)
 public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestratorTest {
 
     /**
