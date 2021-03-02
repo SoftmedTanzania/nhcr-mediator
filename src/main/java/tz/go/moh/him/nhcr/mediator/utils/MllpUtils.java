@@ -12,7 +12,8 @@ import java.io.IOException;
 
 public class MllpUtils {
 
-    public static void sendMessage(Message message, MediatorConfig config, HapiContext context, Connection conn) throws HL7Exception {
+    public static String sendMessage(Message message, MediatorConfig config, HapiContext context, Connection conn) throws HL7Exception {
+        String responseMessage = null;
         String host;
         int portNumber;
         boolean useTls;
@@ -43,7 +44,8 @@ public class MllpUtils {
 
         try {
             Message response = conn.getInitiator().sendAndReceive(message);
-            System.out.println("Sent message. Response was " + response.encode());
+            responseMessage  = response.encode();
+            System.out.println("Sent message. Response was " + responseMessage);
         } catch (IOException | LLPException e) {
             System.out.println("Didn't send out this message!");
             e.printStackTrace();
@@ -53,5 +55,6 @@ public class MllpUtils {
             conn = null;
 
         }
+        return responseMessage;
     }
 }

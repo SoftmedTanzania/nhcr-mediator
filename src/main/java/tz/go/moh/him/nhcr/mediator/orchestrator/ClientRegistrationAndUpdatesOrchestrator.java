@@ -80,7 +80,8 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                     client
             );
 
-            MllpUtils.sendMessage(zxtA01, config, context, conn);
+            String response = MllpUtils.sendMessage(zxtA01, config, context, conn);
+            System.out.println(response);
         }
 
         request.getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());

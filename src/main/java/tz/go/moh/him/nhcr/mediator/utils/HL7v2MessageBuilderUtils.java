@@ -55,7 +55,7 @@ public class HL7v2MessageBuilderUtils {
      */
     public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
-        adt.initQuickstart("ADT", messageTriggerEvent, "P");
+        adt.initQuickstart("ADT", "A01", "P");
 
         //Populating the MSH Segment
         populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
