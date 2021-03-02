@@ -3,15 +3,10 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.model.Message;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.powermock.api.mockito.PowerMockito;
@@ -23,8 +18,6 @@ import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Contains tests for the {@link DefaultOrchestrator} class.
@@ -47,7 +40,6 @@ public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestrat
     public void testRequest() throws Exception {
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
-            Mockito.when(MllpUtils.sendMessage(any(Message.class), any(MediatorConfig.class), any(HapiContext.class), any(Connection.class))).thenReturn(null);
 
             InputStream stream = ClientRegistrationAndUpdatesOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
 
