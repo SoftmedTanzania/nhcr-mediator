@@ -1,26 +1,32 @@
-package tz.go.moh.him.nhcr.mediator.mllpTcpClient;
+package tz.go.moh.him.nhcr.mediator.utils;
 
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.llp.LLPException;
+import ca.uhn.hl7v2.model.Message;
 import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 
 import java.io.IOException;
 
-public class MLLPBasedTCPClient {
+public class MllpUtils {
 
-    public static String sendMessage(String message, MediatorConfig config, HapiContext context, Connection conn) throws IOException {
+    public static void sendMessage(Message message, MediatorConfig config, HapiContext context, Connection conn) throws HL7Exception {
         String host;
         int portNumber;
+        boolean useTls;
 
         if (config.getDynamicConfig().isEmpty()) {
             host = config.getProperty("destination.host");
             portNumber = Integer.parseInt(config.getProperty("destination.port"));
+            useTls = !config.getProperty("destination.scheme").equalsIgnoreCase("llp");
         } else {
             JSONObject connectionProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("destinationConnectionProperties");
 
             host = connectionProperties.getString("destinationHost");
             portNumber = connectionProperties.getInt("destinationPort");
+            useTls = !connectionProperties.getString("destinationScheme").equalsIgnoreCase("llp");
         }
 
         /* If we don't already have a connection, create one.
@@ -32,16 +38,13 @@ public class MLLPBasedTCPClient {
          * creating a new connection each time.
          */
         if (conn == null) {
-            boolean useTls = false;
-            int port = 8888;
-            conn = context.newClient("localhost", port, useTls);
+            conn = context.newClient(host, portNumber, useTls);
         }
 
         try {
-            Message next = iter.next();
-            Message response = conn.getInitiator().sendAndReceive(next);
+            Message response = conn.getInitiator().sendAndReceive(message);
             System.out.println("Sent message. Response was " + response.encode());
-        } catch (IOException e) {
+        } catch (IOException | LLPException e) {
             System.out.println("Didn't send out this message!");
             e.printStackTrace();
 
@@ -50,7 +53,5 @@ public class MLLPBasedTCPClient {
             conn = null;
 
         }
-
-        return response;
     }
 }

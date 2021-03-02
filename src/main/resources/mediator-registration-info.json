@@ -5,10 +5,10 @@
   "description": "A mediator for handling system integration with National Health Client Registry.",
   "endpoints": [
     {
-      "name": "NHCR EMR Mediator Route",
+      "name": "NHCR EMR Client Registrations and Updates Route",
       "host": "localhost",
       "port": "3014",
-      "path": "/nhcr",
+      "path": "/nhcr-clients-registrations-and-updates",
       "type": "http"
     },
     {
@@ -21,25 +21,21 @@
   ],
   "defaultChannelConfig": [
     {
-      "name": "NHCR EMR Channel",
-      "urlPattern": "^/nhcr$",
+      "name": "EMR - NHCR Clients Registrations or Updates Channel",
+      "urlPattern": "^/nhcr-clients-registrations-and-updates$",
       "type": "http",
       "allow": [
-        "nhcr-client"
+        "emr-role"
+      ],
+      "methods": [
+        "POST"
       ],
       "routes": [
         {
-          "name": "NHCR EMR Mediator Route",
+          "name": "NHCR EMR Client Registrations and Updates Route",
           "host": "localhost",
           "port": "3014",
-          "path": "/nhcr",
-          "type": "http"
-        },
-        {
-          "name": "NHCR Inbound Mediator Route",
-          "host": "localhost",
-          "port": "3014",
-          "path": "/nhcr-inbound",
+          "path": "/nhcr-clients-registrations-and-updates",
           "type": "http",
           "primary": "true"
         }
@@ -66,12 +62,6 @@
           "type": "number"
         },
         {
-          "param": "destinationPath",
-          "displayName": "Destination Path",
-          "description": "The destination path for receiving data from the HIM. eg /hdr",
-          "type": "string"
-        },
-        {
           "param": "destinationScheme",
           "displayName": "Destination Scheme",
           "description": "Whether the destination is using LLP or SLLP requests.",
@@ -80,18 +70,6 @@
             "llp",
             "sllp"
           ]
-        },
-        {
-          "param": "destinationUsername",
-          "displayName": "Destination Username",
-          "description": "The destination username for receiving data from the HIM.",
-          "type": "string"
-        },
-        {
-          "param": "destinationPassword",
-          "displayName": "Destination Password",
-          "description": "The destination password for receiving data from the HIM.",
-          "type": "password"
         }
       ]
     }

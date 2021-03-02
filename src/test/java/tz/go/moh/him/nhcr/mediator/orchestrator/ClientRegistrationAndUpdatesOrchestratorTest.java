@@ -16,12 +16,12 @@ import java.util.Collections;
 /**
  * Contains tests for the {@link DefaultOrchestrator} class.
  */
-public class NhcrOrchestratorTest extends BaseOrchestratorTest {
+public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestratorTest {
 
     /**
      * The orchestrator.
      */
-    private final ActorRef orchestrator = system.actorOf(Props.create(NhcrOrchestrator.class, configuration));
+    private final ActorRef orchestrator = system.actorOf(Props.create(ClientRegistrationAndUpdatesOrchestrator.class, configuration));
 
     /**
      * Tests the mediator.
@@ -32,7 +32,7 @@ public class NhcrOrchestratorTest extends BaseOrchestratorTest {
     public void testRequest() throws Exception {
         new JavaTestKit(system) {{
 
-            InputStream stream = NhcrOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
+            InputStream stream = ClientRegistrationAndUpdatesOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
 
             Assert.assertNotNull(stream);
 

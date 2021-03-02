@@ -1,6 +1,8 @@
 package tz.go.moh.him.nhcr.mediator.orchestrator;
 
-import ca.uhn.hl7v2.protocol.impl.MLLPTransport;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.Connection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
@@ -11,27 +13,27 @@ import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsRegistrationAndUpdatesMessage;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
+import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateDeserializer;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSerializer;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Represents an NHCR orchestrator.
  */
-public class ClientRegistrationOrUpdatesOrchestrator extends BaseOrchestrator {
+public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
     /**
      * The Gson Instance used for serialization and deserialization of jsons
      */
     public Gson gson;
 
     /**
-     * Initializes a new instance of the {@link ClientRegistrationOrUpdatesOrchestrator} class.
+     * Initializes a new instance of the {@link ClientRegistrationAndUpdatesOrchestrator} class.
      *
      * @param config The configuration.
      */
-    public ClientRegistrationOrUpdatesOrchestrator(MediatorConfig config) {
+    public ClientRegistrationAndUpdatesOrchestrator(MediatorConfig config) {
         super(config);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Client.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
@@ -48,6 +50,12 @@ public class ClientRegistrationOrUpdatesOrchestrator extends BaseOrchestrator {
     @Override
     protected void onReceiveRequestInternal(MediatorHTTPRequest request) throws Exception {
         EmrClientsRegistrationAndUpdatesMessage emrClientsRegistrationAndUpdatesMessage = gson.fromJson(request.getBody(), EmrClientsRegistrationAndUpdatesMessage.class);
+
+        // Create a HapiContext
+        HapiContext context = new DefaultHapiContext();
+
+        // Create a connection
+        Connection conn = null;
 
         for (Client client : emrClientsRegistrationAndUpdatesMessage.getClients()) {
             String messageTriggerEvent;
@@ -72,7 +80,7 @@ public class ClientRegistrationOrUpdatesOrchestrator extends BaseOrchestrator {
                     client
             );
 
-            MLLPTransport sendMessage()
+            MllpUtils.sendMessage(zxtA01, config, context, conn);
         }
 
         request.getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());
