@@ -44,7 +44,7 @@ public class MllpUtils {
 
         try {
             Message response = conn.getInitiator().sendAndReceive(message);
-            responseMessage  = response.encode();
+            responseMessage = response.encode();
             System.out.println("Sent message. Response was " + responseMessage);
         } catch (IOException | LLPException e) {
             System.out.println("Didn't send out this message!");
