@@ -53,9 +53,9 @@ public class HL7v2MessageBuilderUtils {
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
+    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
-        adt.initQuickstart("ADT", "A01", "P");
+        adt.initQuickstart("ADT", messageTriggerEvent, "P");
 
         //Populating the MSH Segment
         populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
