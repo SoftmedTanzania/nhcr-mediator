@@ -72,3 +72,4 @@ fabric.properties
 target/
 src/main/resources/system-configs/
 *.log
+id_file

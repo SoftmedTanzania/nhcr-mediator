@@ -6,8 +6,13 @@ import akka.testkit.JavaTestKit;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -16,12 +21,14 @@ import java.util.Collections;
 /**
  * Contains tests for the {@link DefaultOrchestrator} class.
  */
-public class NhcrOrchestratorTest extends BaseOrchestratorTest {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(MllpUtils.class)
+public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestratorTest {
 
     /**
      * The orchestrator.
      */
-    private final ActorRef orchestrator = system.actorOf(Props.create(NhcrOrchestrator.class, configuration));
+    private final ActorRef orchestrator = system.actorOf(Props.create(ClientRegistrationAndUpdatesOrchestrator.class, configuration));
 
     /**
      * Tests the mediator.
@@ -31,8 +38,9 @@ public class NhcrOrchestratorTest extends BaseOrchestratorTest {
     @Test
     public void testRequest() throws Exception {
         new JavaTestKit(system) {{
+            PowerMockito.mockStatic(MllpUtils.class);
 
-            InputStream stream = NhcrOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
+            InputStream stream = ClientRegistrationAndUpdatesOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
 
             Assert.assertNotNull(stream);
 
