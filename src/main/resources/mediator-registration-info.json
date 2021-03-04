@@ -5,7 +5,7 @@
   "description": "A mediator for handling system integration with National Health Client Registry.",
   "endpoints": [
     {
-      "name": "NHCR EMR Client Registrations and Updates Route",
+      "name": "EMR - NHCR Client Registrations and Updates Route",
       "host": "localhost",
       "port": "3014",
       "path": "/nhcr-clients-registrations-and-updates",
@@ -16,6 +16,13 @@
       "host": "localhost",
       "port": "3014",
       "path": "/nhcr-inbound",
+      "type": "http"
+    },
+    {
+      "name": "EMR - NHCR Conflicts Resolution Route",
+      "host": "localhost",
+      "port": "3014",
+      "path": "/nhcr-conflicts-resolution",
       "type": "http"
     }
   ],
@@ -36,6 +43,27 @@
           "host": "localhost",
           "port": "3014",
           "path": "/nhcr-clients-registrations-and-updates",
+          "type": "http",
+          "primary": "true"
+        }
+      ]
+    },
+    {
+      "name": "EMR - NHCR Conflicts Resolution Channel",
+      "urlPattern": "^/nhcr-conflicts-resolution$",
+      "type": "http",
+      "allow": [
+        "emr-role"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "routes": [
+        {
+          "name": "EMR - NHCR Conflicts Resolution Route",
+          "host": "localhost",
+          "port": "3014",
+          "path": "/nhcr-conflicts-resolution",
           "type": "http",
           "primary": "true"
         }

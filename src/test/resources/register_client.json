@@ -1,8 +1,7 @@
 {
   "sendingFacility": "Mirembe MHH",
-  "sendingApplication": "AFYA CARE",
+  "sendingApplication": "Afya-Care",
   "facilityHFRCode": "104962-6",
-  "oid": "1.2.3.1.4.545",
   "clients": [
     {
       "mrn": "52c9fa36-6b7f-483f-8c4a-1ad033e78618",
@@ -33,19 +32,23 @@
       "programs": [
         {
           "id": "12345",
-          "name": "CTC"
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "CTC"
         },
         {
           "id": "12345",
-          "name": "TB"
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "TB"
         },
         {
           "id": "12345",
-          "name": "RCH"
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "RCH"
         },
         {
           "id": "12345",
-          "name": "MAT"
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "MAT"
         }
       ],
       "insurance": {
@@ -82,9 +85,7 @@
         "sourceOfId": "NATIONAL_ID",
         "typeOfLinkage": "Treatment Supporter"
       },
-      "placeEncountered": "101335-8",
-      "status": 0,
-      "createdAt": "2020-06-02T07:07:20.000Z"
+      "placeEncountered": "101335-8"
     }
   ]
 }
