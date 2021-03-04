@@ -42,7 +42,6 @@ public class HL7v2MessageBuilderUtils {
      *
      * @param sendingApplication   The sending Application.
      * @param facilityHfrCode      The facility HFR code.
-     * @param facilityOid          The sending facility OID.
      * @param receivingFacility    The receiving facility.
      * @param receivingApplication The receiving Application.
      * @param securityAccessToken  The sending facility security token.
@@ -53,7 +52,7 @@ public class HL7v2MessageBuilderUtils {
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
+    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", "A01", "P");
 
@@ -64,7 +63,7 @@ public class HL7v2MessageBuilderUtils {
         populateEvnSegment(adt, recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt, client, facilityOid);
+        populatePidSegment(adt, client);
 
         //Populating IN1 Segment
         if (client.getInsurance() != null) {
@@ -143,11 +142,10 @@ public class HL7v2MessageBuilderUtils {
     /**
      * @param zxtA01            The ZXT_A01 message
      * @param client            The emr client object
-     * @param assigningFacility The Patient Identifier assigning Facility
      * @return The PID segment
      * @throws HL7Exception The exception thrown
      */
-    private static PID populatePidSegment(ZXT_A01 zxtA01, Client client, String assigningFacility) throws HL7Exception {
+    private static PID populatePidSegment(ZXT_A01 zxtA01, Client client) throws HL7Exception {
         //The PID segment
         PID pidSegment = zxtA01.getPID();
 
@@ -156,8 +154,8 @@ public class HL7v2MessageBuilderUtils {
             //Populating the client ids.
             ClientProgram clientProgram = client.getPrograms().get(i);
             pidSegment.getPatientIdentifierList(i).getID().setValue(clientProgram.getId());
-            pidSegment.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getName());
-            pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(assigningFacility);
+            pidSegment.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getAssigningAuthority());
+            pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(clientProgram.getAssigningFacility());
         }
 
         //Populating the client names.
