@@ -3,6 +3,8 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.model.v231.message.ACK;
+import ca.uhn.hl7v2.parser.Parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
@@ -11,13 +13,16 @@ import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsRegistrationAndUpdatesMessage;
+import tz.go.moh.him.nhcr.mediator.domain.EmrResponse;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateDeserializer;
 import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSerializer;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents an NHCR orchestrator.
@@ -57,6 +62,14 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
         // Create a connection
         Connection conn = null;
 
+        // Create a Parser
+        Parser parser = context.getPipeParser();
+
+        List<EmrResponse.FailedClientsMrn> failedClientsMrns = new ArrayList<>();
+
+        int totalNumberOfClients = emrClientsRegistrationAndUpdatesMessage.getClients().size();
+        int numberOfFailed = 0;
+
         for (Client client : emrClientsRegistrationAndUpdatesMessage.getClients()) {
             String messageTriggerEvent;
             if (client.getPostOrUpdate().equals(Client.PostOrUpdate.POST)) {
@@ -80,9 +93,31 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
             );
 
             String response = MllpUtils.sendMessage(zxtA01, config, context, conn);
-            System.out.println(response);
+
+            if (response != null) {
+                ACK ack = (ACK) parser.parse(response);
+                if (!ack.getMSA().getAcknowledgementCode().getValue().equals("AA")) {
+                    EmrResponse.FailedClientsMrn failedClientsMrn = new EmrResponse.FailedClientsMrn();
+                    failedClientsMrn.setMrn(client.getMrn());
+                    failedClientsMrn.setError(ack.getMSA().getTextMessage().getValue());
+
+                    failedClientsMrns.add(failedClientsMrn);
+                    numberOfFailed++;
+                }
+            }
         }
 
-        request.getRequestHandler().tell(new FinishRequest("Success", "text/plain", HttpStatus.SC_OK), getSelf());
+        EmrResponse.Summary summary = new EmrResponse.Summary(totalNumberOfClients, totalNumberOfClients - numberOfFailed, numberOfFailed);
+
+        EmrResponse emrResponse = new EmrResponse();
+        emrResponse.setSummary(summary);
+
+        int httpStatusCode = HttpStatus.SC_OK;
+        if (failedClientsMrns.size() > 0) {
+            emrResponse.setFailedClientsMrns(failedClientsMrns);
+            httpStatusCode = HttpStatus.SC_BAD_REQUEST;
+        }
+
+        request.getRequestHandler().tell(new FinishRequest(gson.toJson(emrResponse), "text/plain", httpStatusCode), getSelf());
     }
 }
