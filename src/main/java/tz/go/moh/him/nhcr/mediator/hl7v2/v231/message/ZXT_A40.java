@@ -1,21 +1,18 @@
 package tz.go.moh.him.nhcr.mediator.hl7v2.v231.message;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v231.message.ADT_A01;
 import ca.uhn.hl7v2.model.v231.message.ADT_A40;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
-import com.google.gson.Gson;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.util.Arrays;
-
-import static com.sun.tools.hat.internal.server.PlatformClasses.getNames;
 
 @SuppressWarnings("serial")
 public class ZXT_A40 extends ADT_A40 {
     /**
      * The constructor
+     *
      * @throws HL7Exception The thrown exception
      */
     public ZXT_A40() throws HL7Exception {
