@@ -124,6 +124,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         ClientProgram ctcProgram = new ClientProgram();
         ctcProgram.setId("12345");
         ctcProgram.setAssigningAuthority("CTC");
+        ctcProgram.setAssigningFacility("101335-8");
         client.setPrograms(Arrays.asList(ctcProgram));
 
         ClientInsurance insurance = new ClientInsurance();
@@ -152,8 +153,6 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         client.setCountryCode("255");
         client.setPhoneNumber("0754886287");
         client.setPlaceEncountered("101335-8");
-        client.setStatus("0");
-        client.setCreatedAt("2020-06-02T07:07:20.000Z");
         emrClientsRegistrationAndUpdatesMessage.setClients(Arrays.asList(client));
 
         //Serializing the object into a json
@@ -184,9 +183,6 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertTrue(json.contains("NATIONAL_ID"));
         Assert.assertTrue(json.contains("Parent"));
         Assert.assertTrue(json.contains("101335-8"));
-        Assert.assertTrue(json.contains("0"));
-        Assert.assertTrue(json.contains("2020-06-02T07:07:20.000Z"));
-
     }
 
 }
