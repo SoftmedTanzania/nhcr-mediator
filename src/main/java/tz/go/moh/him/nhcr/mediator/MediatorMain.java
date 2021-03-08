@@ -10,8 +10,9 @@ import org.openhim.mediator.engine.MediatorServer;
 import org.openhim.mediator.engine.RegistrationConfig;
 import org.openhim.mediator.engine.RoutingTable;
 import org.openhim.mediator.engine.StartupActorsConfig;
-import tz.go.moh.him.nhcr.mediator.orchestrator.DefaultOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.ClientConflictsResolutionsOrchestrator;
 import tz.go.moh.him.nhcr.mediator.orchestrator.ClientRegistrationAndUpdatesOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.DefaultOrchestrator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +37,7 @@ public class MediatorMain {
 
         routingTable.addRoute("/nhcr-inbound", DefaultOrchestrator.class);
         routingTable.addRoute("/nhcr-clients-registrations-and-updates", ClientRegistrationAndUpdatesOrchestrator.class);
+        routingTable.addRoute("/nhcr-conflicts-resolution", ClientConflictsResolutionsOrchestrator.class);
 
         return routingTable;
     }
