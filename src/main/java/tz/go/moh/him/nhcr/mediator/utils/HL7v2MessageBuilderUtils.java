@@ -3,10 +3,12 @@ package tz.go.moh.him.nhcr.mediator.utils;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.segment.EVN;
 import ca.uhn.hl7v2.model.v231.segment.IN1;
+import ca.uhn.hl7v2.model.v231.segment.MRG;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 import ca.uhn.hl7v2.model.v231.segment.PID;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
@@ -14,14 +16,17 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
+import tz.go.moh.him.nhcr.mediator.domain.ClientConflictResolutions;
 import tz.go.moh.him.nhcr.mediator.domain.ClientId;
 import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
 import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A40;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents an HL7v2 message builder utility.
@@ -69,6 +74,53 @@ public class HL7v2MessageBuilderUtils {
         if (client.getInsurance() != null) {
             populateIn1Segment(adt.getIN1IN2IN3().getIN1(), client.getInsurance());
         }
+
+        String ritaId = null;
+        String votersId = null;
+        for (ClientId clientId : client.getIds()) {
+            if (clientId.getType().equalsIgnoreCase("VOTERS_ID")) {
+                votersId = clientId.getId();
+            } else if (clientId.getType().equalsIgnoreCase("RITA_ID")) {
+                ritaId = clientId.getId();
+            }
+        }
+        //Populating the ZTX Segment
+        populateZxtSegment(adt.getZXT(), votersId, ritaId);
+
+
+        return adt;
+    }
+
+    /**
+     * Creates an ZXT A40 message.
+     *
+     * @param sendingApplication   The sending Application.
+     * @param facilityHfrCode      The facility HFR code.
+     * @param receivingFacility    The receiving facility.
+     * @param receivingApplication The receiving Application.
+     * @param securityAccessToken  The sending facility security token.
+     * @param messageControlId     The number or other identifier that uniquely identifies the message
+     * @param recodedDate          The recoded date
+     * @param client               The emr client object
+     * @return Returns the created ZXT A01 message.
+     * @throws IOException  The IOException thrown
+     * @throws HL7Exception The HL7Expeption thrown
+     */
+    public static ZXT_A40 createZxtA40(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, ClientConflictResolutions client) throws HL7Exception, IOException {
+        ZXT_A40 adt = new ZXT_A40();
+        adt.initQuickstart("ADT", "A40", "P");
+
+        //Populating the MSH Segment
+        populateMshSegment(adt.getMSH(), sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
+
+        //Populating the EVN Segment
+        populateEvnSegment(adt.getEVN(), recodedDate);
+
+        //Populating the PID Segment
+        populatePidSegment(adt.getPIDPD1MRGPV1().getPID(), client);
+
+        //Populating the MRG Segment
+        populateMrgSegment(adt.getPIDPD1MRGPV1().getMRG(), client.getMergedRecords());
 
         String ritaId = null;
         String votersId = null;
@@ -241,22 +293,39 @@ public class HL7v2MessageBuilderUtils {
     }
 
     /**
-     * Encodes the ZXT_A01 message into a HL7v2 message string
+     * Populates the MRG Segment
      *
-     * @param zxtA01 The ZXT_A01 message
+     * @param mrgSegment The merge segment to be populated
+     * @param mergedIds  The NHCR assigned client identifier of the merged conflict
+     * @throws DataTypeException The exception thrown if it occurs
+     */
+    private static void populateMrgSegment(MRG mrgSegment, List<ClientConflictResolutions.CrId> mergedIds) throws DataTypeException {
+        int position = 0;
+        for (ClientConflictResolutions.CrId crId : mergedIds) {
+            mrgSegment.getMrg1_PriorPatientIdentifierList(position).getID().setValue(crId.getCrId());
+            mrgSegment.getMrg1_PriorPatientIdentifierList(position).getAssigningAuthority().getNamespaceID().setValue("CR_CID");
+            position++;
+        }
+
+    }
+
+    /**
+     * Encodes the ZXT message into a HL7v2 message string
+     *
+     * @param message The ZXT message
      * @return The HL7v2 encoded string
      * @throws HL7Exception The exception thrown
      */
-    public static String encodeZxtA01Message(ZXT_A01 zxtA01) throws HL7Exception {
+    public static String encodeZxtMessage(AbstractMessage message) throws HL7Exception {
         HapiContext context = new DefaultHapiContext();
 
-        //Creating a custom model class factory for the custom ZTX_A01 message
+        //Creating a custom model class factory for the custom ZTX_A01 and ZTX_A40 message
         ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2.message");
         context.setModelClassFactory(cmf);
 
         Parser parser = context.getPipeParser();
 
-        return parser.encode(zxtA01);
+        return parser.encode(message);
     }
 
     /**
@@ -284,5 +353,32 @@ public class HL7v2MessageBuilderUtils {
         zxtA01.getMSH().getMessageType().getTriggerEvent().setValue("A01");
 
         return zxtA01;
+    }
+
+    /**
+     * Parses the HL7v2 message string to a ZXT_A01 message
+     *
+     * @param zxtA40Hl7Message The HL7v2 encoded string
+     * @return The ZXT_A40 Message Object
+     * @throws HL7Exception The exception thrown
+     */
+    public static ZXT_A40 parseZxtA40Message(String zxtA40Hl7Message) throws HL7Exception {
+        HapiContext context = new DefaultHapiContext();
+        Parser parser = context.getPipeParser();
+
+        //Creating a custom model class factory for the custom ZTX_A40 message
+        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2");
+        context.setModelClassFactory(cmf);
+
+        //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
+        String hl7MessageString = zxtA40Hl7Message.replace("ADT^A40", "ZXT^A40");
+
+        ZXT_A40 zxtA40 = (ZXT_A40) parser.parse(hl7MessageString);
+
+        //Reverting back the message MSH.9 Message type to the original ADT^A01.
+        zxtA40.getMSH().getMessageType().getMessageType().setValue("ADT");
+        zxtA40.getMSH().getMessageType().getTriggerEvent().setValue("A40");
+
+        return zxtA40;
     }
 }
