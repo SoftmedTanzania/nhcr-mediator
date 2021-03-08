@@ -87,7 +87,7 @@ public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestrat
                 }
             }
 
-            Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
             assertEquals(400, responseStatus);
             assertTrue(responseMessage.contains(errorMessageResource.getString("ERROR_TOKEN_IS_BLANK")));
         }};
