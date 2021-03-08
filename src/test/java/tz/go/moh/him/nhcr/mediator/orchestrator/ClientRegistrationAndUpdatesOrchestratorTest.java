@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Contains tests for the {@link DefaultOrchestrator} class.
+ * Contains tests for the {@link ClientRegistrationAndUpdatesOrchestrator} class.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MllpUtils.class)

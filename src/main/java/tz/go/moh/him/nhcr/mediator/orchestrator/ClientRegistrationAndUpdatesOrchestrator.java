@@ -23,6 +23,7 @@ import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSe
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Represents an NHCR orchestrator.
@@ -93,7 +94,7 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                     "NHCR",
                     "NHCR",
                     request.getHeaders().get("x-nhcr-token"),
-                    "1",
+                    String.valueOf(UUID.randomUUID()),
                     recordedDate,
                     client
             );
@@ -113,10 +114,8 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
             }
         }
 
-        EmrResponse.Summary summary = new EmrResponse.Summary(totalNumberOfClients, totalNumberOfClients - numberOfFailed, numberOfFailed);
-
         EmrResponse emrResponse = new EmrResponse();
-        emrResponse.setSummary(summary);
+        emrResponse.setSummary(new EmrResponse.Summary(totalNumberOfClients, totalNumberOfClients - numberOfFailed, numberOfFailed));
 
         int httpStatusCode = HttpStatus.SC_OK;
         if (failedClientsMrns.size() > 0) {
@@ -124,6 +123,6 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
             httpStatusCode = HttpStatus.SC_BAD_REQUEST;
         }
 
-        request.getRequestHandler().tell(new FinishRequest(gson.toJson(emrResponse), "text/plain", httpStatusCode), getSelf());
+        request.getRequestHandler().tell(new FinishRequest(gson.toJson(emrResponse), "text/json", httpStatusCode), getSelf());
     }
 }
