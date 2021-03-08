@@ -137,14 +137,11 @@ public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestrat
                             throw noMatch();
                         }
                     }.get();
-
-            String responseMessage = "";
             int responseStatus = 0;
 
             for (Object o : out) {
                 if (o instanceof FinishRequest) {
                     responseStatus = ((FinishRequest) o).getResponseStatus();
-                    responseMessage = ((FinishRequest) o).getResponse();
                     break;
                 }
             }
