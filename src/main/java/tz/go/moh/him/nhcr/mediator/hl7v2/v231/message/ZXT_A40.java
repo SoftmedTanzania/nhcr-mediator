@@ -5,6 +5,7 @@ import ca.uhn.hl7v2.model.v231.message.ADT_A01;
 import ca.uhn.hl7v2.model.v231.message.ADT_A40;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
+import com.google.gson.Gson;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.util.Arrays;
@@ -34,10 +35,10 @@ public class ZXT_A40 extends ADT_A40 {
 
         // Now, let's add the ZXT segment at the right spot
         String[] segmentNames = getNames();
-        int indexOfIn1 = Arrays.asList(segmentNames).indexOf("IN1IN2IN3");
+        int indexOfPidPd1MrgPv1 = Arrays.asList(segmentNames).indexOf("PIDPD1MRGPV1");
 
-        // Put the ZXT segment right after the IN1 segment
-        int index = indexOfIn1 + 1;
+        // Put the ZXT segment right after the ADT_A40_PIDPD1MRGPV1 segment
+        int index = indexOfPidPd1MrgPv1 + 1;
 
         Class<ZXT> type = ZXT.class;
         boolean required = false;
