@@ -67,6 +67,12 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
 
         List<EmrResponse.FailedClientsMrn> failedClientsMrns = new ArrayList<>();
 
+        String securityToken = request.getHeaders().get("x-nhcr-token");
+        if (securityToken == null) {
+            request.getRequestHandler().tell(new FinishRequest(errorMessageResource.getString("ERROR_TOKEN_IS_BLANK"), "text/plain", HttpStatus.SC_BAD_REQUEST), getSelf());
+            return;
+        }
+
         int totalNumberOfClients = emrClientsRegistrationAndUpdatesMessage.getClients().size();
         int numberOfFailed = 0;
 
@@ -86,7 +92,7 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                     emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode(),
                     "NHCR",
                     "NHCR",
-                    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvbmhjci5yYXN4cC5jb206ODA4MFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYxMjkzMTk3NiwiZXhwIjoxNjEyOTM1NTc2LCJuYmYiOjE2MTI5MzE5NzYsImp0aSI6IlVDb21HNVpQVlN1Wk9KMFgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.UzmHbKcgrgIFdxRGfs74Oyb1C1lvgigk5IDcCvePLis",
+                    request.getHeaders().get("x-nhcr-token"),
                     "1",
                     recordedDate,
                     client

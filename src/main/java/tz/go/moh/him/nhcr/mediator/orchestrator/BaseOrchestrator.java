@@ -1,8 +1,13 @@
 package tz.go.moh.him.nhcr.mediator.orchestrator;
 
 import akka.actor.UntypedActor;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Represents a base orchestrator.
@@ -15,12 +20,25 @@ public abstract class BaseOrchestrator extends UntypedActor {
     protected final MediatorConfig config;
 
     /**
+     * Represents an Error Messages Definition Resource Object defined in <a href="file:../resources/error-messages.json">/resources/error-messages.json</a>.
+     */
+    protected JSONObject errorMessageResource;
+
+    /**
      * Initializes a new instance of the {@link DefaultOrchestrator} class.
      *
      * @param config The configuration.
      */
     protected BaseOrchestrator(MediatorConfig config) {
         this.config = config;
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("error-messages.json");
+        try {
+            if (stream != null) {
+                errorMessageResource = new JSONObject(IOUtils.toString(stream));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
