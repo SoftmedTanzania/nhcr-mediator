@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.testkit.JavaTestKit;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -39,8 +41,9 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
      *
      * @throws Exception if an exception occurs
      */
-//    @Test
+    @Test
     public void testWithMissingTokenRequest() throws Exception {
+        assertNotNull(system);
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
 
@@ -97,8 +100,9 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
      *
      * @throws Exception if an exception occurs
      */
-//    @Test
+    @Test
     public void testRequest() throws Exception {
+        assertNotNull(system);
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
 
