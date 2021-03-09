@@ -40,7 +40,7 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
      *
      * @throws Exception if an exception occurs
      */
-//    @Test
+    @Test
     public void testWithMissingTokenRequest() throws Exception {
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
@@ -98,7 +98,7 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
      *
      * @throws Exception if an exception occurs
      */
-//    @Test
+    @Test
     public void testRequest() throws Exception {
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
