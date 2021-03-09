@@ -1,0 +1,98 @@
+{
+  "sendingFacility": "Mirembe MHH",
+  "sendingApplication": "Afya-Care",
+  "facilityHFRCode": "104962-6",
+  "clients": [
+    {
+      "mrn": "52c9fa36-6b7f-483f-8c4a-1ad033e78618",
+      "firstName": "fname",
+      "middleName": "mname",
+      "lastName": "lname",
+      "otherName": "oname",
+      "uln": "981426-6090",
+      "ids": [
+        {
+          "id": "12345",
+          "type": "NATIONAL_ID"
+        },
+        {
+          "id": "12345",
+          "type": "VOTERS_ID"
+        },
+        {
+          "id": "12345",
+          "type": "DRIVERS_LICENSE_ID"
+        },
+        {
+          "id": "12345",
+          "type": "RITA_ID"
+        }
+      ],
+      "programs": [
+        {
+          "id": "12345",
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "CTC"
+        },
+        {
+          "id": "12345",
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "TB"
+        },
+        {
+          "id": "12345",
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "RCH"
+        },
+        {
+          "id": "12345",
+          "assigningFacility": "104962-6",
+          "assigningAuthority": "MAT"
+        }
+      ],
+      "insurance": {
+        "id": "12345",
+        "name": "NHIF"
+      },
+      "sex": "FEMALE",
+      "dob": "2020-03-15",
+      "permanentAddress": {
+        "region": "Manyara",
+        "council": "Kiteto",
+        "ward": "Ayasanda",
+        "village": "Robayambao"
+      },
+      "residentialAddress": {
+        "region": "Manyara",
+        "council": "Kiteto",
+        "ward": "Ayasanda",
+        "village": "Robayambao"
+      },
+      "placeOfBirth": {
+        "region": "Arusha",
+        "council": "Arusha Urban"
+      },
+      "countryCode": "255",
+      "phoneNumber": "0754886287",
+      "familyLinkages": {
+        "id": "12232131",
+        "sourceOfId": "NATIONAL_ID",
+        "typeOfLinkage": "Parent"
+      },
+      "otherLinkages": {
+        "id": "12232131",
+        "sourceOfId": "NATIONAL_ID",
+        "typeOfLinkage": "Treatment Supporter"
+      },
+      "placeEncountered": "101335-8",
+      "mergedRecords": [
+        {
+          "crId": "2811"
+        },
+        {
+          "crId": "2808"
+        }
+      ]
+    }
+  ]
+}
