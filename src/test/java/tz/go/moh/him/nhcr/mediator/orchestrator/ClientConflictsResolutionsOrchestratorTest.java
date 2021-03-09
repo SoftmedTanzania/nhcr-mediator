@@ -49,8 +49,6 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
 
             InputStream stream = ClientConflictsResolutionsOrchestratorTest.class.getClassLoader().getResourceAsStream("clients_conflicts_resolution.json");
 
-            Assert.assertNotNull(stream);
-
             MediatorHTTPRequest request = new MediatorHTTPRequest(
                     getRef(),
                     getRef(),
