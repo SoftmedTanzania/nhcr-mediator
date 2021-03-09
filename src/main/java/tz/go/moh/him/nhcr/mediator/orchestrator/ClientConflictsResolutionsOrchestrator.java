@@ -15,7 +15,6 @@ import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientConflictResolutions;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsConflictsResolutionsMessage;
 import tz.go.moh.him.nhcr.mediator.domain.EmrResponse;
-import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A40;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;

@@ -146,7 +146,7 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
                 }
             }
 
-            Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
             assertEquals(200, responseStatus);
         }};
     }

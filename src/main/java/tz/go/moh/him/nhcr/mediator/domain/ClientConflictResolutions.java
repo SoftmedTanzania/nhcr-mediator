@@ -11,7 +11,7 @@ public class ClientConflictResolutions extends Client {
      */
     @SerializedName("mergedRecords")
     @JsonProperty("mergedRecords")
-    List<CrId> mergedRecords;
+    private List<CrId> mergedRecords;
 
     public List<CrId> getMergedRecords() {
         return mergedRecords;
