@@ -42,7 +42,6 @@ public class HL7v2MessageBuilderUtils {
      *
      * @param sendingApplication   The sending Application.
      * @param facilityHfrCode      The facility HFR code.
-     * @param facilityOid          The sending facility OID.
      * @param receivingFacility    The receiving facility.
      * @param receivingApplication The receiving Application.
      * @param securityAccessToken  The sending facility security token.
@@ -53,22 +52,22 @@ public class HL7v2MessageBuilderUtils {
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String facilityOid, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
+    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
-        adt.initQuickstart("ADT", "A01", "P");
+        adt.initQuickstart("ADT", messageTriggerEvent, "P");
 
         //Populating the MSH Segment
-        populateMshSegment(adt, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
+        populateMshSegment(adt.getMSH(), sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
 
         //Populating the EVN Segment
-        populateEvnSegment(adt, recodedDate);
+        populateEvnSegment(adt.getEVN(), recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt, client, facilityOid);
+        populatePidSegment(adt.getPID(), client);
 
         //Populating IN1 Segment
         if (client.getInsurance() != null) {
-            populateIn1Segment(adt, client.getInsurance());
+            populateIn1Segment(adt.getIN1IN2IN3().getIN1(), client.getInsurance());
         }
 
         String ritaId = null;
@@ -81,7 +80,7 @@ public class HL7v2MessageBuilderUtils {
             }
         }
         //Populating the ZTX Segment
-        populateZxtSegment(adt, votersId, ritaId);
+        populateZxtSegment(adt.getZXT(), votersId, ritaId);
 
 
         return adt;
@@ -91,7 +90,7 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Populates the MSH Segment
      *
-     * @param zxtA01               The ZXT_A01 message
+     * @param mshSegment           The MSH segment
      * @param sendingApplication   The sending Application.
      * @param sendingFacility      The sending Facility.
      * @param receivingApplication The receiving Application.
@@ -99,19 +98,17 @@ public class HL7v2MessageBuilderUtils {
      * @param dateTimeOfTheMessage The date time of the message.
      * @param security             The security access token
      * @param messageControlId     The message control ID
-     * @return The MSH segment
      * @throws DataTypeException The exception thrown
      */
-    private static MSH populateMshSegment(ZXT_A01 zxtA01,
-                                          String sendingApplication,
-                                          String sendingFacility,
-                                          String receivingApplication,
-                                          String receivingFacility,
-                                          Date dateTimeOfTheMessage,
-                                          String security,
-                                          String messageControlId
+    private static void populateMshSegment(MSH mshSegment,
+                                           String sendingApplication,
+                                           String sendingFacility,
+                                           String receivingApplication,
+                                           String receivingFacility,
+                                           Date dateTimeOfTheMessage,
+                                           String security,
+                                           String messageControlId
     ) throws DataTypeException {
-        MSH mshSegment = zxtA01.getMSH();
         mshSegment.getSendingApplication().getNamespaceID().setValue(sendingApplication);
         mshSegment.getSendingFacility().getNamespaceID().setValue(sendingFacility);
         mshSegment.getReceivingApplication().getNamespaceID().setValue(receivingApplication);
@@ -121,43 +118,32 @@ public class HL7v2MessageBuilderUtils {
         mshSegment.getVersionID().getVersionID().setValue("2.3.1");
         mshSegment.getProcessingID().getProcessingID().setValue("P");
         mshSegment.getMessageControlID().setValue(messageControlId);
-
-        return mshSegment;
     }
 
     /**
      * Populates the EVN Segment
      *
-     * @param zxtA01           The ZXT_A01 message
+     * @param evnSegment       The EVN segment to be populated
      * @param recordedDateTime The recorded date time
-     * @return The EVN segment
      * @throws DataTypeException The exception thrown
      */
-    private static EVN populateEvnSegment(ZXT_A01 zxtA01, Date recordedDateTime) throws DataTypeException {
-        EVN evnSegment = zxtA01.getEVN();
+    private static void populateEvnSegment(EVN evnSegment, Date recordedDateTime) throws DataTypeException {
         evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(recordedDateTime);
-
-        return evnSegment;
     }
 
     /**
-     * @param zxtA01            The ZXT_A01 message
-     * @param client            The emr client object
-     * @param assigningFacility The Patient Identifier assigning Facility
-     * @return The PID segment
+     * @param pidSegment The PID segment to be populated
+     * @param client     The emr client object
      * @throws HL7Exception The exception thrown
      */
-    private static PID populatePidSegment(ZXT_A01 zxtA01, Client client, String assigningFacility) throws HL7Exception {
-        //The PID segment
-        PID pidSegment = zxtA01.getPID();
-
+    private static void populatePidSegment(PID pidSegment, Client client) throws HL7Exception {
         // Populating the PID.3
         for (int i = 0; i < client.getPrograms().size(); i++) {
             //Populating the client ids.
             ClientProgram clientProgram = client.getPrograms().get(i);
             pidSegment.getPatientIdentifierList(i).getID().setValue(clientProgram.getId());
-            pidSegment.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getName());
-            pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(assigningFacility);
+            pidSegment.getPatientIdentifierList(i).getAssigningAuthority().getNamespaceID().setValue(clientProgram.getAssigningAuthority());
+            pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(clientProgram.getAssigningFacility());
         }
 
         //Populating the client names.
@@ -219,38 +205,30 @@ public class HL7v2MessageBuilderUtils {
                 pidSegment.getNationality().getIdentifier().setValue(clientId.getId());
             }
         }
-
-        return pidSegment;
     }
 
     /**
      * Populates the IN1 Segment
      *
-     * @param zxtA01    The ZXT_A01 message
-     * @param insurance The client insurance object
-     * @return The IN1 Segment
+     * @param in1Segment The IN1 segment to be populated
+     * @param insurance  The client insurance object
      * @throws DataTypeException The exception thrown
      */
-    private static IN1 populateIn1Segment(ZXT_A01 zxtA01, ClientInsurance insurance) throws DataTypeException {
-        IN1 in1Segment = zxtA01.getIN1IN2IN3().getIN1();
+    private static void populateIn1Segment(IN1 in1Segment, ClientInsurance insurance) throws DataTypeException {
         in1Segment.getSetIDIN1().setValue("1");
         in1Segment.getInsuredSIDNumber(0).getID().setValue(insurance.getId()); //TODO have a discussion on this
         in1Segment.getInsuranceCompanyName(0).getOrganizationName().setValue(insurance.getName());
-
-        return in1Segment;
     }
 
     /**
      * Populates the ZXT Segment
      *
-     * @param zxtA01  The ZXT_A01 message
-     * @param votesId The Client's Voters Id
-     * @param ritaId  The Client's Rita ID
-     * @return The ZXT Segment
+     * @param zxtSegment The ZXT segment to be populated
+     * @param votesId    The Client's Voters Id
+     * @param ritaId     The Client's Rita ID
      * @throws HL7Exception The Exception thrown
      */
-    private static ZXT populateZxtSegment(ZXT_A01 zxtA01, String votesId, String ritaId) throws HL7Exception {
-        ZXT zxtSegment = zxtA01.getZXT();
+    private static void populateZxtSegment(ZXT zxtSegment, String votesId, String ritaId) throws HL7Exception {
         if (votesId != null)
             zxtSegment.getVotersId().setValue(votesId);
 
@@ -260,8 +238,6 @@ public class HL7v2MessageBuilderUtils {
             zxtSegment.getRitaId().getCountryName().setValue("Tanzania");
             zxtSegment.getRitaId().getCountryCode().setValue("TZA");
         }
-
-        return zxtSegment;
     }
 
     /**

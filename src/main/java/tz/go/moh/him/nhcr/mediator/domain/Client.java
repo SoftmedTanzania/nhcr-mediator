@@ -146,20 +146,6 @@ public class Client {
     @JsonProperty("placeEncountered")
     private String placeEncountered;
 
-    /**
-     * Status
-     */
-    @SerializedName("status")
-    @JsonProperty("status")
-    private String status;
-
-    /**
-     * Date createdAt
-     */
-    @SerializedName("createdAt")
-    @JsonProperty("createdAt")
-    private String createdAt;
-
     public String getMrn() {
         return mrn;
     }
@@ -318,22 +304,6 @@ public class Client {
 
     public void setPlaceEncountered(String placeEncountered) {
         this.placeEncountered = placeEncountered;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
     }
 
     public enum PostOrUpdate {

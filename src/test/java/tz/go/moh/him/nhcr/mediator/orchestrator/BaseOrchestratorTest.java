@@ -4,6 +4,7 @@ import akka.actor.ActorSystem;
 import akka.testkit.JavaTestKit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,12 +15,17 @@ import org.openhim.mediator.engine.testing.TestingUtils;
 import tz.go.moh.him.nhcr.mediator.mock.MockNhcr;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 public abstract class BaseOrchestratorTest {
+    /**
+     * Represents an Error Messages Definition Resource Object defined in <a href="file:../resources/error-messages.json">/resources/error-messages.json</a>.
+     */
+    protected JSONObject errorMessageResource;
 
     /**
      * Represents the configuration.
@@ -107,11 +113,16 @@ public abstract class BaseOrchestratorTest {
      * Runs initialization before each test execution.
      */
     @Before
-    public void before() {
+    public void before() throws IOException {
         List<MockLauncher.ActorToLaunch> actorsToLaunch = new LinkedList<>();
 
         actorsToLaunch.add(new MockLauncher.ActorToLaunch("mllp-connector", MockNhcr.class));
 
         TestingUtils.launchActors(system, configuration.getName(), actorsToLaunch);
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("error-messages.json");
+        if (stream != null) {
+            errorMessageResource = new JSONObject(IOUtils.toString(stream));
+        }
     }
 }

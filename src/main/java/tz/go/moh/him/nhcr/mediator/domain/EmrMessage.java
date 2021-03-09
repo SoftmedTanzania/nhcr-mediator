@@ -30,13 +30,6 @@ public class EmrMessage {
     private String sendingApplication;
 
     /**
-     * The sending facility OID.
-     */
-    @SerializedName("oid")
-    @JsonProperty("oid")
-    private String oid;
-
-    /**
      * Initializes a new instance of the {@link EmrMessage} class.
      */
     public EmrMessage() {
@@ -47,13 +40,13 @@ public class EmrMessage {
      *
      * @param sendingFacility The sending facility.
      * @param facilityHfrCode The facility HFR code.
-     * @param oid             The facility oid.
+     * @param sendingApplication The sending application.
      */
-    public EmrMessage(String sendingFacility, String facilityHfrCode, String oid) {
+    public EmrMessage(String sendingFacility, String facilityHfrCode, String sendingApplication) {
         this();
         this.setSendingFacility(sendingFacility);
         this.setFacilityHfrCode(facilityHfrCode);
-        this.setOid(oid);
+        this.setSendingApplication(sendingApplication);
     }
 
     /**
@@ -90,24 +83,6 @@ public class EmrMessage {
      */
     public void setFacilityHfrCode(String facilityHfrCode) {
         this.facilityHfrCode = facilityHfrCode;
-    }
-
-    /**
-     * Gets the facility NHCR OID.
-     *
-     * @return Returns the facility NHCR OID.
-     */
-    public String getOid() {
-        return oid;
-    }
-
-    /**
-     * Sets the facility NHCR OID.
-     *
-     * @param oid The facility NHCR oid.
-     */
-    public void setOid(String oid) {
-        this.oid = oid;
     }
 
     /**

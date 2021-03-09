@@ -58,7 +58,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
 
         Assert.assertEquals("Mirembe MHH", emrClientsRegistrationAndUpdatesMessage.getSendingFacility());
         Assert.assertEquals("104962-6", emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode());
-        Assert.assertEquals("1.2.3.1.4.545", emrClientsRegistrationAndUpdatesMessage.getOid());
+        Assert.assertEquals("Afya-Care", emrClientsRegistrationAndUpdatesMessage.getSendingApplication());
 
         Client client = emrClientsRegistrationAndUpdatesMessage.getClients().get(0);
         Assert.assertEquals("52c9fa36-6b7f-483f-8c4a-1ad033e78618", client.getMrn());
@@ -73,7 +73,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertEquals("NATIONAL_ID", client.getIds().get(0).getType());
 
         Assert.assertEquals("12345", client.getPrograms().get(0).getId());
-        Assert.assertEquals("CTC", client.getPrograms().get(0).getName());
+        Assert.assertEquals("CTC", client.getPrograms().get(0).getAssigningAuthority());
 
         Assert.assertEquals("12345", client.getInsurance().getId());
         Assert.assertEquals("NHIF", client.getInsurance().getName());
@@ -92,8 +92,6 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertEquals("Parent", client.getFamilyLinkages().getTypeOfLinkage());
 
         Assert.assertEquals("101335-8", client.getPlaceEncountered());
-        Assert.assertEquals("0", client.getStatus());
-        Assert.assertEquals("2020-06-02T07:07:20.000Z", client.getCreatedAt());
 
     }
 
@@ -106,7 +104,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
 
         emrClientsRegistrationAndUpdatesMessage.setSendingFacility("Mirembe MHH");
         emrClientsRegistrationAndUpdatesMessage.setFacilityHfrCode("Blaj9747");
-        emrClientsRegistrationAndUpdatesMessage.setOid("AFYA CARE");
+        emrClientsRegistrationAndUpdatesMessage.setSendingApplication("Afya-Care");
 
         Client client = new Client();
         client.setMrn("52c9fa36-6b7f-483f-8c4a-1ad033e78618");
@@ -125,7 +123,8 @@ public class ClientsRegistrationAndUpdatesMessageTest {
 
         ClientProgram ctcProgram = new ClientProgram();
         ctcProgram.setId("12345");
-        ctcProgram.setName("CTC");
+        ctcProgram.setAssigningAuthority("CTC");
+        ctcProgram.setAssigningFacility("101335-8");
         client.setPrograms(Arrays.asList(ctcProgram));
 
         ClientInsurance insurance = new ClientInsurance();
@@ -154,8 +153,6 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         client.setCountryCode("255");
         client.setPhoneNumber("0754886287");
         client.setPlaceEncountered("101335-8");
-        client.setStatus("0");
-        client.setCreatedAt("2020-06-02T07:07:20.000Z");
         emrClientsRegistrationAndUpdatesMessage.setClients(Arrays.asList(client));
 
         //Serializing the object into a json
@@ -163,7 +160,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
 
         Assert.assertTrue(json.contains("Mirembe MHH"));
         Assert.assertTrue(json.contains("Blaj9747"));
-        Assert.assertTrue(json.contains("AFYA CARE"));
+        Assert.assertTrue(json.contains("Afya-Care"));
 
         Assert.assertTrue(json.contains("52c9fa36-6b7f-483f-8c4a-1ad033e78618"));
         Assert.assertTrue(json.contains("P"));
@@ -186,9 +183,6 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertTrue(json.contains("NATIONAL_ID"));
         Assert.assertTrue(json.contains("Parent"));
         Assert.assertTrue(json.contains("101335-8"));
-        Assert.assertTrue(json.contains("0"));
-        Assert.assertTrue(json.contains("2020-06-02T07:07:20.000Z"));
-
     }
 
 }

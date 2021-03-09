@@ -22,6 +22,6 @@ public class EmrMessageTest {
 
         Assert.assertTrue(actual.contains(message.getFacilityHfrCode()));
         Assert.assertTrue(actual.contains(message.getSendingFacility()));
-        Assert.assertTrue(actual.contains(message.getOid()));
+        Assert.assertTrue(actual.contains(message.getSendingApplication()));
     }
 }

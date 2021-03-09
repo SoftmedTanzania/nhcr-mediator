@@ -17,9 +17,14 @@ import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Contains tests for the {@link DefaultOrchestrator} class.
+ * Contains tests for the {@link ClientRegistrationAndUpdatesOrchestrator} class.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MllpUtils.class)
@@ -31,12 +36,12 @@ public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestrat
     private final ActorRef orchestrator = system.actorOf(Props.create(ClientRegistrationAndUpdatesOrchestrator.class, configuration));
 
     /**
-     * Tests the mediator.
+     * Tests the mediator with a request with missing token headers.
      *
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testRequest() throws Exception {
+    public void testWithMissingTokenRequest() throws Exception {
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
 
@@ -60,17 +65,89 @@ public class ClientRegistrationAndUpdatesOrchestratorTest extends BaseOrchestrat
 
             orchestrator.tell(request, getRef());
 
-            final Object[] out = new ReceiveWhile<Object>(Object.class, duration("3 seconds")) {
-                @Override
-                protected Object match(Object msg) {
-                    if (msg instanceof FinishRequest) {
-                        return msg;
-                    }
-                    throw noMatch();
+            final Object[] out =
+                    new ReceiveWhile<Object>(Object.class, duration("3 seconds")) {
+                        @Override
+                        protected Object match(Object msg) throws Exception {
+                            if (msg instanceof FinishRequest) {
+                                return msg;
+                            }
+                            throw noMatch();
+                        }
+                    }.get();
+
+            String responseMessage = "";
+            int responseStatus = 0;
+
+            for (Object o : out) {
+                if (o instanceof FinishRequest) {
+                    responseStatus = ((FinishRequest) o).getResponseStatus();
+                    responseMessage = ((FinishRequest) o).getResponse();
+                    break;
                 }
-            }.get();
+            }
+
+            assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            assertEquals(400, responseStatus);
+            assertTrue(responseMessage.contains(errorMessageResource.getString("ERROR_TOKEN_IS_BLANK")));
+        }};
+    }
+
+    /**
+     * Tests the mediator with a request with token headers.
+     *
+     * @throws Exception if an exception occurs
+     */
+    @Test
+    public void testRequest() throws Exception {
+        new JavaTestKit(system) {{
+            PowerMockito.mockStatic(MllpUtils.class);
+
+            InputStream stream = ClientRegistrationAndUpdatesOrchestratorTest.class.getClassLoader().getResourceAsStream("register_client.json");
+
+            Assert.assertNotNull(stream);
+
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Content-Type", "application/json");
+            headers.put("x-nhcr-token", "csv-sync-service");
+
+            MediatorHTTPRequest request = new MediatorHTTPRequest(
+                    getRef(),
+                    getRef(),
+                    "unit-test",
+                    "POST",
+                    "http",
+                    null,
+                    null,
+                    "/hfr-inbound",
+                    IOUtils.toString(stream),
+                    headers,
+                    Collections.emptyList()
+            );
+
+            orchestrator.tell(request, getRef());
+
+            final Object[] out =
+                    new ReceiveWhile<Object>(Object.class, duration("3 seconds")) {
+                        @Override
+                        protected Object match(Object msg) throws Exception {
+                            if (msg instanceof FinishRequest) {
+                                return msg;
+                            }
+                            throw noMatch();
+                        }
+                    }.get();
+            int responseStatus = 0;
+
+            for (Object o : out) {
+                if (o instanceof FinishRequest) {
+                    responseStatus = ((FinishRequest) o).getResponseStatus();
+                    break;
+                }
+            }
 
             Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            assertEquals(200, responseStatus);
         }};
     }
 }
