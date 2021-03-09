@@ -4,7 +4,6 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhim.mediator.engine.messages.FinishRequest;
@@ -105,8 +104,6 @@ public class ClientConflictsResolutionsOrchestratorTest extends BaseOrchestrator
             PowerMockito.mockStatic(MllpUtils.class);
 
             InputStream stream = ClientConflictsResolutionsOrchestratorTest.class.getClassLoader().getResourceAsStream("clients_conflicts_resolution.json");
-
-            Assert.assertNotNull(stream);
 
             Map<String, String> headers = new HashMap<>();
             headers.put("Content-Type", "application/json");
