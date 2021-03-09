@@ -1,6 +1,8 @@
 package tz.go.moh.him.nhcr.mediator.orchestrator;
 
 import akka.actor.UntypedActor;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
@@ -25,6 +27,11 @@ public abstract class BaseOrchestrator extends UntypedActor {
     protected JSONObject errorMessageResource;
 
     /**
+     * The logger instance.
+     */
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+
+    /**
      * Initializes a new instance of the {@link DefaultOrchestrator} class.
      *
      * @param config The configuration.
@@ -37,6 +44,7 @@ public abstract class BaseOrchestrator extends UntypedActor {
                 errorMessageResource = new JSONObject(IOUtils.toString(stream));
             }
         } catch (IOException e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }
