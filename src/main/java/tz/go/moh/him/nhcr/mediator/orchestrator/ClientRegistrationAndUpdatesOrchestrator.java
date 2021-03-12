@@ -106,7 +106,9 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                 if (!ack.getMSA().getAcknowledgementCode().getValue().equals("AA")) {
                     EmrResponse.FailedClientsMrn failedClientsMrn = new EmrResponse.FailedClientsMrn();
                     failedClientsMrn.setMrn(client.getMrn());
-                    failedClientsMrn.setError(ack.getMSA().getTextMessage().getValue());
+                    failedClientsMrn.setError(
+                            ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getText().getValue() + " : " + ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getAlternateText().getValue()
+                    );
 
                     failedClientsMrns.add(failedClientsMrn);
                     numberOfFailed++;
