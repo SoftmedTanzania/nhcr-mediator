@@ -101,7 +101,7 @@ public class ClientConflictsResolutionsOrchestrator extends BaseOrchestrator {
                     EmrResponse.FailedClientsMrn failedClientsMrn = new EmrResponse.FailedClientsMrn();
                     failedClientsMrn.setMrn(resolvedConflicts.getMrn());
                     failedClientsMrn.setError(
-                            ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getText().getValue() + " : " + ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getAlternateText().getValue()
+                            ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getText().getValue() + ". " + ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getAlternateText().getValue()
                     );
                     failedClientsMrns.add(failedClientsMrn);
                     numberOfFailed++;
