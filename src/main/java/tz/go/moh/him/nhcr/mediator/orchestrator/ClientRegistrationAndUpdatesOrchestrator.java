@@ -79,16 +79,20 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
 
         for (Client client : emrClientsRegistrationAndUpdatesMessage.getClients()) {
             String messageTriggerEvent;
+            String messageStructure;
             if (client.getPostOrUpdate().equals(Client.PostOrUpdate.POST)) {
                 messageTriggerEvent = "A01";
+                messageStructure = "ADT_A01";
             } else {
                 messageTriggerEvent = "A08";
+                messageStructure = "ADT_A08";
             }
 
             Date recordedDate = new Date();
 
             ZXT_A01 zxtA01 = HL7v2MessageBuilderUtils.createZxtA01(
                     messageTriggerEvent,
+                    messageStructure,
                     emrClientsRegistrationAndUpdatesMessage.getSendingApplication(),
                     emrClientsRegistrationAndUpdatesMessage.getFacilityHfrCode(),
                     "NHCR",
@@ -106,7 +110,9 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                 if (!ack.getMSA().getAcknowledgementCode().getValue().equals("AA")) {
                     EmrResponse.FailedClientsMrn failedClientsMrn = new EmrResponse.FailedClientsMrn();
                     failedClientsMrn.setMrn(client.getMrn());
-                    failedClientsMrn.setError(ack.getMSA().getTextMessage().getValue());
+                    failedClientsMrn.setError(
+                            ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getText().getValue() + ". " + ack.getERR().getErr1_ErrorCodeAndLocation(0).getCodeIdentifyingError().getAlternateText().getValue()
+                    );
 
                     failedClientsMrns.add(failedClientsMrn);
                     numberOfFailed++;
