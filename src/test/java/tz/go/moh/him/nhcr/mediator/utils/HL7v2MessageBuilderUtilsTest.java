@@ -40,6 +40,7 @@ public class HL7v2MessageBuilderUtilsTest {
         gsonBuilder.registerTypeAdapter(Client.PostOrUpdate.class, new AttributePostOrUpdateSerializer());
         gsonBuilder.registerTypeAdapter(Client.PostOrUpdate.class, new AttributePostOrUpdateDeserializer());
         gson = gsonBuilder.create();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -63,9 +64,6 @@ public class HL7v2MessageBuilderUtilsTest {
         String registerClientJsonPayload = IOUtils.toString(registerClientJsonPayloadStream);
 
         EmrClientsRegistrationAndUpdatesMessage message = gson.fromJson(registerClientJsonPayload, EmrClientsRegistrationAndUpdatesMessage.class);
-
-
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
         Date recordedDate = new Date(2021, Calendar.FEBRUARY, 25, 0, 0);
 
@@ -122,9 +120,6 @@ public class HL7v2MessageBuilderUtilsTest {
         String registerClientJsonPayload = IOUtils.toString(clientsConflictsResolutionJsonPayloadStream);
 
         EmrClientsConflictsResolutionsMessage message = gson.fromJson(registerClientJsonPayload, EmrClientsConflictsResolutionsMessage.class);
-
-
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
         Date recordedDate = new Date(2021, Calendar.FEBRUARY, 25, 0, 0);
 
