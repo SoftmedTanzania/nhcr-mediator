@@ -25,6 +25,7 @@ import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A40;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,8 @@ import java.util.List;
  * Represents an HL7v2 message builder utility.
  */
 public class HL7v2MessageBuilderUtils {
+    private static SimpleDateFormat eventDateTimeDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static SimpleDateFormat dobEventTypeSimpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
     /**
      * Creates an ADT A04 message.
@@ -45,6 +48,8 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Creates an ZXT A01 message.
      *
+     * @param messageTriggerEvent  The MSH message trigger event.
+     * @param messageStructure     The MSH message structure.
      * @param sendingApplication   The sending Application.
      * @param facilityHfrCode      The facility HFR code.
      * @param receivingFacility    The receiving facility.
@@ -57,12 +62,12 @@ public class HL7v2MessageBuilderUtils {
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
+    public static ZXT_A01 createZxtA01(String messageTriggerEvent, String messageStructure, String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date recodedDate, Client client) throws HL7Exception, IOException {
         ZXT_A01 adt = new ZXT_A01();
         adt.initQuickstart("ADT", messageTriggerEvent, "P");
 
         //Populating the MSH Segment
-        populateMshSegment(adt.getMSH(), sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
+        populateMshSegment(adt.getMSH(), messageStructure, sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
 
         //Populating the EVN Segment
         populateEvnSegment(adt.getEVN(), recodedDate);
@@ -111,7 +116,7 @@ public class HL7v2MessageBuilderUtils {
         adt.initQuickstart("ADT", "A40", "P");
 
         //Populating the MSH Segment
-        populateMshSegment(adt.getMSH(), sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
+        populateMshSegment(adt.getMSH(),"ADT_A40", sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
 
         //Populating the EVN Segment
         populateEvnSegment(adt.getEVN(), recodedDate);
@@ -143,6 +148,7 @@ public class HL7v2MessageBuilderUtils {
      * Populates the MSH Segment
      *
      * @param mshSegment           The MSH segment
+     * @param messageStructure     The MSH message structure
      * @param sendingApplication   The sending Application.
      * @param sendingFacility      The sending Facility.
      * @param receivingApplication The receiving Application.
@@ -153,6 +159,7 @@ public class HL7v2MessageBuilderUtils {
      * @throws DataTypeException The exception thrown
      */
     private static void populateMshSegment(MSH mshSegment,
+                                           String messageStructure,
                                            String sendingApplication,
                                            String sendingFacility,
                                            String receivingApplication,
@@ -165,8 +172,9 @@ public class HL7v2MessageBuilderUtils {
         mshSegment.getSendingFacility().getNamespaceID().setValue(sendingFacility);
         mshSegment.getReceivingApplication().getNamespaceID().setValue(receivingApplication);
         mshSegment.getReceivingFacility().getNamespaceID().setValue(receivingFacility);
-        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(dateTimeOfTheMessage);
+        mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(eventDateTimeDateFormat.format(dateTimeOfTheMessage));
         mshSegment.getSecurity().setValue(security);
+        mshSegment.getMessageType().getMessageStructure().setValue(messageStructure);
         mshSegment.getVersionID().getVersionID().setValue("2.3.1");
         mshSegment.getProcessingID().getProcessingID().setValue("P");
         mshSegment.getMessageControlID().setValue(messageControlId);
@@ -180,7 +188,7 @@ public class HL7v2MessageBuilderUtils {
      * @throws DataTypeException The exception thrown
      */
     private static void populateEvnSegment(EVN evnSegment, Date recordedDateTime) throws DataTypeException {
-        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(recordedDateTime);
+        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(recordedDateTime));
     }
 
     /**
@@ -205,7 +213,8 @@ public class HL7v2MessageBuilderUtils {
         pidSegment.getPatientName(0).getNameTypeCode().setValue("L");
 
         //Populating the client date of birth.
-        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(DateUtils.checkDateFormatStrings(client.getDob()));
+        Date dob = DateUtils.checkDateFormatStrings(client.getDob());
+        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(dob));
 
         //Populating the client sex.
         if (client.getSex().equalsIgnoreCase("male")) {
@@ -344,19 +353,20 @@ public class HL7v2MessageBuilderUtils {
         context.setModelClassFactory(cmf);
 
         //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
-        String hl7MessageString = zxtA01Hl7Message.replace("ADT^A01", "ZXT^A01");
+        String hl7MessageString = zxtA01Hl7Message.replace("ADT^A01^ADT_A01", "ZXT^A01^ZXT_A01");
 
         ZXT_A01 zxtA01 = (ZXT_A01) parser.parse(hl7MessageString);
 
         //Reverting back the message MSH.9 Message type to the original ADT^A01.
         zxtA01.getMSH().getMessageType().getMessageType().setValue("ADT");
         zxtA01.getMSH().getMessageType().getTriggerEvent().setValue("A01");
+        zxtA01.getMSH().getMessageType().getMessageStructure().setValue("ADT_A01");
 
         return zxtA01;
     }
 
     /**
-     * Parses the HL7v2 message string to a ZXT_A01 message
+     * Parses the HL7v2 message string to a ZXT_A40 message
      *
      * @param zxtA40Hl7Message The HL7v2 encoded string
      * @return The ZXT_A40 Message Object
@@ -371,13 +381,14 @@ public class HL7v2MessageBuilderUtils {
         context.setModelClassFactory(cmf);
 
         //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
-        String hl7MessageString = zxtA40Hl7Message.replace("ADT^A40", "ZXT^A40");
+        String hl7MessageString = zxtA40Hl7Message.replace("ADT^A40^ADT_A40", "ZXT^A40^ZXT_A40");
 
         ZXT_A40 zxtA40 = (ZXT_A40) parser.parse(hl7MessageString);
 
         //Reverting back the message MSH.9 Message type to the original ADT^A01.
         zxtA40.getMSH().getMessageType().getMessageType().setValue("ADT");
         zxtA40.getMSH().getMessageType().getTriggerEvent().setValue("A40");
+        zxtA40.getMSH().getMessageType().getMessageStructure().setValue("ADT_A40");
 
         return zxtA40;
     }

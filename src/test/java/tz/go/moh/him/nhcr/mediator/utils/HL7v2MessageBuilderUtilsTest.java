@@ -72,6 +72,7 @@ public class HL7v2MessageBuilderUtilsTest {
 
         ZXT_A01 zxtA01 = HL7v2MessageBuilderUtils.createZxtA01(
                 "A01",
+                "ADT_A01",
                 message.getSendingApplication(),
                 message.getFacilityHfrCode(),
                 "NHCR",
