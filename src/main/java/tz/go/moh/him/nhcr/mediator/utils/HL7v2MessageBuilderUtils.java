@@ -5,27 +5,27 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.v231.datatype.AD;
+import ca.uhn.hl7v2.model.v231.message.ADR_A19;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
-import ca.uhn.hl7v2.model.v231.segment.EVN;
-import ca.uhn.hl7v2.model.v231.segment.IN1;
-import ca.uhn.hl7v2.model.v231.segment.MRG;
-import ca.uhn.hl7v2.model.v231.segment.MSH;
-import ca.uhn.hl7v2.model.v231.segment.PID;
+import ca.uhn.hl7v2.model.v231.message.QRY_A19;
+import ca.uhn.hl7v2.model.v231.segment.*;
+import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
-import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.ClientConflictResolutions;
-import tz.go.moh.him.nhcr.mediator.domain.ClientId;
-import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
-import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
+import tz.go.moh.him.nhcr.mediator.domain.*;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A40;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +43,41 @@ public class HL7v2MessageBuilderUtils {
      */
     public static ADT_A04 createAdtA04() {
         return new ADT_A04();
+    }
+
+    /**
+     * Creates an QRY A19 message.
+     *
+     * @param sendingApplication   The sending Application.
+     * @param facilityHfrCode      The facility HFR code.
+     * @param receivingFacility    The receiving facility.
+     * @param receivingApplication The receiving Application.
+     * @param securityAccessToken  The sending facility security token.
+     * @param messageControlId     The number or other identifier that uniquely identifies the message
+     * @param queryDateTime        The query date
+     * @param id                   The client id
+     * @param idType               The client id type
+     * @param whatQualifier        The What User Qualifier
+     * @param startDateTime        The When Data start date/time
+     * @param endDateTime        The When Data end date/time
+     * @return Returns the created QRY A19 message.
+     * @throws IOException  The IOException thrown
+     * @throws HL7Exception The HL7Expeption thrown
+     */
+    public static QRY_A19 createQryA19(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date queryDateTime, String id, String idType, String whatQualifier, String startDateTime, String endDateTime) throws HL7Exception, IOException {
+        QRY_A19 qry = new QRY_A19();
+        qry.initQuickstart("QRY", "A19", "P");
+
+        // Populating the MSH Segment
+        populateMshSegment(qry.getMSH(), "QRY_A19", sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, queryDateTime, securityAccessToken, messageControlId);
+
+        // Populating the QRD Segment
+        populateQrdSegment(qry.getQRD(), queryDateTime, id, idType);
+
+        // Populating the QRF Segment
+        populateQrfSegment(qry.getQRF(), whatQualifier, startDateTime, endDateTime);
+
+        return qry;
     }
 
     /**
@@ -391,5 +426,119 @@ public class HL7v2MessageBuilderUtils {
         zxtA40.getMSH().getMessageType().getMessageStructure().setValue("ADT_A40");
 
         return zxtA40;
+    }
+
+    /**
+     * Populates the QRD Segment
+     *
+     * @param qrdSegment       The QRD segment to be populated
+     * @param queryDateTime     The query date time
+     * @param id                   The client id
+     * @param idType               The client id type
+     * @throws DataTypeException The exception thrown
+     */
+    private static void populateQrdSegment(QRD qrdSegment, Date queryDateTime, String id, String idType) throws DataTypeException {
+        qrdSegment.getQueryDateTime().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(queryDateTime));
+        qrdSegment.getQueryFormatCode().setValue("R");
+        qrdSegment.getQueryPriority().setValue("I");
+        if (!id.isEmpty() && !idType.isEmpty()) {
+            qrdSegment.getWhatSubjectFilter(0).getIdentifier().setValue(id);
+            qrdSegment.getWhatSubjectFilter(0).getText().setValue(idType);
+        }
+
+        // TODO: include counts?
+    }
+
+    /**
+     * Populates the QRF Segment
+     *
+     * @param qrfSegment       The QRF segment to be populated
+     * @param whatQualifier     The What User Qualifier value
+     * @oaram startDateTime      The When Data start date/time
+     * @oaram endDateTime        The When Data end date/time
+     * @throws DataTypeException The exception thrown
+     */
+    private static void populateQrfSegment(QRF qrfSegment, String whatQualifier, String startDateTime, String endDateTime) throws DataTypeException {
+        qrfSegment.getWhatUserQualifier(0).setValue(whatQualifier);
+        if (whatQualifier.equalsIgnoreCase("CONFLICTS")) {
+            // normalize the incoming date time format
+            qrfSegment.getWhenDataStartDateTime().getTimeOfAnEvent().setValue(startDateTime);
+            qrfSegment.getWhenDataEndDateTime().getTimeOfAnEvent().setValue(endDateTime);
+        }
+    }
+
+    /**
+     * Parses the HL7v2 ADR_A19 message and returned found clients
+     *
+     * @param adrA19Hl7Message The HL7v2 ADR_A19 encoded string
+     * @return The A list of clients
+     * @throws HL7Exception The exception thrown
+     */
+    public static List<Client> parseAdrA19Message(String adrA19Hl7Message) throws HL7Exception {
+        List<Client> retVal = new ArrayList<>();
+
+        HapiContext context = new DefaultHapiContext();
+        Parser parser = context.getPipeParser();
+        ADR_A19 adr = (ADR_A19) parser.parse(adrA19Hl7Message);
+
+        int reps = adr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2Reps();
+        for (int i = 0; i < reps; i++) {
+            Client client = new Client();
+            PID pid = adr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2(i).getPID();
+
+            if (pid == null) continue;
+
+            // Identifiers
+            int ids = pid.getPatientIdentifierListReps();
+            if (ids > 0) {
+                List<ClientProgram> programs = new ArrayList<>();
+                for (int j = 0; j < ids; j++) {
+                    ClientProgram program = new ClientProgram();
+                    program.setId(pid.getPatientIdentifierList(j).getID().getValue());
+                    program.setAssigningAuthority(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValue());
+                    program.setAssigningFacility(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValue());
+
+                    programs.add(program);
+                }
+                client.setPrograms(programs);
+            }
+
+            // Name
+            if (pid.getPatientName(0) != null) {
+                client.setLastName(pid.getPatientName(0).getFamilyLastName().getFamilyName().getValue());
+                client.setFirstName(pid.getPatientName(0).getGivenName().getValue());
+                client.setMiddleName(pid.getPatientName(0).getMiddleInitialOrName().getValue());
+            }
+
+            // Sex
+            if (pid.getSex() != null) {
+                client.setSex(pid.getSex().getValue());
+            }
+
+            // Address
+            if (pid.getPatientAddress(0) != null) {
+                ClientAddress address = new ClientAddress();
+                address.setRegion(pid.getPatientAddress(0).getCity().getValue());
+
+                // parse the other designation parts
+                if (pid.getPatientAddress(0).getOtherDesignation().getValue() != null) {
+                    String[] designation = pid.getPatientAddress(0).getOtherDesignation().getValue().split("\\*");
+                    address.setCouncil(designation[0]);
+                    address.setWard(designation[1]);
+                    address.setVillage(designation[2]);
+                }
+
+                client.setPermanentAddress(address);
+            }
+
+            // Date of Birth
+            if (pid.getDateTimeOfBirth() != null) {
+                client.setDob(pid.getDateTimeOfBirth().getTimeOfAnEvent().getValue());
+            }
+
+            retVal.add(client);
+        }
+
+        return retVal;
     }
 }
