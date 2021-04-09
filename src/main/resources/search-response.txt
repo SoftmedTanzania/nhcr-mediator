@@ -1,0 +1,13 @@
+MSH|^~\&|||||||ADR^A19|||2.3.1||
+MSA|AA||
+QAK||OK||10|10||
+PID|1||01-02-0100-000577^^^CTC^PT~02-02-0100-000507^^^TB^PT~qeeZOC36ZmOQ8lbrsi1p3g==^^^^PT~137^^^^PT||Doe^James^John1^^^^L||20180315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322135100.931+0300|104962-6||
+PID|2||123457^^^CTC^PT~123457^^^TB^PT~gzFyg2Rao887dGtCo5XaZA==^^^^PT~91^^^^PT||Doe^James^John^^^^L||20200315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322135100.931+0300|Test||
+PID|3||tttu@1^^^CTC^PT~92bW9SpViPHubfr77Wnbgg==^^^^PT~232^^^^PT||family^middle^tttu^^^^L||||||||||||||||||||||||||||20210322134959.372+0300|HIM||
+PID|4||eew@1^^^CTC^PT~paBcg2oLlcVFoQyWBTRo8Q==^^^^PT~220^^^^PT||family^middle^eww^^^^L||||||||||||||||||||||||||||20210322134959.372+0300|Test||
+PID|5||123460^^^CTC^PT~123460^^^TB^PT~KBaa43INzc2w0Jg3BVeyGg==^^^^PT~117^^^^PT||lname^mname^fname^^^^L||20200315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322134830.948+0300|Test||
+PID|6||01-02-0100-00455543^^^CTC^PT~6FUykmS6Q4ZKSsHQIuK22A==^^^^PT~158^^^^PT||James^peter^Paul^^^^L||19900315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322125825.789+0300|104962-6||
+PID|7||01-02-0100-343434^^^CTC^PT~8eVj6iMCxtJdQBMMj5Z/xw==^^^^PT~170^^^^PT||James^John^Paul^^^^L||19900315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322125825.789+0300|Test||
+PID|8||01-02-0100-009343535^^^CTC^PT~JueHWEW3m+IwrAo6ZIPkHQ==^^^^PT~160^^^^PT||James^peter^Paul^^^^L||19900315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322125601.720+0300|104962-6||
+PID|9||01-02-0100-9938434^^^CTC^PT~4RnqoZBgCtppplknGkfhHg==^^^^PT~168^^^^PT||James^peter^Paul^^^^L||19900315|F|||^Kiteto*Ayasanda*Robayambao^Manyara^Manyara^^^H||^PRN^PH||||||||||||||||||||20210322125601.720+0300|104962-6||
+PID|10||numb@1^^^CTC^PT~9AuyIZZDTKs2nPX/CULSQw==^^^^PT~181^^^^PT||family^middle^numb^^^^L||||||||||||||||||||||||||||20210322114806.643+0300|HIM||
