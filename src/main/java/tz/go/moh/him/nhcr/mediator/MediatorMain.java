@@ -10,7 +10,11 @@ import org.openhim.mediator.engine.MediatorServer;
 import org.openhim.mediator.engine.RegistrationConfig;
 import org.openhim.mediator.engine.RoutingTable;
 import org.openhim.mediator.engine.StartupActorsConfig;
-import tz.go.moh.him.nhcr.mediator.orchestrator.*;
+import tz.go.moh.him.nhcr.mediator.orchestrator.ClientConflictsResolutionsOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.ClientRegistrationAndUpdatesOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.ClientsSearchOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.DefaultOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.RequestForConflictsOrchestrator;
 
 import java.io.File;
 import java.io.FileNotFoundException;

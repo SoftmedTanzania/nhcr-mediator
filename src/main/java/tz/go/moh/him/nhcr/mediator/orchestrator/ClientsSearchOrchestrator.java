@@ -59,9 +59,6 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         // Create a connection
         Connection conn = null;
 
-        // Create a Parser
-        Parser parser = context.getPipeParser();
-
         // Get the security token
         String securityToken = request.getHeaders().get("x-nhcr-token");
         if (securityToken == null) {
