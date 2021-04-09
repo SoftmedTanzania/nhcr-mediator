@@ -7,7 +7,6 @@ import ca.uhn.hl7v2.model.v231.message.QRY_A19;
 import ca.uhn.hl7v2.parser.Parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
@@ -17,8 +16,6 @@ import tz.go.moh.him.nhcr.mediator.domain.EmrRequestForConflictsMessage;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

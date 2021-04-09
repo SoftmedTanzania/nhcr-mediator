@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhim.mediator.engine.messages.FinishRequest;
@@ -18,8 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Contains tests for the {@link ClientsSearchOrchestrator} class.
@@ -40,7 +39,7 @@ public class ClientsSearchOrchestratorTest extends BaseOrchestratorTest {
      */
     @Test
     public void testWithMissingTokenRequest() throws Exception {
-        assertNotNull(system);
+        Assert.assertNotNull(system);
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
 
@@ -84,9 +83,9 @@ public class ClientsSearchOrchestratorTest extends BaseOrchestratorTest {
                 }
             }
 
-            assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
-            assertEquals(400, responseStatus);
-            assertTrue(responseMessage.contains(errorMessageResource.getString("ERROR_TOKEN_IS_BLANK")));
+            Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            Assert.assertEquals(400, responseStatus);
+            Assert.assertTrue(responseMessage.contains(errorMessageResource.getString("ERROR_TOKEN_IS_BLANK")));
         }};
     }
 
@@ -97,7 +96,7 @@ public class ClientsSearchOrchestratorTest extends BaseOrchestratorTest {
      */
     @Test
     public void testRequest() throws Exception {
-        assertNotNull(system);
+        Assert.assertNotNull(system);
         new JavaTestKit(system) {{
             PowerMockito.mockStatic(MllpUtils.class);
 
@@ -142,8 +141,8 @@ public class ClientsSearchOrchestratorTest extends BaseOrchestratorTest {
                 }
             }
 
-            assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
-            assertEquals(200, responseStatus);
+            Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
+            Assert.assertEquals(200, responseStatus);
         }};
     }
 }
