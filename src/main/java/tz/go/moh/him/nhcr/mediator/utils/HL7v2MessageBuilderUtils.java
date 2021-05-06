@@ -7,12 +7,23 @@ import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.message.QRY_A19;
-import ca.uhn.hl7v2.model.v231.segment.*;
+import ca.uhn.hl7v2.model.v231.segment.EVN;
+import ca.uhn.hl7v2.model.v231.segment.IN1;
+import ca.uhn.hl7v2.model.v231.segment.MRG;
+import ca.uhn.hl7v2.model.v231.segment.MSH;
+import ca.uhn.hl7v2.model.v231.segment.PID;
+import ca.uhn.hl7v2.model.v231.segment.QRD;
+import ca.uhn.hl7v2.model.v231.segment.QRF;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
-import tz.go.moh.him.nhcr.mediator.domain.*;
+import tz.go.moh.him.nhcr.mediator.domain.Client;
+import tz.go.moh.him.nhcr.mediator.domain.ClientAddress;
+import tz.go.moh.him.nhcr.mediator.domain.ClientConflictResolutions;
+import tz.go.moh.him.nhcr.mediator.domain.ClientId;
+import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
+import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.group.ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZDR_A19;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
@@ -33,39 +44,33 @@ import java.util.stream.Collectors;
  */
 public class HL7v2MessageBuilderUtils {
     /**
-     * The EMR date format.
-     */
-    private static SimpleDateFormat eventDateTimeDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-
-    /**
-     * The NHCR date format.
-     */
-    private static SimpleDateFormat nhcrDateFormat = new SimpleDateFormat("yyyyMMdd");
-
-    /**
-     * The EMR date format.
-     */
-    private static SimpleDateFormat emrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    /**
      * The national id.
      */
     private static final String NATIONAL_ID = "NATIONAL_ID";
-
     /**
      * The voters id.
      */
     private static final String VOTERS_ID = "VOTERS_ID";
-
     /**
      * The drivers license id.
      */
     private static final String DRIVERS_LICENSE_ID = "DRIVERS_LICENSE_ID";
-
     /**
      * The Rita id.
      */
     private static final String RITA_ID = "RITA_ID";
+    /**
+     * The EMR date format.
+     */
+    private static SimpleDateFormat eventDateTimeDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    /**
+     * The NHCR date format.
+     */
+    private static SimpleDateFormat nhcrDateFormat = new SimpleDateFormat("yyyyMMdd");
+    /**
+     * The EMR date format.
+     */
+    private static SimpleDateFormat emrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * Creates an ADT A04 message.
@@ -90,7 +95,7 @@ public class HL7v2MessageBuilderUtils {
      * @param idType               The client id type
      * @param whatQualifier        The What User Qualifier
      * @param startDateTime        The When Data start date/time
-     * @param endDateTime        The When Data end date/time
+     * @param endDateTime          The When Data end date/time
      * @return Returns the created QRY A19 message.
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
@@ -139,7 +144,7 @@ public class HL7v2MessageBuilderUtils {
         populateEvnSegment(adt.getEVN(), recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt.getPID(), client, facilityHfrCode);
+        populatePidSegment(adt.getPID(), client, facilityHfrCode, sendingApplication);
 
         //Populating IN1 Segment
         if (client.getInsurance() != null) {
@@ -181,13 +186,13 @@ public class HL7v2MessageBuilderUtils {
         adt.initQuickstart("ADT", "A40", "P");
 
         //Populating the MSH Segment
-        populateMshSegment(adt.getMSH(),"ADT_A40", sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
+        populateMshSegment(adt.getMSH(), "ADT_A40", sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, recodedDate, securityAccessToken, messageControlId);
 
         //Populating the EVN Segment
         populateEvnSegment(adt.getEVN(), recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt.getPIDPD1MRGPV1().getPID(), client, facilityHfrCode);
+        populatePidSegment(adt.getPIDPD1MRGPV1().getPID(), client, facilityHfrCode, sendingApplication);
 
         //Populating the MRG Segment
         populateMrgSegment(adt.getPIDPD1MRGPV1().getMRG(), client.getMergedRecords());
@@ -261,7 +266,7 @@ public class HL7v2MessageBuilderUtils {
      * @param client     The emr client object
      * @throws HL7Exception The exception thrown
      */
-    private static void populatePidSegment(PID pidSegment, Client client, String facilityHfrCode) throws HL7Exception {
+    private static void populatePidSegment(PID pidSegment, Client client, String facilityHfrCode, String sendingApplication) throws HL7Exception {
         // Populating the PID.3
         for (int i = 0; i < client.getPrograms().size(); i++) {
             //Populating the client ids.
@@ -274,7 +279,7 @@ public class HL7v2MessageBuilderUtils {
         // MRN
         int ids = pidSegment.getPatientIdentifierListReps();
         pidSegment.getPatientIdentifierList(ids).getID().setValue(client.getMrn());
-        pidSegment.getPatientIdentifierList(ids).getAssigningAuthority().getNamespaceID().setValue(client.getPlaceEncountered());
+        pidSegment.getPatientIdentifierList(ids).getAssigningAuthority().getNamespaceID().setValue(sendingApplication);
         pidSegment.getPatientIdentifierList(ids).getAssigningFacility().getNamespaceID().setValue(client.getPlaceEncountered());
 
         //Populating the client names.
@@ -467,10 +472,10 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Populates the QRD Segment
      *
-     * @param qrdSegment       The QRD segment to be populated
-     * @param queryDateTime     The query date time
-     * @param id                   The client id
-     * @param idType               The client id type
+     * @param qrdSegment    The QRD segment to be populated
+     * @param queryDateTime The query date time
+     * @param id            The client id
+     * @param idType        The client id type
      * @throws DataTypeException The exception thrown
      */
     private static void populateQrdSegment(QRD qrdSegment, Date queryDateTime, String id, String idType) throws DataTypeException {
@@ -488,11 +493,11 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Populates the QRF Segment
      *
-     * @param qrfSegment       The QRF segment to be populated
-     * @param whatQualifier     The What User Qualifier value
+     * @param qrfSegment    The QRF segment to be populated
+     * @param whatQualifier The What User Qualifier value
+     * @throws DataTypeException The exception thrown
      * @oaram startDateTime      The When Data start date/time
      * @oaram endDateTime        The When Data end date/time
-     * @throws DataTypeException The exception thrown
      */
     private static void populateQrfSegment(QRF qrfSegment, String whatQualifier, String startDateTime, String endDateTime) throws DataTypeException {
         qrfSegment.getWhatUserQualifier(0).setValue(whatQualifier);
