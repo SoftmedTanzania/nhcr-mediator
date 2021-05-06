@@ -3,6 +3,7 @@ package tz.go.moh.him.nhcr.mediator.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Client {
@@ -145,6 +146,14 @@ public class Client {
     @SerializedName("placeEncountered")
     @JsonProperty("placeEncountered")
     private String placeEncountered;
+
+    /**
+     * Initializes a new instance of the {@link Client} class.
+     */
+    public Client() {
+        setIds(new ArrayList<>());
+        setPrograms(new ArrayList<>());
+    }
 
     public String getMrn() {
         return mrn;

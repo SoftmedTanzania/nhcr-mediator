@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class MllpUtils {
 
@@ -39,7 +40,8 @@ public class MllpUtils {
          * creating a new connection each time.
          */
         if (conn == null) {
-            conn = context.newClient(host, portNumber, useTls);
+            conn = context.newLazyClient(host, portNumber, useTls);
+            conn.getInitiator().setTimeout(5, TimeUnit.MINUTES);
         }
 
         try {

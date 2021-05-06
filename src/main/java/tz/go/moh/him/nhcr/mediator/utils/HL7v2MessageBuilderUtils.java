@@ -5,7 +5,6 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.v231.message.ADR_A19;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.message.QRY_A19;
 import ca.uhn.hl7v2.model.v231.segment.*;
@@ -14,22 +13,59 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.*;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.group.ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT;
+import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZDR_A19;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A40;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.segment.ZXT;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents an HL7v2 message builder utility.
  */
 public class HL7v2MessageBuilderUtils {
+    /**
+     * The EMR date format.
+     */
     private static SimpleDateFormat eventDateTimeDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static SimpleDateFormat dobEventTypeSimpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+
+    /**
+     * The NHCR date format.
+     */
+    private static SimpleDateFormat nhcrDateFormat = new SimpleDateFormat("yyyyMMdd");
+
+    /**
+     * The EMR date format.
+     */
+    private static SimpleDateFormat emrDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    /**
+     * The national id.
+     */
+    private static final String NATIONAL_ID = "NATIONAL_ID";
+
+    /**
+     * The voters id.
+     */
+    private static final String VOTERS_ID = "VOTERS_ID";
+
+    /**
+     * The drivers license id.
+     */
+    private static final String DRIVERS_LICENSE_ID = "DRIVERS_LICENSE_ID";
+
+    /**
+     * The Rita id.
+     */
+    private static final String RITA_ID = "RITA_ID";
 
     /**
      * Creates an ADT A04 message.
@@ -103,7 +139,7 @@ public class HL7v2MessageBuilderUtils {
         populateEvnSegment(adt.getEVN(), recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt.getPID(), client);
+        populatePidSegment(adt.getPID(), client, facilityHfrCode);
 
         //Populating IN1 Segment
         if (client.getInsurance() != null) {
@@ -121,7 +157,6 @@ public class HL7v2MessageBuilderUtils {
         }
         //Populating the ZTX Segment
         populateZxtSegment(adt.getZXT(), votersId, ritaId);
-
 
         return adt;
     }
@@ -152,7 +187,7 @@ public class HL7v2MessageBuilderUtils {
         populateEvnSegment(adt.getEVN(), recodedDate);
 
         //Populating the PID Segment
-        populatePidSegment(adt.getPIDPD1MRGPV1().getPID(), client);
+        populatePidSegment(adt.getPIDPD1MRGPV1().getPID(), client, facilityHfrCode);
 
         //Populating the MRG Segment
         populateMrgSegment(adt.getPIDPD1MRGPV1().getMRG(), client.getMergedRecords());
@@ -218,7 +253,7 @@ public class HL7v2MessageBuilderUtils {
      * @throws DataTypeException The exception thrown
      */
     private static void populateEvnSegment(EVN evnSegment, Date recordedDateTime) throws DataTypeException {
-        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(recordedDateTime));
+        evnSegment.getRecordedDateTime().getTimeOfAnEvent().setValue(nhcrDateFormat.format(recordedDateTime));
     }
 
     /**
@@ -226,7 +261,7 @@ public class HL7v2MessageBuilderUtils {
      * @param client     The emr client object
      * @throws HL7Exception The exception thrown
      */
-    private static void populatePidSegment(PID pidSegment, Client client) throws HL7Exception {
+    private static void populatePidSegment(PID pidSegment, Client client, String facilityHfrCode) throws HL7Exception {
         // Populating the PID.3
         for (int i = 0; i < client.getPrograms().size(); i++) {
             //Populating the client ids.
@@ -236,6 +271,11 @@ public class HL7v2MessageBuilderUtils {
             pidSegment.getPatientIdentifierList(i).getAssigningFacility().getNamespaceID().setValue(clientProgram.getAssigningFacility());
         }
 
+        // MRN
+        int ids = pidSegment.getPatientIdentifierListReps();
+        pidSegment.getPatientIdentifierList(ids).getID().setValue(client.getMrn());
+        pidSegment.getPatientIdentifierList(ids).getAssigningAuthority().getNamespaceID().setValue(facilityHfrCode);
+
         //Populating the client names.
         pidSegment.getPatientName(0).getFamilyLastName().getFamilyName().setValue(client.getLastName());
         pidSegment.getPatientName(0).getGivenName().setValue(client.getFirstName());
@@ -244,7 +284,7 @@ public class HL7v2MessageBuilderUtils {
 
         //Populating the client date of birth.
         Date dob = DateUtils.checkDateFormatStrings(client.getDob());
-        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(dob));
+        pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(nhcrDateFormat.format(dob));
 
         //Populating the client sex.
         if (client.getSex().equalsIgnoreCase("male")) {
@@ -433,7 +473,7 @@ public class HL7v2MessageBuilderUtils {
      * @throws DataTypeException The exception thrown
      */
     private static void populateQrdSegment(QRD qrdSegment, Date queryDateTime, String id, String idType) throws DataTypeException {
-        qrdSegment.getQueryDateTime().getTimeOfAnEvent().setValue(dobEventTypeSimpleDateFormat.format(queryDateTime));
+        qrdSegment.getQueryDateTime().getTimeOfAnEvent().setValue(nhcrDateFormat.format(queryDateTime));
         qrdSegment.getQueryFormatCode().setValue("R");
         qrdSegment.getQueryPriority().setValue("I");
         if (!id.isEmpty() && !idType.isEmpty()) {
@@ -474,28 +514,38 @@ public class HL7v2MessageBuilderUtils {
 
         HapiContext context = new DefaultHapiContext();
         Parser parser = context.getPipeParser();
-        ADR_A19 adr = (ADR_A19) parser.parse(adrA19Hl7Message);
 
-        int reps = adr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2Reps();
-        for (int i = 0; i < reps; i++) {
+        // Creating a custom model class factory for the custom ZDR_A19 message
+        ModelClassFactory cmf = new CustomModelClassFactory("tz.go.moh.him.nhcr.mediator.hl7v2");
+        context.setModelClassFactory(cmf);
+
+        //Replacing the message MSH.9 Message type to the custom ZXT Type inorder for parser to correctly parse the message.
+        adrA19Hl7Message = adrA19Hl7Message.replace("ADR^A19^ADR_A19", "ZDR^A19^ZDR_A19");
+        adrA19Hl7Message = adrA19Hl7Message.replace("ADR^A19", "ZDR^A19");
+
+        // fix MSH-12
+        adrA19Hl7Message = adrA19Hl7Message.replace("|2.5", "|2.3.1");
+
+        ZDR_A19 zdr = (ZDR_A19) parser.parse(adrA19Hl7Message);
+
+        List<ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT> groups = zdr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXTAll();
+        for (int i = 0; i < groups.size(); i++) {
             Client client = new Client();
-            PID pid = adr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2(i).getPID();
+            PID pid = groups.get(i).getPID();
 
             if (pid == null) continue;
 
             // Identifiers
             int ids = pid.getPatientIdentifierListReps();
             if (ids > 0) {
-                List<ClientProgram> programs = new ArrayList<>();
                 for (int j = 0; j < ids; j++) {
                     ClientProgram program = new ClientProgram();
                     program.setId(pid.getPatientIdentifierList(j).getID().getValue());
                     program.setAssigningAuthority(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValue());
                     program.setAssigningFacility(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValue());
 
-                    programs.add(program);
+                    client.getPrograms().add(program);
                 }
-                client.setPrograms(programs);
             }
 
             // Name
@@ -527,8 +577,57 @@ public class HL7v2MessageBuilderUtils {
             }
 
             // Date of Birth
-            if (pid.getDateTimeOfBirth() != null) {
-                client.setDob(pid.getDateTimeOfBirth().getTimeOfAnEvent().getValue());
+            if (pid.getDateTimeOfBirth() != null && !pid.getDateTimeOfBirth().getTimeOfAnEvent().isEmpty()) {
+                try {
+                    client.setDob(emrDateFormat.format(nhcrDateFormat.parse(pid.getDateTimeOfBirth().getTimeOfAnEvent().getValue())));
+                } catch (ParseException e) {
+                    throw new HL7Exception("Unable to parse the date of birth");
+                }
+            }
+
+            // Set the ULN
+            client.setUln(pid.getSSNNumberPatient().getValue());
+
+            // Set the other name
+            if (pid.getPatientAlias(0) != null) {
+                client.setOtherName(pid.getPatientAlias(0).getGivenName().getValue());
+            }
+
+            // Set the National ID
+            if (pid.getCitizenshipReps() > 0) {
+                client.getIds().addAll(Arrays.stream(pid.getCitizenship()).map(c -> new ClientId(NATIONAL_ID, c.getIdentifier().getValue())).collect(Collectors.toList()));
+            }
+
+            // Set the drivers license id
+            if (pid.getDriverSLicenseNumberPatient() != null && !pid.getDriverSLicenseNumberPatient().getDriverSLicenseNumber().isEmpty()) {
+                client.getIds().add(new ClientId(DRIVERS_LICENSE_ID, pid.getDriverSLicenseNumberPatient().getDriverSLicenseNumber().getValue()));
+            }
+
+            // Set the Insurance ID
+            IN1 in1 = groups.get(i).getIN1();
+            if (in1 != null && !in1.getSetIDIN1().isEmpty()) {
+                ClientInsurance insurance = new ClientInsurance();
+                insurance.setId(in1.getSetIDIN1().getValue());
+
+                if (in1.getInsuranceCompanyName(0) != null) {
+                    insurance.setName(in1.getInsuranceCompanyName(0).getOrganizationName().getValue());
+                }
+
+                client.setInsurance(insurance);
+            }
+
+            // ZXT - custom identifiers
+            ZXT zxt = groups.get(i).getZXT();
+            if (zxt != null) {
+                // set the voters id
+                if (zxt != null && !zxt.getVotersId().isEmpty()) {
+                    client.getIds().add(new ClientId(VOTERS_ID, zxt.getVotersId().getValue()));
+                }
+
+                // set the rita id
+                if (zxt != null && !zxt.getRitaId().getId().isEmpty()) {
+                    client.getIds().add(new ClientId(RITA_ID, zxt.getRitaId().getId().getValue()));
+                }
             }
 
             retVal.add(client);
