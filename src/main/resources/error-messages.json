@@ -1,3 +1,8 @@
 {
-  "ERROR_TOKEN_IS_BLANK": "The security token header was not provided"
+  "ERROR_TOKEN_IS_BLANK": "The security token header was not provided",
+  "ERROR_ID_IS_BLANK": "Validation failed. id must not be blank",
+  "ERROR_TYPE_IS_BLANK": "Validation failed. type must not be blank",
+  "ERROR_SENDING_APPLICATION_IS_BLANK": "Validation failed. sendingApplication must not be blank",
+  "ERROR_FACILITY_HFR_CODE_IS_BLANK": "Validation failed. facilityHFRCode must not be blank",
+  "ERROR_NO_RESPONSE_FROM_TARGET_SYSTEM": "No response from the target system"
 }
