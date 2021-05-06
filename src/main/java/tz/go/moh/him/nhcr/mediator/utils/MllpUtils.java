@@ -3,12 +3,14 @@ package tz.go.moh.him.nhcr.mediator.utils;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.LazyConnection;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class MllpUtils {
 
@@ -39,7 +41,8 @@ public class MllpUtils {
          * creating a new connection each time.
          */
         if (conn == null) {
-            conn = context.newClient(host, portNumber, useTls);
+            conn = context.newLazyClient(host, portNumber, useTls);
+            conn.getInitiator().setTimeout(5, TimeUnit.MINUTES);
         }
 
         try {

@@ -2,7 +2,7 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.LazyConnection;
 import ca.uhn.hl7v2.model.v231.message.QRY_A19;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -56,7 +56,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         HapiContext context = new DefaultHapiContext();
 
         // Create a connection
-        Connection conn = null;
+        LazyConnection conn = null;
 
         // Get the security token
         String securityToken = request.getHeaders().get("x-nhcr-token");
@@ -66,7 +66,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         }
 
         // Prepare and send the query
-        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getSendingFacility(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "");
+        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "");
         String response = MllpUtils.sendMessage(query, config, context, conn);
 
         if (response != null) {
