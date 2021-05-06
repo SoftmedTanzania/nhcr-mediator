@@ -274,7 +274,7 @@ public class HL7v2MessageBuilderUtils {
         // MRN
         int ids = pidSegment.getPatientIdentifierListReps();
         pidSegment.getPatientIdentifierList(ids).getID().setValue(client.getMrn());
-        pidSegment.getPatientIdentifierList(ids).getAssigningAuthority().getNamespaceID().setValue(client.getPlaceEncountered());
+        pidSegment.getPatientIdentifierList(ids).getAssigningFacility().getNamespaceID().setValue(client.getPlaceEncountered());
 
         //Populating the client names.
         pidSegment.getPatientName(0).getFamilyLastName().getFamilyName().setValue(client.getLastName());
