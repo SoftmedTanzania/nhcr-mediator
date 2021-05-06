@@ -3,7 +3,6 @@ package tz.go.moh.him.nhcr.mediator.utils;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.LazyConnection;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import org.json.JSONObject;

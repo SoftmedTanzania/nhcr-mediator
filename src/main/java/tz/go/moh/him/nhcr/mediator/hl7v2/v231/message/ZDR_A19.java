@@ -2,7 +2,13 @@ package tz.go.moh.him.nhcr.mediator.hl7v2.v231.message;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.AbstractMessage;
-import ca.uhn.hl7v2.model.v231.segment.*;
+import ca.uhn.hl7v2.model.v231.segment.ERR;
+import ca.uhn.hl7v2.model.v231.segment.MSA;
+import ca.uhn.hl7v2.model.v231.segment.MSH;
+import ca.uhn.hl7v2.model.v231.segment.QAK;
+import ca.uhn.hl7v2.model.v231.segment.QRD;
+import ca.uhn.hl7v2.model.v231.segment.QRF;
+import ca.uhn.hl7v2.model.v231.segment.DSC;
 import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.group.ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT;

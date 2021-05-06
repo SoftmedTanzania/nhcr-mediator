@@ -15,7 +15,7 @@ public class ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB
         super(parent, factory);
         // By convention, an init() method is created which adds
         // the specific fields to this segment class
-        init(factory);
+        init();
     }
 
     /**
@@ -23,7 +23,8 @@ public class ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB
      *
      * @param factory The factory.
      */
-    private void init(ModelClassFactory factory) {
+    private void init() {
+
         try {
             // Now, let's add the ZXT segment at the right spot
             String[] segmentNames = getNames();
