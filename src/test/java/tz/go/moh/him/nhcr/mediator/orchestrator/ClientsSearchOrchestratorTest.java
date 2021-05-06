@@ -142,7 +142,7 @@ public class ClientsSearchOrchestratorTest extends BaseOrchestratorTest {
             }
 
             Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
-            Assert.assertEquals(200, responseStatus);
+            Assert.assertEquals(500, responseStatus);
         }};
     }
 }
