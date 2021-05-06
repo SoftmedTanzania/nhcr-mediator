@@ -524,7 +524,7 @@ public class HL7v2MessageBuilderUtils {
         adrA19Hl7Message = adrA19Hl7Message.replace("ADR^A19", "ZDR^A19");
 
         // fix MSH-12
-        adrA19Hl7Message = adrA19Hl7Message.replace("|2.5|", "|2.3.1|");
+        adrA19Hl7Message = adrA19Hl7Message.replace("|2.5", "|2.3.1");
 
         ZDR_A19 zdr = (ZDR_A19) parser.parse(adrA19Hl7Message);
 
