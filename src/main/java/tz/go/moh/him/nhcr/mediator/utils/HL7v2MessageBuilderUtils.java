@@ -340,7 +340,7 @@ public class HL7v2MessageBuilderUtils {
         //Populating phone number
         pidSegment.getPhoneNumberHome(0).getTelecommunicationUseCode().setValue("PRN");
         pidSegment.getPhoneNumberHome(0).getTelecommunicationEquipmentType().setValue("PH");
-        pidSegment.getPhoneNumberHome(0).getAreaCityCode().setValue(client.getCountryCode());
+        pidSegment.getPhoneNumberHome(0).getCountryCode().setValue(client.getCountryCode());
         pidSegment.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber());
 
         //Populating uln
