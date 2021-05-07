@@ -5,6 +5,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.AbstractMessage;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.v231.datatype.XAD;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.message.QRY_A19;
 import ca.uhn.hl7v2.model.v231.segment.EVN;
@@ -96,11 +97,13 @@ public class HL7v2MessageBuilderUtils {
      * @param whatQualifier        The What User Qualifier
      * @param startDateTime        The When Data start date/time
      * @param endDateTime          The When Data end date/time
+     * @param offset               The Offset
+     * @param limit                The Limit
      * @return Returns the created QRY A19 message.
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static QRY_A19 createQryA19(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date queryDateTime, String id, String idType, String whatQualifier, String startDateTime, String endDateTime) throws HL7Exception, IOException {
+    public static QRY_A19 createQryA19(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date queryDateTime, String id, String idType, String whatQualifier, String startDateTime, String endDateTime, String offset, String limit) throws HL7Exception, IOException {
         QRY_A19 qry = new QRY_A19();
         qry.initQuickstart("QRY", "A19", "P");
 
@@ -108,7 +111,7 @@ public class HL7v2MessageBuilderUtils {
         populateMshSegment(qry.getMSH(), "QRY_A19", sendingApplication, facilityHfrCode, receivingApplication, receivingFacility, queryDateTime, securityAccessToken, messageControlId);
 
         // Populating the QRD Segment
-        populateQrdSegment(qry.getQRD(), queryDateTime, id, idType);
+        populateQrdSegment(qry.getQRD(), queryDateTime, id, idType, offset, limit);
 
         // Populating the QRF Segment
         populateQrfSegment(qry.getQRF(), whatQualifier, startDateTime, endDateTime);
@@ -476,9 +479,11 @@ public class HL7v2MessageBuilderUtils {
      * @param queryDateTime The query date time
      * @param id            The client id
      * @param idType        The client id type
+     * @param offset        The Offset
+     * @param limit         The Limit
      * @throws DataTypeException The exception thrown
      */
-    private static void populateQrdSegment(QRD qrdSegment, Date queryDateTime, String id, String idType) throws DataTypeException {
+    private static void populateQrdSegment(QRD qrdSegment, Date queryDateTime, String id, String idType, String offset, String limit) throws DataTypeException {
         qrdSegment.getQueryDateTime().getTimeOfAnEvent().setValue(nhcrDateFormat.format(queryDateTime));
         qrdSegment.getQueryFormatCode().setValue("R");
         qrdSegment.getQueryPriority().setValue("I");
@@ -487,7 +492,14 @@ public class HL7v2MessageBuilderUtils {
             qrdSegment.getWhatSubjectFilter(0).getText().setValue(idType);
         }
 
-        // TODO: include counts?
+        // Set the offset and limit
+        if (offset != null && !offset.isEmpty()) {
+            qrdSegment.getQueryResultsLevel().setValue(offset);
+        }
+
+        if (limit != null && !limit.isEmpty()) {
+            qrdSegment.getQuantityLimitedRequest().getQuantity().setValue(limit);
+        }
     }
 
     /**
@@ -534,6 +546,10 @@ public class HL7v2MessageBuilderUtils {
 
         ZDR_A19 zdr = (ZDR_A19) parser.parse(adrA19Hl7Message);
 
+        // Get MSH-5 & MSH-6
+        String assigningAuthority = ((MSH)zdr.get("MSH")).getReceivingApplication().getNamespaceID().getValue();
+        String facilityCode = ((MSH)zdr.get("MSH")).getReceivingFacility().getNamespaceID().getValue();
+
         List<ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT> groups = zdr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXTAll();
         for (int i = 0; i < groups.size(); i++) {
             Client client = new Client();
@@ -545,6 +561,21 @@ public class HL7v2MessageBuilderUtils {
             int ids = pid.getPatientIdentifierListReps();
             if (ids > 0) {
                 for (int j = 0; j < ids; j++) {
+
+                    // skip logic for mrn
+                    if (
+                        assigningAuthority.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()) ||
+                        facilityCode.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValueOrEmpty())
+                    ) {
+                        // Set the mrn on the client
+                        client.setMrn(pid.getPatientIdentifierList(j).getID().getValue());
+
+                        // Set the encounter location
+                        client.setPlaceEncountered(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValue());
+
+                        continue;
+                    }
+
                     ClientProgram program = new ClientProgram();
                     program.setId(pid.getPatientIdentifierList(j).getID().getValue());
                     program.setAssigningAuthority(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValue());
@@ -561,25 +592,31 @@ public class HL7v2MessageBuilderUtils {
                 client.setMiddleName(pid.getPatientName(0).getMiddleInitialOrName().getValue());
             }
 
+            // Other name
+            if (pid.getPatientAlias(0) != null) {
+                client.setOtherName(pid.getPatientAlias(0).getGivenName().getValue());
+            }
+
             // Sex
             if (pid.getSex() != null) {
                 client.setSex(pid.getSex().getValue());
             }
 
             // Address
-            if (pid.getPatientAddress(0) != null) {
-                ClientAddress address = new ClientAddress();
-                address.setRegion(pid.getPatientAddress(0).getCity().getValue());
+            XAD permanentAddress = Arrays.stream(pid.getPatientAddress()).filter(c -> "H".equals(c.getAddressType().getValue())).findFirst().orElse(null);
+            XAD residentialAddress = Arrays.stream(pid.getPatientAddress()).filter(c -> "C".equals(c.getAddressType().getValue())).findFirst().orElse(null);
+            XAD birthAddress = Arrays.stream(pid.getPatientAddress()).filter(c -> "BR".equals(c.getAddressType().getValue())).findFirst().orElse(null);
 
-                // parse the other designation parts
-                if (pid.getPatientAddress(0).getOtherDesignation().getValue() != null) {
-                    String[] designation = pid.getPatientAddress(0).getOtherDesignation().getValue().split("\\*");
-                    address.setCouncil(designation[0]);
-                    address.setWard(designation[1]);
-                    address.setVillage(designation[2]);
-                }
+            if (permanentAddress != null) {
+                client.setPermanentAddress(mapAddress(permanentAddress));
+            }
 
-                client.setPermanentAddress(address);
+            if (residentialAddress != null) {
+                client.setResidentialAddress(mapAddress(residentialAddress));
+            }
+
+            if (birthAddress != null) {
+                client.setPlaceOfBirth(mapAddress(birthAddress));
             }
 
             // Date of Birth
@@ -589,6 +626,12 @@ public class HL7v2MessageBuilderUtils {
                 } catch (ParseException e) {
                     throw new HL7Exception("Unable to parse the date of birth");
                 }
+            }
+
+            // Set phone number and country code
+            if (!pid.getPhoneNumberHome(0).isEmpty()) {
+                client.setPhoneNumber(pid.getPhoneNumberHome(0).getPhoneNumber().getValue());
+                client.setCountryCode(pid.getPhoneNumberHome(0).getCountryCode().getValue());
             }
 
             // Set the ULN
@@ -611,9 +654,9 @@ public class HL7v2MessageBuilderUtils {
 
             // Set the Insurance ID
             IN1 in1 = groups.get(i).getIN1();
-            if (in1 != null && !in1.getSetIDIN1().isEmpty()) {
+            if (in1 != null && !in1.getInsurancePlanID().isEmpty()) {
                 ClientInsurance insurance = new ClientInsurance();
-                insurance.setId(in1.getSetIDIN1().getValue());
+                insurance.setId(in1.getInsurancePlanID().getIdentifier().getValue());
 
                 if (in1.getInsuranceCompanyName(0) != null) {
                     insurance.setName(in1.getInsuranceCompanyName(0).getOrganizationName().getValue());
@@ -640,5 +683,26 @@ public class HL7v2MessageBuilderUtils {
         }
 
         return retVal;
+    }
+    /**
+     * Maps an address.
+     *
+     * @param xad The address to map.
+     * @return Returns the mapped address.
+     */
+    private static ClientAddress mapAddress(XAD xad) {
+        ClientAddress address = new ClientAddress();
+
+        address.setRegion(xad.getCity().getValue());
+
+        // parse the other designation parts
+        if (xad.getOtherDesignation().getValue() != null) {
+            String[] designation = xad.getOtherDesignation().getValue().split("\\*");
+            address.setCouncil(designation[0]);
+            address.setWard(designation[1]);
+            address.setVillage(designation[2]);
+        }
+
+        return address;
     }
 }

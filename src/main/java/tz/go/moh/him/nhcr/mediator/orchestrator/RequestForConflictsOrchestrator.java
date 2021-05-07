@@ -83,7 +83,7 @@ public class RequestForConflictsOrchestrator extends BaseOrchestrator {
         }
 
         // Prepare and send the query
-        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), "", "", "CONFLICTS", message.getStartDateTime(), message.getEndDateTime());
+        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), "", "", "CONFLICTS", message.getStartDateTime(), message.getEndDateTime(), message.getOffset(), message.getLimit());
         String response = MllpUtils.sendMessage(query, config, context, conn);
 
         // Check if a response was received
