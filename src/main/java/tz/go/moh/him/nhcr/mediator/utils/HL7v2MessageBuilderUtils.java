@@ -324,6 +324,7 @@ public class HL7v2MessageBuilderUtils {
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPermanentAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("H");
+            patientAddressIndex++;
         }
 
         if (client.getPlaceOfBirth() != null) {
@@ -333,6 +334,7 @@ public class HL7v2MessageBuilderUtils {
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPlaceOfBirth().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPlaceOfBirth().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("BR");
+            patientAddressIndex++;
         }
 
         //Populating phone number
