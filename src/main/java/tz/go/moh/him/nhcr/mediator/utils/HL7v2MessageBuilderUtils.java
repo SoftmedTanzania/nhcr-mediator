@@ -309,7 +309,17 @@ public class HL7v2MessageBuilderUtils {
         int patientAddressIndex = 0;
         if (client.getResidentialAddress() != null) {
             //Populating Residential Address
-            String councilWardVillage = client.getResidentialAddress().getCouncil() + "*" + client.getResidentialAddress().getWard() + "*" + client.getResidentialAddress().getVillage();
+            String councilWardVillage = "";
+            if(client.getResidentialAddress().getCouncil()!=null){
+                councilWardVillage = client.getResidentialAddress().getCouncil();
+            }
+            if(client.getResidentialAddress().getWard()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getResidentialAddress().getWard();
+
+            }
+            if(client.getResidentialAddress().getVillage()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getResidentialAddress().getVillage();
+            }
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getResidentialAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getResidentialAddress().getRegion());
@@ -319,7 +329,17 @@ public class HL7v2MessageBuilderUtils {
 
         if (client.getPermanentAddress() != null) {
             //Populating Permanent Address
-            String councilWardVillage = client.getPermanentAddress().getCouncil() + "*" + client.getPermanentAddress().getWard() + "*" + client.getPermanentAddress().getVillage();
+            String councilWardVillage = "";
+            if(client.getPermanentAddress().getCouncil()!=null){
+                councilWardVillage = client.getPermanentAddress().getCouncil();
+            }
+            if(client.getPermanentAddress().getWard()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getPermanentAddress().getWard();
+
+            }
+            if(client.getPermanentAddress().getVillage()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getPermanentAddress().getVillage();
+            }
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPermanentAddress().getRegion());
@@ -329,7 +349,18 @@ public class HL7v2MessageBuilderUtils {
 
         if (client.getPlaceOfBirth() != null) {
             //Populating Place of birth
-            String councilWardVillage = client.getPlaceOfBirth().getCouncil() + "*" + client.getPlaceOfBirth().getWard() + "*" + client.getPlaceOfBirth().getVillage();
+            String councilWardVillage = "";
+            if(client.getPlaceOfBirth().getCouncil()!=null){
+                councilWardVillage = client.getPlaceOfBirth().getCouncil();
+            }
+            if(client.getPlaceOfBirth().getWard()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getPlaceOfBirth().getWard();
+
+            }
+            if(client.getPlaceOfBirth().getVillage()!=null){
+                councilWardVillage = councilWardVillage+ "*" + client.getPlaceOfBirth().getVillage();
+            }
+
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPlaceOfBirth().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPlaceOfBirth().getRegion());
