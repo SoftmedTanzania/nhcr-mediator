@@ -352,7 +352,6 @@ public class HL7v2MessageBuilderUtils {
                 pidSegment.getDriverSLicenseNumberPatient().getDriverSLicenseNumber().setValue(clientId.getId());
             } else if (clientId.getType().equalsIgnoreCase("NATIONAL_ID")) {
                 //Populating national ID
-                pidSegment.getCitizenship(0).getIdentifier().setValue(clientId.getId());
                 pidSegment.getNationality().getIdentifier().setValue(clientId.getId());
             }
         }
