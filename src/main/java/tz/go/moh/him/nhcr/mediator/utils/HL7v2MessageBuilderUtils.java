@@ -371,7 +371,7 @@ public class HL7v2MessageBuilderUtils {
         //Populating phone number
         pidSegment.getPhoneNumberHome(0).getTelecommunicationUseCode().setValue("PRN");
         pidSegment.getPhoneNumberHome(0).getTelecommunicationEquipmentType().setValue("PH");
-        pidSegment.getPhoneNumberHome(0).getAreaCityCode().setValue(client.getCountryCode());
+        pidSegment.getPhoneNumberHome(0).getCountryCode().setValue(client.getCountryCode());
         pidSegment.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber());
 
         //Populating uln
@@ -684,8 +684,8 @@ public class HL7v2MessageBuilderUtils {
             }
 
             // Set the National ID
-            if (pid.getCitizenshipReps() > 0) {
-                client.getIds().addAll(Arrays.stream(pid.getCitizenship()).map(c -> new ClientId(NATIONAL_ID, c.getIdentifier().getValue())).collect(Collectors.toList()));
+            if (!pid.getNationality().isEmpty() && !pid.getNationality().getIdentifier().isEmpty()) {
+                client.getIds().add(new ClientId(NATIONAL_ID, pid.getNationality().getIdentifier().getValue()));
             }
 
             // Set the drivers license id
