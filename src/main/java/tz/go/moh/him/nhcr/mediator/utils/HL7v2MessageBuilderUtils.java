@@ -313,7 +313,7 @@ public class HL7v2MessageBuilderUtils {
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getResidentialAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getResidentialAddress().getRegion());
-            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("H");
+            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("C");
             patientAddressIndex++;
         }
 
@@ -323,7 +323,16 @@ public class HL7v2MessageBuilderUtils {
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
             pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPermanentAddress().getRegion());
-            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("P");
+            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("H");
+        }
+
+        if (client.getPlaceOfBirth() != null) {
+            //Populating Place of birth
+            String councilWardVillage = client.getPlaceOfBirth().getCouncil() + "*" + client.getPlaceOfBirth().getWard() + "*" + client.getPlaceOfBirth().getVillage();
+            pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
+            pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPlaceOfBirth().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getStateOrProvince().setValue(client.getPlaceOfBirth().getRegion());
+            pidSegment.getPatientAddress(patientAddressIndex).getAddressType().setValue("BR");
         }
 
         //Populating phone number
