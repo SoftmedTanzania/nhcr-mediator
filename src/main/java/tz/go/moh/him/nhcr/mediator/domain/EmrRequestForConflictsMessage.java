@@ -23,7 +23,14 @@ public class EmrRequestForConflictsMessage extends EmrMessage {
      */
     @SerializedName("limit")
     @JsonProperty("limit")
-    private int limit;
+    private String limit;
+
+    /**
+     * Offset
+     */
+    @SerializedName("offset")
+    @JsonProperty("offset")
+    private String offset;
 
     public String getStartDateTime() {
         return startDateTime;
@@ -41,11 +48,19 @@ public class EmrRequestForConflictsMessage extends EmrMessage {
         this.endDateTime = endDateTime;
     }
 
-    public int getLimit() {
+    public String getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public void setLimit(String limit) {
         this.limit = limit;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
     }
 }

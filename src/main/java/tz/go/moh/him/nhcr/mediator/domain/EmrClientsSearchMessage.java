@@ -18,6 +18,20 @@ public class EmrClientsSearchMessage extends EmrMessage {
     @JsonProperty("type")
     private String type;
 
+    /**
+     * Limit
+     */
+    @SerializedName("limit")
+    @JsonProperty("limit")
+    private String limit;
+
+    /**
+     * Offset
+     */
+    @SerializedName("offset")
+    @JsonProperty("offset")
+    private String offset;
+
     public String getId() {
         return id;
     }
@@ -32,5 +46,21 @@ public class EmrClientsSearchMessage extends EmrMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getLimit() {
+        return limit;
+    }
+
+    public void setLimit(String limit) {
+        this.limit = limit;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
     }
 }
