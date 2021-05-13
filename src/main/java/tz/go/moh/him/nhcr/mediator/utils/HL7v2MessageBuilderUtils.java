@@ -617,6 +617,20 @@ public class HL7v2MessageBuilderUtils {
                         continue;
                     }
 
+                    // skip logic for CR_CID
+                    if (pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty().equalsIgnoreCase("CR_CID")) {
+                        client.getIds().add(new ClientId("CR_CID", pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()));
+
+                        continue;
+                    }
+
+                    // skip logic for ENT_ID
+                    if (pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty().equalsIgnoreCase("ENT_ID")) {
+                        client.getIds().add(new ClientId("ENT_ID", pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()));
+
+                        continue;
+                    }
+
                     ClientProgram program = new ClientProgram();
                     program.setId(pid.getPatientIdentifierList(j).getID().getValue());
                     program.setAssigningAuthority(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValue());
@@ -639,8 +653,12 @@ public class HL7v2MessageBuilderUtils {
             }
 
             // Sex
-            if (pid.getSex() != null) {
-                client.setSex(pid.getSex().getValue());
+            if (!pid.getSex().isEmpty()) {
+                if (pid.getSex().getValueOrEmpty().equalsIgnoreCase("M")) {
+                    client.setSex("MALE");
+                } else if (pid.getSex().getValueOrEmpty().equalsIgnoreCase("F")) {
+                    client.setSex("FEMALE");
+                }
             }
 
             // Address
