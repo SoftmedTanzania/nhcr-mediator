@@ -619,14 +619,14 @@ public class HL7v2MessageBuilderUtils {
 
                     // skip logic for CR_CID
                     if (pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty().equalsIgnoreCase("CR_CID")) {
-                        client.getIds().add(new ClientId("CR_CID", pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()));
+                        client.getIds().add(new ClientId("CR_CID", pid.getPatientIdentifierList(j).getID().getValue()));
 
                         continue;
                     }
 
                     // skip logic for ENT_ID
                     if (pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty().equalsIgnoreCase("ENT_ID")) {
-                        client.getIds().add(new ClientId("ENT_ID", pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()));
+                        client.getIds().add(new ClientId("ENT_ID", pid.getPatientIdentifierList(j).getID().getValue()));
 
                         continue;
                     }
