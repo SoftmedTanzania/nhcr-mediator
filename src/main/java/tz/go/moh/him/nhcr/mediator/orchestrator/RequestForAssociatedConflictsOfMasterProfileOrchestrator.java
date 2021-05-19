@@ -13,7 +13,7 @@ import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.EmrClientsSearchMessage;
+import tz.go.moh.him.nhcr.mediator.domain.EmrRequestForAssociatedConflictsOfMasterProfileMessage;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a Clients Search orchestrator.
+ * Represents the Request For Conflicts For Associated Conflicts Of Master Profile orchestrator.
  */
-public class ClientsSearchOrchestrator extends BaseOrchestrator {
+public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends BaseOrchestrator {
     /**
      * The Gson Instance used for serialization and deserialization of jsons
      */
     public Gson gson;
 
     /**
-     * Initializes a new instance of the {@link ClientsSearchOrchestrator} class.
+     * Initializes a new instance of the {@link RequestForAssociatedConflictsOfMasterProfileOrchestrator} class.
      *
      * @param config The configuration.
      */
-    public ClientsSearchOrchestrator(MediatorConfig config) {
+    public RequestForAssociatedConflictsOfMasterProfileOrchestrator(MediatorConfig config) {
         super(config);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -50,9 +50,9 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
      */
     @Override
     protected void onReceiveRequestInternal(MediatorHTTPRequest request) throws Exception {
-        List<Client> clients = new ArrayList<>();
+        List<Client> conflicts = new ArrayList<>();
 
-        EmrClientsSearchMessage message = gson.fromJson(request.getBody(), EmrClientsSearchMessage.class);
+        EmrRequestForAssociatedConflictsOfMasterProfileMessage message = gson.fromJson(request.getBody(), EmrRequestForAssociatedConflictsOfMasterProfileMessage.class);
 
         // Create a HapiContext
         HapiContext context = new DefaultHapiContext();
@@ -83,7 +83,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         }
 
         // Prepare and send the query
-        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "", message.getOffset(), message.getLimit(),"");
+        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), "", "", "CONFLICTS", "", "", "", "", message.getCrCid());
         String response = MllpUtils.sendMessage(query, config, context, conn);
 
         // Check if a response was received
@@ -102,12 +102,12 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         }
 
         // Parse the response and build the client search response clientSearchResponse
-        clients = HL7v2MessageBuilderUtils.parseAdrA19Message(response);
+        conflicts = HL7v2MessageBuilderUtils.parseAdrA19Message(response);
 
-        if (clients.size() > 0) {
-            request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_OK), getSelf());
+        if (conflicts.size() > 0) {
+            request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_OK), getSelf());
         } else {
-            request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
+            request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
         }
     }
 }

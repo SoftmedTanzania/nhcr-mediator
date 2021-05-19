@@ -18,6 +18,7 @@ import ca.uhn.hl7v2.model.v231.segment.QRF;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
+import org.codehaus.plexus.util.StringUtils;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.ClientAddress;
@@ -98,11 +99,12 @@ public class HL7v2MessageBuilderUtils {
      * @param endDateTime          The When Data end date/time
      * @param offset               The Offset
      * @param limit                The Limit
+     * @param otherQrySubjectFilter The other query subject filter
      * @return Returns the created QRY A19 message.
      * @throws IOException  The IOException thrown
      * @throws HL7Exception The HL7Expeption thrown
      */
-    public static QRY_A19 createQryA19(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date queryDateTime, String id, String idType, String whatQualifier, String startDateTime, String endDateTime, String offset, String limit) throws HL7Exception, IOException {
+    public static QRY_A19 createQryA19(String sendingApplication, String facilityHfrCode, String receivingFacility, String receivingApplication, String securityAccessToken, String messageControlId, Date queryDateTime, String id, String idType, String whatQualifier, String startDateTime, String endDateTime, String offset, String limit, String otherQrySubjectFilter) throws HL7Exception, IOException {
         QRY_A19 qry = new QRY_A19();
         qry.initQuickstart("QRY", "A19", "P");
 
@@ -113,7 +115,7 @@ public class HL7v2MessageBuilderUtils {
         populateQrdSegment(qry.getQRD(), queryDateTime, id, idType, offset, limit);
 
         // Populating the QRF Segment
-        populateQrfSegment(qry.getQRF(), whatQualifier, startDateTime, endDateTime);
+        populateQrfSegment(qry.getQRF(), whatQualifier, startDateTime, endDateTime, otherQrySubjectFilter);
 
         return qry;
     }
@@ -560,18 +562,26 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Populates the QRF Segment
      *
-     * @param qrfSegment    The QRF segment to be populated
-     * @param whatQualifier The What User Qualifier value
+     * @param qrfSegment            The QRF segment to be populated
+     * @param whatQualifier         The What User Qualifier value
+     * @param startDateTime         The When Data start date/time
+     * @param endDateTime           The When Data end date/time
+     * @param otherQrySubjectFilter The other query subject filter
      * @throws DataTypeException The exception thrown
-     * @oaram startDateTime      The When Data start date/time
-     * @oaram endDateTime        The When Data end date/time
      */
-    private static void populateQrfSegment(QRF qrfSegment, String whatQualifier, String startDateTime, String endDateTime) throws DataTypeException {
+    private static void populateQrfSegment(QRF qrfSegment, String whatQualifier, String startDateTime, String endDateTime, String otherQrySubjectFilter) throws DataTypeException {
         qrfSegment.getWhatUserQualifier(0).setValue(whatQualifier);
         if (whatQualifier.equalsIgnoreCase("CONFLICTS")) {
-            // normalize the incoming date time format
-            qrfSegment.getWhenDataStartDateTime().getTimeOfAnEvent().setValue(startDateTime);
-            qrfSegment.getWhenDataEndDateTime().getTimeOfAnEvent().setValue(endDateTime);
+
+            if (!StringUtils.isBlank(startDateTime) && !StringUtils.isBlank(endDateTime)) {
+                // normalize the incoming date time format
+                qrfSegment.getWhenDataStartDateTime().getTimeOfAnEvent().setValue(startDateTime);
+                qrfSegment.getWhenDataEndDateTime().getTimeOfAnEvent().setValue(endDateTime);
+            }
+
+            if (!StringUtils.isBlank(otherQrySubjectFilter)) {
+                qrfSegment.getOtherQRYSubjectFilter(0).setValue(otherQrySubjectFilter);
+            }
         }
     }
 
