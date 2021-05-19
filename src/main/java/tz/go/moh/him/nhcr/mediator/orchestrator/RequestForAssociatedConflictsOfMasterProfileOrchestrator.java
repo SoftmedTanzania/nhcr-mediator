@@ -13,7 +13,7 @@ import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.EmrRequestForConflictsMessage;
+import tz.go.moh.him.nhcr.mediator.domain.EmrRequestForAssociatedConflictsOfMasterProfileMessage;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
@@ -23,20 +23,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents the Request For Conflicts orchestrator.
+ * Represents the Request For Conflicts For Associated Conflicts Of Master Profile orchestrator.
  */
-public class RequestForConflictsOrchestrator extends BaseOrchestrator {
+public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends BaseOrchestrator {
     /**
      * The Gson Instance used for serialization and deserialization of jsons
      */
     public Gson gson;
 
     /**
-     * Initializes a new instance of the {@link RequestForConflictsOrchestrator} class.
+     * Initializes a new instance of the {@link RequestForAssociatedConflictsOfMasterProfileOrchestrator} class.
      *
      * @param config The configuration.
      */
-    public RequestForConflictsOrchestrator(MediatorConfig config) {
+    public RequestForAssociatedConflictsOfMasterProfileOrchestrator(MediatorConfig config) {
         super(config);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -52,7 +52,7 @@ public class RequestForConflictsOrchestrator extends BaseOrchestrator {
     protected void onReceiveRequestInternal(MediatorHTTPRequest request) throws Exception {
         List<Client> conflicts = new ArrayList<>();
 
-        EmrRequestForConflictsMessage message = gson.fromJson(request.getBody(), EmrRequestForConflictsMessage.class);
+        EmrRequestForAssociatedConflictsOfMasterProfileMessage message = gson.fromJson(request.getBody(), EmrRequestForAssociatedConflictsOfMasterProfileMessage.class);
 
         // Create a HapiContext
         HapiContext context = new DefaultHapiContext();
@@ -83,7 +83,7 @@ public class RequestForConflictsOrchestrator extends BaseOrchestrator {
         }
 
         // Prepare and send the query
-        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), "", "", "CONFLICTS", message.getStartDateTime(), message.getEndDateTime(), message.getOffset(), message.getLimit(),"");
+        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), "", "", "CONFLICTS", "", "", "", "", message.getCrCid());
         String response = MllpUtils.sendMessage(query, config, context, conn);
 
         // Check if a response was received

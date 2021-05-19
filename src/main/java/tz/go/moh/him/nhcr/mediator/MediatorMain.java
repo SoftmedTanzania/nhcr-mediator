@@ -14,6 +14,7 @@ import tz.go.moh.him.nhcr.mediator.orchestrator.ClientConflictsResolutionsOrches
 import tz.go.moh.him.nhcr.mediator.orchestrator.ClientRegistrationAndUpdatesOrchestrator;
 import tz.go.moh.him.nhcr.mediator.orchestrator.ClientsSearchOrchestrator;
 import tz.go.moh.him.nhcr.mediator.orchestrator.DefaultOrchestrator;
+import tz.go.moh.him.nhcr.mediator.orchestrator.RequestForAssociatedConflictsOfMasterProfileOrchestrator;
 import tz.go.moh.him.nhcr.mediator.orchestrator.RequestForConflictsOrchestrator;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public class MediatorMain {
         routingTable.addRoute("/nhcr-conflicts-resolution", ClientConflictsResolutionsOrchestrator.class);
         routingTable.addRoute("/nhcr-clients-search", ClientsSearchOrchestrator.class);
         routingTable.addRoute("/nhcr-request-for-conflicts", RequestForConflictsOrchestrator.class);
+        routingTable.addRoute("/nhcr-request-for-associated-conflicts-of-master-profile", RequestForAssociatedConflictsOfMasterProfileOrchestrator.class);
 
         return routingTable;
     }
