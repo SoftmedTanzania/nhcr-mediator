@@ -7,8 +7,8 @@ public class EmrRequestForAssociatedConflictsOfMasterProfileMessage extends EmrM
     /**
      * The CR CID of the master record with conflicts
      */
-    @SerializedName("cr_cid")
-    @JsonProperty("cr_cid")
+    @SerializedName("crCid")
+    @JsonProperty("crCid")
     private String crCid;
 
     public String getCrCid() {
