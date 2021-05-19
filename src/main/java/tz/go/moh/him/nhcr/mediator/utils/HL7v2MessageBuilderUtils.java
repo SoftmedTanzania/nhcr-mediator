@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents an HL7v2 message builder utility.
@@ -310,20 +309,20 @@ public class HL7v2MessageBuilderUtils {
         if (client.getResidentialAddress() != null) {
             //Populating Residential Address
             String councilWardVillage = "";
-            if(client.getResidentialAddress().getCouncil()!=null){
+            if (client.getResidentialAddress().getCouncil() != null) {
                 councilWardVillage = client.getResidentialAddress().getCouncil();
             }
 
-            if(client.getResidentialAddress().getWard()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getResidentialAddress().getWard();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getResidentialAddress().getWard() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getResidentialAddress().getWard();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
 
-            if(client.getResidentialAddress().getVillage()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getResidentialAddress().getVillage();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getResidentialAddress().getVillage() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getResidentialAddress().getVillage();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getResidentialAddress().getRegion());
@@ -335,20 +334,20 @@ public class HL7v2MessageBuilderUtils {
         if (client.getPermanentAddress() != null) {
             //Populating Permanent Address
             String councilWardVillage = "";
-            if(client.getPermanentAddress().getCouncil()!=null){
+            if (client.getPermanentAddress().getCouncil() != null) {
                 councilWardVillage = client.getPermanentAddress().getCouncil();
             }
 
-            if(client.getPermanentAddress().getWard()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getPermanentAddress().getWard();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getPermanentAddress().getWard() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getPermanentAddress().getWard();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
 
-            if(client.getPermanentAddress().getVillage()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getPermanentAddress().getVillage();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getPermanentAddress().getVillage() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getPermanentAddress().getVillage();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
             pidSegment.getPatientAddress(patientAddressIndex).getCity().setValue(client.getPermanentAddress().getRegion());
@@ -360,20 +359,20 @@ public class HL7v2MessageBuilderUtils {
         if (client.getPlaceOfBirth() != null) {
             //Populating Place of birth
             String councilWardVillage = "";
-            if(client.getPlaceOfBirth().getCouncil()!=null){
+            if (client.getPlaceOfBirth().getCouncil() != null) {
                 councilWardVillage = client.getPlaceOfBirth().getCouncil();
             }
 
-            if(client.getPlaceOfBirth().getWard()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getPlaceOfBirth().getWard();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getPlaceOfBirth().getWard() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getPlaceOfBirth().getWard();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
 
-            if(client.getPlaceOfBirth().getVillage()!=null){
-                councilWardVillage = councilWardVillage+ "*" + client.getPlaceOfBirth().getVillage();
-            }else{
-                councilWardVillage = councilWardVillage+ "*";
+            if (client.getPlaceOfBirth().getVillage() != null) {
+                councilWardVillage = councilWardVillage + "*" + client.getPlaceOfBirth().getVillage();
+            } else {
+                councilWardVillage = councilWardVillage + "*";
             }
 
             pidSegment.getPatientAddress(patientAddressIndex).getOtherDesignation().setValue(councilWardVillage);
@@ -603,8 +602,8 @@ public class HL7v2MessageBuilderUtils {
         ZDR_A19 zdr = (ZDR_A19) parser.parse(adrA19Hl7Message);
 
         // Get MSH-5 & MSH-6
-        String assigningAuthority = ((MSH)zdr.get("MSH")).getReceivingApplication().getNamespaceID().getValue();
-        String facilityCode = ((MSH)zdr.get("MSH")).getReceivingFacility().getNamespaceID().getValue();
+        String assigningAuthority = ((MSH) zdr.get("MSH")).getReceivingApplication().getNamespaceID().getValue();
+        String facilityCode = ((MSH) zdr.get("MSH")).getReceivingFacility().getNamespaceID().getValue();
 
         List<ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT> groups = zdr.getEVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXTAll();
         for (int i = 0; i < groups.size(); i++) {
@@ -620,8 +619,8 @@ public class HL7v2MessageBuilderUtils {
 
                     // skip logic for mrn
                     if (
-                        assigningAuthority.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()) ||
-                        facilityCode.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValueOrEmpty())
+                            assigningAuthority.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningAuthority().getNamespaceID().getValueOrEmpty()) ||
+                                    facilityCode.equalsIgnoreCase(pid.getPatientIdentifierList(j).getAssigningFacility().getNamespaceID().getValueOrEmpty())
                     ) {
                         // Set the mrn on the client
                         client.setMrn(pid.getPatientIdentifierList(j).getID().getValue());
@@ -758,6 +757,7 @@ public class HL7v2MessageBuilderUtils {
 
         return retVal;
     }
+
     /**
      * Maps an address.
      *
@@ -772,9 +772,16 @@ public class HL7v2MessageBuilderUtils {
         // parse the other designation parts
         if (xad.getOtherDesignation().getValue() != null) {
             String[] designation = xad.getOtherDesignation().getValue().split("\\*");
-            address.setCouncil(designation[0]);
-            address.setWard(designation[1]);
-            address.setVillage(designation[2]);
+            if (designation.length == 3) {
+                address.setCouncil(designation[0]);
+                address.setWard(designation[1]);
+                address.setVillage(designation[2]);
+            } else if (designation.length == 2) {
+                address.setCouncil(designation[0]);
+                address.setWard(designation[1]);
+            } else if (designation.length == 1) {
+                address.setCouncil(designation[0]);
+            }
         }
 
         return address;
