@@ -1,7 +1,7 @@
 {
   "urn": "urn:uuid:18BD2025-2037-4F8C-AF7A-474F94A2D894",
   "version": "0.1.0",
-  "name": "NHCR Mediator",
+  "name": "PoS - NHCR Mediator",
   "description": "A mediator for handling system integration with National Health Client Registry.",
   "endpoints": [
     {
