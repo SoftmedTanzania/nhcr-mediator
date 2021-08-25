@@ -15,12 +15,6 @@ import java.util.Map;
 public class MockRita extends MockHTTPConnector {
 
     /**
-     * Initializes a new instance of the {@link MockRita} class.
-     */
-    public MockRita() {
-    }
-
-    /**
      * Gets the response.
      *
      * @return Returns the response.
