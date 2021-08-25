@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.testing.MockLauncher;
 import org.openhim.mediator.engine.testing.TestingUtils;
-import tz.go.moh.him.nhcr.mediator.mock.MockNhcr;
+import tz.go.moh.him.nhcr.mediator.mock.MockRita;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +116,7 @@ public abstract class BaseOrchestratorTest {
     public void before() throws IOException {
         List<MockLauncher.ActorToLaunch> actorsToLaunch = new LinkedList<>();
 
-        actorsToLaunch.add(new MockLauncher.ActorToLaunch("mllp-connector", MockNhcr.class));
+        actorsToLaunch.add(new MockLauncher.ActorToLaunch("http-connector", MockRita.class));
 
         TestingUtils.launchActors(system, configuration.getName(), actorsToLaunch);
 
