@@ -1,5 +1,7 @@
 package tz.go.moh.him.nhcr.mediator.orchestrator;
 
+import akka.actor.ActorRef;
+import akka.actor.Props;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.LazyConnection;
@@ -12,6 +14,7 @@ import org.apache.http.HttpStatus;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
+import org.openhim.mediator.engine.messages.SimpleMediatorRequest;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsSearchMessage;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
@@ -23,7 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a Clients Search orchestrator.
+ * Represents a NHCR Clients Search orchestrator.
  */
 public class ClientsSearchOrchestrator extends BaseOrchestrator {
     /**
@@ -83,7 +86,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         }
 
         // Prepare and send the query
-        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "", message.getOffset(), message.getLimit(),"");
+        QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "", message.getOffset(), message.getLimit(), "");
         String response = MllpUtils.sendMessage(query, config, context, conn);
 
         // Check if a response was received
@@ -107,7 +110,16 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         if (clients.size() > 0) {
             request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_OK), getSelf());
         } else {
-            request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
+            if (message.getType().equalsIgnoreCase("ULN")) {
+                log.info("Sending data to Rita Client Search Actor");
+                ActorRef actor = getContext().actorOf(Props.create(RitaActor.class, config));
+                actor.tell(
+                        new SimpleMediatorRequest<>(
+                                request.getRequestHandler(),
+                                getSelf(),
+                                new Gson().toJson(message)), getSelf());
+            } else
+                request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
         }
     }
 }

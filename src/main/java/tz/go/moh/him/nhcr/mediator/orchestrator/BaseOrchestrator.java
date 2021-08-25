@@ -29,7 +29,7 @@ public abstract class BaseOrchestrator extends UntypedActor {
     /**
      * The logger instance.
      */
-    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+    protected final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     /**
      * Initializes a new instance of the {@link DefaultOrchestrator} class.
