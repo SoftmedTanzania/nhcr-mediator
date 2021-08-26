@@ -113,11 +113,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
             if (message.getType().equalsIgnoreCase("ULN")) {
                 log.info("Sending data to Rita Client Search Actor");
                 ActorRef actor = getContext().actorOf(Props.create(RitaActor.class, config));
-                actor.tell(
-                        new SimpleMediatorRequest<>(
-                                request.getRequestHandler(),
-                                getSelf(),
-                                new Gson().toJson(message)), getSelf());
+                actor.tell(request, getSelf());
             } else
                 request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
         }
