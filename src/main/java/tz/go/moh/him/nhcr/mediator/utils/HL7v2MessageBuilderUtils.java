@@ -47,11 +47,11 @@ public class HL7v2MessageBuilderUtils {
     /**
      * The national id.
      */
-    private static final String NATIONAL_ID = "NATIONAL_ID";
+    public static final String NATIONAL_ID = "NATIONAL_ID";
     /**
      * The voters id.
      */
-    private static final String VOTERS_ID = "VOTERS_ID";
+    public static final String VOTERS_ID = "VOTERS_ID";
     /**
      * The drivers license id.
      */
