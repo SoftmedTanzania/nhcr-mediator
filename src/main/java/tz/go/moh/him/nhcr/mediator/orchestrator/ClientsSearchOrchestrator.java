@@ -14,7 +14,6 @@ import org.apache.http.HttpStatus;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
-import org.openhim.mediator.engine.messages.SimpleMediatorRequest;
 import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.domain.EmrClientsSearchMessage;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
