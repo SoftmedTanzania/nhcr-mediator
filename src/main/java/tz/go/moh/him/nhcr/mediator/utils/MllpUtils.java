@@ -66,6 +66,7 @@ public class MllpUtils {
 
             CoreResponse.Orchestration sendingDataToNHCROrchestration = new CoreResponse.Orchestration();
             sendingDataToNHCROrchestration.setRequest(request);
+            sendingDataToNHCROrchestration.setName("Sending HL7 Messages to NHCR");
 
             CoreResponse.Response responseFromNHCR = new CoreResponse.Response();
 
@@ -73,8 +74,8 @@ public class MllpUtils {
             header.put("content-type","text/plain;charset=UTF-8");
             header.put("accept","*/*");
             header.put("vary","Accept-Encoding");
+            header.put("x-openhim-transactionid",mediatorHTTPRequest.getHeaders().get("x-openhim-transactionid"));
 
-            System.out.println("headers = ");
             responseFromNHCR.setHeaders(header);
             responseFromNHCR.setBody(responseMessage);
             responseFromNHCR.setStatus(200);
