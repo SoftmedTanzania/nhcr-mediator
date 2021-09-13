@@ -93,7 +93,7 @@ public class ClientConflictsResolutionsOrchestrator extends BaseOrchestrator {
                     resolvedConflicts
             );
 
-            String response = MllpUtils.sendMessage(zxtA40, config, context, conn);
+            String response = MllpUtils.sendMessage(request,zxtA40, config, context, conn,getSelf());
 
             if (response != null) {
                 ACK ack = (ACK) parser.parse(response);

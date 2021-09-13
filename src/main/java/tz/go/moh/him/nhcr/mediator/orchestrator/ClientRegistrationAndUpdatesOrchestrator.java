@@ -103,7 +103,7 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
                     client
             );
 
-            String response = MllpUtils.sendMessage(zxtA01, config, context, conn);
+            String response = MllpUtils.sendMessage(request, zxtA01, config, context, conn, getSelf());
 
             if (response != null) {
                 ACK ack = (ACK) parser.parse(response);

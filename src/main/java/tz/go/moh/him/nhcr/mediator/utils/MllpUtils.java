@@ -1,19 +1,24 @@
 package tz.go.moh.him.nhcr.mediator.utils;
 
+import akka.actor.ActorRef;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import org.json.JSONObject;
+import org.openhim.mediator.engine.CoreResponse;
 import org.openhim.mediator.engine.MediatorConfig;
+import org.openhim.mediator.engine.messages.AddOrchestrationToCoreResponse;
+import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class MllpUtils {
 
-    public static String sendMessage(Message message, MediatorConfig config, HapiContext context, Connection conn) throws HL7Exception {
+    public static String sendMessage(MediatorHTTPRequest mediatorHTTPRequest, Message message, MediatorConfig config, HapiContext context, Connection conn, ActorRef actorRef) throws HL7Exception {
         String responseMessage = null;
         String host;
         int portNumber;
@@ -47,6 +52,31 @@ public class MllpUtils {
         try {
             Message response = conn.getInitiator().sendAndReceive(message);
             responseMessage = response.encode();
+
+            CoreResponse.Request request = new CoreResponse.Request();
+            request.setBody(mediatorHTTPRequest.getBody());
+            request.setHeaders(mediatorHTTPRequest.getHeaders());
+            request.setHost(mediatorHTTPRequest.getHost());
+            request.setMethod(mediatorHTTPRequest.getMethod());
+            request.setPath(mediatorHTTPRequest.getPath());
+            request.setPort(String.valueOf(mediatorHTTPRequest.getPort()));
+            request.setTimestamp(Calendar.getInstance().getTime());
+
+
+            CoreResponse.Orchestration sendingDataToNHCROrchestration = new CoreResponse.Orchestration();
+            sendingDataToNHCROrchestration.setRequest(request);
+
+            CoreResponse.Response responseFromNHCR = new CoreResponse.Response();
+            responseFromNHCR.setBody(responseMessage);
+            responseFromNHCR.setStatus(200);
+            responseFromNHCR.setTimestamp(Calendar.getInstance().getTime());
+            sendingDataToNHCROrchestration.setResponse(responseFromNHCR);
+
+            /**
+             * Sending an orchestration back to HIM
+             */
+            mediatorHTTPRequest.getRequestHandler().tell(new AddOrchestrationToCoreResponse(sendingDataToNHCROrchestration), actorRef);
+
             System.out.println("Sent message. Response was " + responseMessage);
         } catch (IOException | LLPException e) {
             System.out.println("Didn't send out this message!");

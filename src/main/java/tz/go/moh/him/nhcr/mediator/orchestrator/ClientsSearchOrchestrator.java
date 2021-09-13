@@ -86,7 +86,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
 
         // Prepare and send the query
         QRY_A19 query = HL7v2MessageBuilderUtils.createQryA19(message.getSendingApplication(), message.getFacilityHfrCode(), "NHCR", "NHCR", securityToken, String.valueOf(UUID.randomUUID()), new Date(), message.getId(), message.getType(), "PATIENTS", "", "", message.getOffset(), message.getLimit(), "");
-        String response = MllpUtils.sendMessage(query, config, context, conn);
+        String response = MllpUtils.sendMessage(request, query, config, context, conn, getSelf());
 
         // Check if a response was received
         if (response == null) {
