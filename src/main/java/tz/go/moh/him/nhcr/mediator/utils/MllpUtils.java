@@ -14,6 +14,7 @@ import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class MllpUtils {
@@ -67,6 +68,14 @@ public class MllpUtils {
             sendingDataToNHCROrchestration.setRequest(request);
 
             CoreResponse.Response responseFromNHCR = new CoreResponse.Response();
+
+            HashMap<String, String> header = new HashMap<>();
+            header.put("content-type","text/plain;charset=UTF-8");
+            header.put("accept","*/*");
+            header.put("vary","Accept-Encoding");
+
+            System.out.println("headers = ");
+            responseFromNHCR.setHeaders(header);
             responseFromNHCR.setBody(responseMessage);
             responseFromNHCR.setStatus(200);
             responseFromNHCR.setTimestamp(Calendar.getInstance().getTime());
