@@ -54,13 +54,18 @@ public class MllpUtils {
             Message response = conn.getInitiator().sendAndReceive(message);
             responseMessage = response.encode();
 
+            HashMap<String, String> header = new HashMap<>();
+            header.put("content-type","text/plain;charset=UTF-8");
+            header.put("accept","*/*");
+            header.put("vary","Accept-Encoding");
+            header.put("x-openhim-transactionid",mediatorHTTPRequest.getHeaders().get("x-openhim-transactionid"));
+
             CoreResponse.Request request = new CoreResponse.Request();
-            request.setBody(mediatorHTTPRequest.getBody());
-            request.setHeaders(mediatorHTTPRequest.getHeaders());
-            request.setHost(mediatorHTTPRequest.getHost());
-            request.setMethod(mediatorHTTPRequest.getMethod());
-            request.setPath(mediatorHTTPRequest.getPath());
-            request.setPort(String.valueOf(mediatorHTTPRequest.getPort()));
+            request.setBody(message.encode());
+            request.setHeaders(header);
+            request.setHost(host);
+            request.setMethod("TCP");
+            request.setPort(String.valueOf(portNumber));
             request.setTimestamp(Calendar.getInstance().getTime());
 
 
@@ -69,12 +74,6 @@ public class MllpUtils {
             sendingDataToNHCROrchestration.setName("Sending HL7 Messages to NHCR");
 
             CoreResponse.Response responseFromNHCR = new CoreResponse.Response();
-
-            HashMap<String, String> header = new HashMap<>();
-            header.put("content-type","text/plain;charset=UTF-8");
-            header.put("accept","*/*");
-            header.put("vary","Accept-Encoding");
-            header.put("x-openhim-transactionid",mediatorHTTPRequest.getHeaders().get("x-openhim-transactionid"));
 
             responseFromNHCR.setHeaders(header);
             responseFromNHCR.setBody(responseMessage);
