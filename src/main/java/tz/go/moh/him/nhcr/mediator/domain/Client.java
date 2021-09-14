@@ -141,6 +141,20 @@ public class Client {
     private String dob;
 
     /**
+     * Client's Death Date
+     */
+    @SerializedName("deathDate")
+    @JsonProperty("deathDate")
+    private String deathDate;
+
+    /**
+     * Client's Death Status
+     */
+    @SerializedName("deathStatus")
+    @JsonProperty("deathStatus")
+    private boolean deathStatus;
+
+    /**
      * HFR code of the facility that originally encountered
      */
     @SerializedName("placeEncountered")
@@ -313,6 +327,22 @@ public class Client {
 
     public void setPlaceEncountered(String placeEncountered) {
         this.placeEncountered = placeEncountered;
+    }
+
+    public String getDeathDate() {
+        return deathDate;
+    }
+
+    public void setDeathDate(String deathDate) {
+        this.deathDate = deathDate;
+    }
+
+    public boolean isDeathStatus() {
+        return deathStatus;
+    }
+
+    public void setDeathStatus(boolean deathStatus) {
+        this.deathStatus = deathStatus;
     }
 
     public enum PostOrUpdate {

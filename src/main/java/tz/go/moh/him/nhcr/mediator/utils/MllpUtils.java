@@ -54,12 +54,18 @@ public class MllpUtils {
             Message response = conn.getInitiator().sendAndReceive(message);
             responseMessage = response.encode();
 
+            /**
+             * Creating an orchestration header that will be sent back to the HIM
+             */
             HashMap<String, String> header = new HashMap<>();
             header.put("content-type","text/plain;charset=UTF-8");
             header.put("accept","*/*");
             header.put("vary","Accept-Encoding");
             header.put("x-openhim-transactionid",mediatorHTTPRequest.getHeaders().get("x-openhim-transactionid"));
 
+            /**
+             * Creating core request to be added to the Orchestration
+             */
             CoreResponse.Request request = new CoreResponse.Request();
             request.setBody(message.encode());
             request.setHeaders(header);
@@ -68,7 +74,9 @@ public class MllpUtils {
             request.setPort(String.valueOf(portNumber));
             request.setTimestamp(Calendar.getInstance().getTime());
 
-
+            /**
+             * Creating the Orchestration object
+             */
             CoreResponse.Orchestration sendingDataToNHCROrchestration = new CoreResponse.Orchestration();
             sendingDataToNHCROrchestration.setRequest(request);
             sendingDataToNHCROrchestration.setName("Sending HL7 Messages to NHCR");

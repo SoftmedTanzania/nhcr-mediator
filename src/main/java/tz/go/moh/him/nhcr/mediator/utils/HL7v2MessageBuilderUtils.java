@@ -85,20 +85,20 @@ public class HL7v2MessageBuilderUtils {
     /**
      * Creates an QRY A19 message.
      *
-     * @param sendingApplication   The sending Application.
-     * @param facilityHfrCode      The facility HFR code.
-     * @param receivingFacility    The receiving facility.
-     * @param receivingApplication The receiving Application.
-     * @param securityAccessToken  The sending facility security token.
-     * @param messageControlId     The number or other identifier that uniquely identifies the message
-     * @param queryDateTime        The query date
-     * @param id                   The client id
-     * @param idType               The client id type
-     * @param whatQualifier        The What User Qualifier
-     * @param startDateTime        The When Data start date/time
-     * @param endDateTime          The When Data end date/time
-     * @param offset               The Offset
-     * @param limit                The Limit
+     * @param sendingApplication    The sending Application.
+     * @param facilityHfrCode       The facility HFR code.
+     * @param receivingFacility     The receiving facility.
+     * @param receivingApplication  The receiving Application.
+     * @param securityAccessToken   The sending facility security token.
+     * @param messageControlId      The number or other identifier that uniquely identifies the message
+     * @param queryDateTime         The query date
+     * @param id                    The client id
+     * @param idType                The client id type
+     * @param whatQualifier         The What User Qualifier
+     * @param startDateTime         The When Data start date/time
+     * @param endDateTime           The When Data end date/time
+     * @param offset                The Offset
+     * @param limit                 The Limit
      * @param otherQrySubjectFilter The other query subject filter
      * @return Returns the created QRY A19 message.
      * @throws IOException  The IOException thrown
@@ -295,6 +295,15 @@ public class HL7v2MessageBuilderUtils {
         //Populating the client date of birth.
         Date dob = DateUtils.checkDateFormatStrings(client.getDob());
         pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(nhcrDateFormat.format(dob));
+
+        //Populating the client death status.
+        pidSegment.getPatientDeathIndicator().setValue(client.isDeathStatus() ? "Y" : "N");
+
+        if (client.isDeathStatus()) {
+            //Populating the client death date.
+            Date deathDate = DateUtils.checkDateFormatStrings(client.getDeathDate());
+            pidSegment.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(nhcrDateFormat.format(deathDate));
+        }
 
         //Populating the client sex.
         if (client.getSex().equalsIgnoreCase("male")) {
@@ -708,6 +717,18 @@ public class HL7v2MessageBuilderUtils {
                     client.setDob(emrDateFormat.format(nhcrDateFormat.parse(pid.getDateTimeOfBirth().getTimeOfAnEvent().getValue())));
                 } catch (ParseException e) {
                     throw new HL7Exception("Unable to parse the date of birth");
+                }
+            }
+
+            //Set Client Death Status
+            client.setDeathStatus(pid.getPatientDeathIndicator().getValue().equalsIgnoreCase("Y"));
+
+            // Set Death Date
+            if (pid.getPatientDeathDateAndTime() != null && !pid.getPatientDeathDateAndTime().getTimeOfAnEvent().isEmpty()) {
+                try {
+                    client.setDeathDate(emrDateFormat.format(nhcrDateFormat.parse(pid.getPatientDeathDateAndTime().getTimeOfAnEvent().getValue())));
+                } catch (ParseException e) {
+                    throw new HL7Exception("Unable to parse the death date");
                 }
             }
 
