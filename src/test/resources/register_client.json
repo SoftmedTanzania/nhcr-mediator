@@ -57,6 +57,8 @@
       },
       "sex": "FEMALE",
       "dob": "2020-03-15",
+      "deathDate": "2021-03-15",
+      "deathStatus": true,
       "permanentAddress": {
         "region": "Manyara",
         "council": "Kiteto",
