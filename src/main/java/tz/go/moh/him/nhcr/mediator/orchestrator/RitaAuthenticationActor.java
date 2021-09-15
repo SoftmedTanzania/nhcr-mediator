@@ -105,6 +105,9 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
 
         //Requesting for authentication token from RITA
         host = scheme + "://" + host + ":" + "8081" + authenticationPath;
+
+        log.info("host = "+host);
+
         List<Pair<String, String>> parameters = new ArrayList<>();
         parameters.add(new ImmutablePair<>("grant_type", "client_credentials"));
 
