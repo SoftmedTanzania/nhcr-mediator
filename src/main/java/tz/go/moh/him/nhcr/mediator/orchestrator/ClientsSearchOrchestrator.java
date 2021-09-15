@@ -113,6 +113,11 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
                 log.info("Sending data to Rita Client Search Actor");
                 ActorRef actor = getContext().actorOf(Props.create(RitaActor.class, config));
                 actor.tell(request, getSelf());
+            }
+            if (message.getType().equalsIgnoreCase("NI")) {
+                log.info("Sending data to NIDA Client Search Actor");
+                ActorRef actor = getContext().actorOf(Props.create(NidaActor.class, config));
+                actor.tell(request, getSelf());
             } else
                 request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
         }

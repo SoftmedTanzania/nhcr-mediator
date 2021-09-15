@@ -14,24 +14,12 @@ public class NidaRequestPayload {
     @XmlElement(name = "FINGERCODE")
     String fingerCode;
 
-    public String getNin() {
-        return nin;
-    }
-
     public void setNin(String nin) {
         this.nin = nin;
     }
 
-    public String getFingerImage() {
-        return fingerImage;
-    }
-
     public void setFingerImage(String fingerImage) {
         this.fingerImage = fingerImage;
-    }
-
-    public String getFingerCode() {
-        return fingerCode;
     }
 
     public void setFingerCode(String fingerCode) {

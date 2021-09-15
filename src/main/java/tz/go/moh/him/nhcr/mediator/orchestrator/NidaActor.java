@@ -3,6 +3,8 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 import akka.actor.ActorSelection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpHeaders;
@@ -13,11 +15,7 @@ import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPResponse;
 import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
-import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.ClientId;
-import tz.go.moh.him.nhcr.mediator.domain.ClientLinkage;
-import tz.go.moh.him.nhcr.mediator.domain.EmrClientsSearchMessage;
-import tz.go.moh.him.nhcr.mediator.domain.RitaResponse;
+import tz.go.moh.him.nhcr.mediator.domain.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,9 +27,9 @@ import static tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils.NATIONA
 import static tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils.VOTERS_ID;
 
 /**
- * Represents a RITA Clients Search orchestrator.
+ * Represents a NIDA Clients Search orchestrator.
  */
-public class RitaActor extends BaseOrchestrator {
+public class NidaActor extends BaseOrchestrator {
     /**
      * The serializer.
      */
@@ -47,11 +45,11 @@ public class RitaActor extends BaseOrchestrator {
     private MediatorHTTPRequest workingRequest;
 
     /**
-     * Initializes a new instance of the {@link RitaActor} class.
+     * Initializes a new instance of the {@link NidaActor} class.
      *
      * @param config The configuration.
      */
-    public RitaActor(MediatorConfig config) {
+    public NidaActor(MediatorConfig config) {
         super(config);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -68,6 +66,30 @@ public class RitaActor extends BaseOrchestrator {
         EmrClientsSearchMessage message = gson.fromJson(request.getBody(), EmrClientsSearchMessage.class);
 
         log.info("Received request: " + request.getHost() + " " + request.getMethod() + " " + request.getPath());
+
+        NidaRequestPayload nidaRequestPayload = new NidaRequestPayload();
+        nidaRequestPayload.setNin(message.getId());
+
+        if (message.getFingerPrint() != null && message.getFingerPrint().getCode() != null && message.getFingerPrint().getImage() != null) {
+            nidaRequestPayload.setFingerCode(message.getFingerPrint().getCode());
+            nidaRequestPayload.setFingerImage(message.getFingerPrint().getImage());
+        }else{
+            request.getRequestHandler().tell(new FinishRequest("Missing FingerPrint or FingerPrint Code", "text/plain", HttpStatus.SC_NOT_FOUND), getSelf());
+            return;
+        }
+
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(NidaRequestPayload.class);
+
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+        // output pretty printed
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        // output to console
+        jaxbMarshaller.marshal(nidaRequestPayload, System.out);
+
+
 
         Map<String, String> headers = new HashMap<>();
 

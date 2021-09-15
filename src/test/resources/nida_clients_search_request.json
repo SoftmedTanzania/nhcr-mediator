@@ -1,0 +1,10 @@
+{
+  "sendingApplication": "Afya-Care",
+  "facilityHFRCode": "104962-6",
+  "id": "06108133-18158-34499-44",
+  "type": "NI",
+  "fingerPrint": {
+    "image": "Fingerprint Image base64",
+    "code": "R1, R2, R3, R4, R5, L1, L2, L3, L4, L5"
+  }
+}
