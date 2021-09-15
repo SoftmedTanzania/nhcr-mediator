@@ -99,6 +99,7 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
                     byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
                     String authHeader = "Basic " + new String(encodedAuth);
                     headers.put(HttpHeaders.AUTHORIZATION, authHeader);
+                    headers.put(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
                 }
             }
         }
@@ -109,10 +110,12 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
         log.info("host = "+host);
 
         List<Pair<String, String>> parameters = new ArrayList<>();
-        parameters.add(new ImmutablePair<>("grant_type", "client_credentials"));
+
+        JSONObject object = new JSONObject();
+        object.put("grant_type","client_credentials");
 
         MediatorHTTPRequest ritaAuthenticationRequest = new MediatorHTTPRequest(request.getRequestHandler(), getSelf(), "Request for Authentication Token", "POST",
-                host, null, headers, parameters);
+                host, object.toString(), headers, parameters);
 
         //Initialize http connector
         ActorSelection httpConnector = getContext().actorSelection(config.userPathFor("http-connector"));
