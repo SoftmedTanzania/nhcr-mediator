@@ -59,7 +59,7 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
      */
     @Override
     protected void onReceiveRequestInternal(MediatorHTTPRequest request) throws Exception {
-
+        log.info("onReceiveRequestInternal");
         Map<String, String> headers = new HashMap<>();
 
         headers.put(HttpHeaders.CONTENT_TYPE, "multipart/form-data");
@@ -72,14 +72,14 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
         String password;
 
         if (config.getDynamicConfig().isEmpty()) {
-            log.debug("Dynamic config is empty, using config from mediator.properties");
+            log.info("Dynamic config is empty, using config from mediator.properties");
 
             host = config.getProperty("rita.host");
             port = Integer.parseInt(config.getProperty("rita.port"));
             authenticationPath = config.getProperty("rita.authenticationPath");
             scheme = config.getProperty("rita.scheme");
         } else {
-            log.debug("Using dynamic config");
+            log.info("Using dynamic config");
 
             JSONObject destinationProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("ritaConnectionProperties");
 
@@ -104,7 +104,7 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
         }
 
         //Requesting for authentication token from RITA
-        host = scheme + "://" + host + ":" + port + authenticationPath;
+        host = scheme + "://" + host + ":" + "8081" + authenticationPath;
         List<Pair<String, String>> parameters = new ArrayList<>();
         parameters.add(new ImmutablePair<>("grant_type", "client_credentials"));
 
