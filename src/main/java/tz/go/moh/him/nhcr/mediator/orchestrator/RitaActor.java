@@ -3,8 +3,6 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 import akka.actor.ActorSelection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -16,7 +14,6 @@ import org.openhim.mediator.engine.messages.MediatorHTTPResponse;
 import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
 import tz.go.moh.him.nhcr.mediator.domain.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,21 +30,18 @@ public class RitaActor extends BaseOrchestrator {
      * The serializer.
      */
     private static final JsonSerializer serializer = new JsonSerializer();
-
+    /**
+     * The Rita Authentication Response.
+     */
+    private final RitaAuthenticationResponse ritaAuthenticationResponse;
     /**
      * The Gson Instance used for serialization and deserialization of jsons
      */
     public Gson gson;
-
     /**
      * The working request.
      */
     private MediatorHTTPRequest workingRequest;
-
-    /**
-     * The Rita Authentication Response.
-     */
-    private RitaAuthenticationResponse ritaAuthenticationResponse;
 
     /**
      * Initializes a new instance of the {@link RitaActor} class.
@@ -105,7 +99,7 @@ public class RitaActor extends BaseOrchestrator {
         }
 
         if (ritaAuthenticationResponse != null && ritaAuthenticationResponse.getAccessToken() != null) {
-            String authHeader = "Bearer " + new String(ritaAuthenticationResponse.getAccessToken());
+            String authHeader = "Bearer " + ritaAuthenticationResponse.getAccessToken();
             headers.put(HttpHeaders.AUTHORIZATION, authHeader);
         }
 
