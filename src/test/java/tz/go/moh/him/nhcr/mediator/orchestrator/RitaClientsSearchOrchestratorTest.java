@@ -26,7 +26,7 @@ public class RitaClientsSearchOrchestratorTest extends BaseOrchestratorTest {
     /**
      * The orchestrator.
      */
-    private final ActorRef orchestrator = system.actorOf(Props.create(RitaActor.class, configuration));
+    private final ActorRef orchestrator = system.actorOf(Props.create(RitaAuthenticationActor.class, configuration));
 
     /**
      * Tests the mediator with a request with token headers.
