@@ -8,7 +8,9 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.json.JSONObject;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
@@ -111,11 +113,13 @@ public class RitaAuthenticationActor extends BaseOrchestrator {
 
         List<Pair<String, String>> parameters = new ArrayList<>();
 
-        JSONObject object = new JSONObject();
-        object.put("grant_type","client_credentials");
+        HttpEntity entity = MultipartEntityBuilder
+                .create()
+                .addTextBody("grant_type", "client_credentials")
+                .build();
 
         MediatorHTTPRequest ritaAuthenticationRequest = new MediatorHTTPRequest(request.getRequestHandler(), getSelf(), "Request for Authentication Token", "POST",
-                host, object.toString(), headers, parameters);
+                host, entity.toString(), headers, parameters);
 
         //Initialize http connector
         ActorSelection httpConnector = getContext().actorSelection(config.userPathFor("http-connector"));
