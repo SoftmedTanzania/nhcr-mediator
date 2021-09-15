@@ -13,6 +13,7 @@ import java.util.Map;
  * Represents a mock destination.
  */
 public class MockRita extends MockHTTPConnector {
+    private boolean isRequestForToken;
 
     /**
      * Gets the response.
@@ -22,7 +23,10 @@ public class MockRita extends MockHTTPConnector {
     @Override
     public String getResponse() {
         try {
-            return IOUtils.toString(RitaClientsSearchOrchestratorTest.class.getClassLoader().getResourceAsStream("rita_success_response.json"));
+            if (isRequestForToken)
+                return IOUtils.toString(RitaClientsSearchOrchestratorTest.class.getClassLoader().getResourceAsStream("rita_success_authentication_response.json"));
+            else
+                return IOUtils.toString(RitaClientsSearchOrchestratorTest.class.getClassLoader().getResourceAsStream("rita_success_response.json"));
         } catch (Exception e) {
             return null;
         }
@@ -55,6 +59,13 @@ public class MockRita extends MockHTTPConnector {
      */
     @Override
     public void executeOnReceive(MediatorHTTPRequest msg) {
-        Assert.assertTrue(msg.getUri().contains("?pin=627931576839"));
+        if (msg.getOrchestration().equalsIgnoreCase("Request for Authentication Token")) {
+            Assert.assertTrue(msg.getUri().contains("/oauth/token"));
+            isRequestForToken = true;
+        } else {
+            Assert.assertTrue(msg.getUri().contains("?pin=627931576839"));
+            Assert.assertTrue(msg.getHeaders().get("Authorization").contains("asdda-ffaf-affafa-afffafaf"));
+            isRequestForToken = false;
+        }
     }
 }

@@ -3,7 +3,6 @@ package tz.go.moh.him.nhcr.mediator.orchestrator;
 import akka.actor.ActorSelection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -13,13 +12,8 @@ import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPResponse;
 import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
-import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.ClientId;
-import tz.go.moh.him.nhcr.mediator.domain.ClientLinkage;
-import tz.go.moh.him.nhcr.mediator.domain.EmrClientsSearchMessage;
-import tz.go.moh.him.nhcr.mediator.domain.RitaResponse;
+import tz.go.moh.him.nhcr.mediator.domain.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +30,10 @@ public class RitaActor extends BaseOrchestrator {
      * The serializer.
      */
     private static final JsonSerializer serializer = new JsonSerializer();
-
+    /**
+     * The Rita Authentication Response.
+     */
+    private final RitaAuthenticationResponse ritaAuthenticationResponse;
     /**
      * The Gson Instance used for serialization and deserialization of jsons
      */
@@ -51,8 +48,9 @@ public class RitaActor extends BaseOrchestrator {
      *
      * @param config The configuration.
      */
-    public RitaActor(MediatorConfig config) {
+    public RitaActor(MediatorConfig config, RitaAuthenticationResponse ritaAuthenticationResponse) {
         super(config);
+        this.ritaAuthenticationResponse = ritaAuthenticationResponse;
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
     }
@@ -87,36 +85,27 @@ public class RitaActor extends BaseOrchestrator {
 
             host = config.getProperty("rita.host");
             port = Integer.parseInt(config.getProperty("rita.port"));
-            path = config.getProperty("rita.path");
+            path = config.getProperty("rita.personDetailsPath");
             scheme = config.getProperty("rita.scheme");
         } else {
             log.debug("Using dynamic config");
 
-            JSONObject destinationProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("destinationConnectionProperties");
+            JSONObject destinationProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("ritaConnectionProperties");
 
             host = destinationProperties.getString("ritaHost");
             port = destinationProperties.getInt("ritaPort");
             path = destinationProperties.getString("ritaPath");
             scheme = destinationProperties.getString("ritaScheme");
+        }
 
-            if (destinationProperties.has("ritaUsername") && destinationProperties.has("ritaPassword")) {
-                username = destinationProperties.getString("ritaUsername");
-                password = destinationProperties.getString("ritaPassword");
-
-                // if we have a username and a password
-                // we want to add the username and password as the Basic Auth header in the HTTP request
-                if (username != null && !"".equals(username) && password != null && !"".equals(password)) {
-                    String auth = username + ":" + password;
-                    byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-                    String authHeader = "Basic " + new String(encodedAuth);
-                    headers.put(HttpHeaders.AUTHORIZATION, authHeader);
-                }
-            }
+        if (ritaAuthenticationResponse != null && ritaAuthenticationResponse.getAccessToken() != null) {
+            String authHeader = "Bearer " + ritaAuthenticationResponse.getAccessToken();
+            headers.put(HttpHeaders.AUTHORIZATION, authHeader);
         }
 
         host = scheme + "://" + host + ":" + port + path + "?pin=" + message.getId();
 
-        MediatorHTTPRequest ritaRequest = new MediatorHTTPRequest(request.getRequestHandler(), getSelf(), host, "GET",
+        MediatorHTTPRequest ritaRequest = new MediatorHTTPRequest(request.getRequestHandler(), getSelf(), "Get Person Details from RITA", "GET",
                 host, null, headers, parameters);
 
         ActorSelection httpConnector = getContext().actorSelection(config.userPathFor("http-connector"));
