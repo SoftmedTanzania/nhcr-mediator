@@ -37,6 +37,20 @@ public class RitaAuthenticationResponse {
     @JsonProperty("scope")
     private String scope;
 
+    /**
+     * The received error code.
+     */
+    @SerializedName("error")
+    @JsonProperty("error")
+    private String error;
+
+    /**
+     * The received error description from rita.
+     */
+    @SerializedName("error_description")
+    @JsonProperty("error_description")
+    private String errorDescription;
+
     public String getAccessToken() {
         return accessToken;
     }
@@ -67,5 +81,21 @@ public class RitaAuthenticationResponse {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 }
