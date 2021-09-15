@@ -211,7 +211,7 @@ public class RitaActor extends BaseOrchestrator {
             JSONObject ritaProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("ritaConnectionProperties");
             host = ritaProperties.getString("ritaHost");
             port = ritaProperties.getInt("ritaAuthenticationPort");
-            authenticationPath = config.getProperty("ritaAuthenticationPath");
+            authenticationPath = ritaProperties.getString("ritaAuthenticationPath");
             scheme = ritaProperties.getString("ritaScheme");
 
             Map<String, String> headers = new HashMap<>();
