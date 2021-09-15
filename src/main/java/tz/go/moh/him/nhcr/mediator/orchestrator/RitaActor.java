@@ -96,7 +96,7 @@ public class RitaActor extends BaseOrchestrator {
 
             host = destinationProperties.getString("ritaHost");
             port = destinationProperties.getInt("ritaPort");
-            path = destinationProperties.getString("ritaPath");
+            path = destinationProperties.getString("ritaPersonDetailsPath");
             scheme = destinationProperties.getString("ritaScheme");
         }
 
@@ -211,7 +211,7 @@ public class RitaActor extends BaseOrchestrator {
             JSONObject ritaProperties = new JSONObject(config.getDynamicConfig()).getJSONObject("ritaConnectionProperties");
             host = ritaProperties.getString("ritaHost");
             port = ritaProperties.getInt("ritaAuthenticationPort");
-            authenticationPath = config.getProperty("rita.authenticationPath");
+            authenticationPath = config.getProperty("ritaAuthenticationPath");
             scheme = ritaProperties.getString("ritaScheme");
 
             Map<String, String> headers = new HashMap<>();
