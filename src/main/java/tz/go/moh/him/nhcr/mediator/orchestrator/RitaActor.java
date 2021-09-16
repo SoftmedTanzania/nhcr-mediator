@@ -159,26 +159,6 @@ public class RitaActor extends BaseOrchestrator {
 
         client.setDeathStatus(!ritaResponse.getPersonStatus().equalsIgnoreCase("ALIVE"));
 
-
-        List<ClientId> clientIds = new ArrayList<>();
-        if (ritaResponse.getNin() != null) {
-            ClientId nationalId = new ClientId();
-            nationalId.setId(String.valueOf(ritaResponse.getNin()));
-            nationalId.setType(NATIONAL_ID);
-
-            clientIds.add(nationalId);
-        }
-
-        if (ritaResponse.getVoterId() != null) {
-            ClientId voterId = new ClientId();
-            voterId.setId(String.valueOf(ritaResponse.getVoterId()));
-            voterId.setType(VOTERS_ID);
-
-            clientIds.add(voterId);
-        }
-
-        client.setIds(clientIds);
-
         if (ritaResponse.getMotherPin() != null) {
             ClientLinkage motherLinkage = new ClientLinkage();
             motherLinkage.setId(ritaResponse.getMotherPin());
