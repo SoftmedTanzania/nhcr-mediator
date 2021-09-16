@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils.NATIONAL_ID;
-import static tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils.VOTERS_ID;
-
 /**
  * Represents a RITA Clients Search orchestrator.
  */
@@ -143,7 +140,9 @@ public class RitaActor extends BaseOrchestrator {
         }
     }
 
-    private Client convertToClient(RitaResponse ritaResponse) {
+    private List<Client> convertToClient(RitaResponse ritaResponse) {
+        List<Client> results = new ArrayList<>();
+
         Client client = new Client();
 
         client.setFirstName(ritaResponse.getFirstName());
@@ -175,7 +174,9 @@ public class RitaActor extends BaseOrchestrator {
             client.setOtherLinkages(fatherLinkage);
         }
 
-        return client;
+        results.add(client);
+
+        return results;
     }
 
     private RitaAuthenticationResponse getRitaAuthenticationToken() {
