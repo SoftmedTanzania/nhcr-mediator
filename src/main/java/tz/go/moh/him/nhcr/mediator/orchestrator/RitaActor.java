@@ -132,8 +132,12 @@ public class RitaActor extends BaseOrchestrator {
                 workingRequest.getRequestHandler().tell(new FinishRequest(gson.toJson(ritaAuthenticationResponse), "text/json", HttpStatus.SC_INTERNAL_SERVER_ERROR), getSelf());
             }
         } else if (message instanceof MediatorHTTPResponse) {
-            RitaResponse ritaResponse = serializer.deserialize(((MediatorHTTPResponse) message).getBody(), RitaResponse.class);
-            workingRequest.getRequestHandler().tell(new FinishRequest(gson.toJson(convertToClient(ritaResponse)), "text/json", HttpStatus.SC_OK), getSelf());
+            if (((MediatorHTTPResponse) message).getStatusCode() == HttpStatus.SC_OK) {
+                RitaResponse ritaResponse = serializer.deserialize(((MediatorHTTPResponse) message).getBody(), RitaResponse.class);
+                workingRequest.getRequestHandler().tell(new FinishRequest(gson.toJson(convertToClient(ritaResponse)), "text/json", HttpStatus.SC_OK), getSelf());
+            } else {
+                workingRequest.getRequestHandler().tell(((MediatorHTTPResponse) message).toFinishRequest(), getSelf());
+            }
         } else {
             unhandled(message);
         }
