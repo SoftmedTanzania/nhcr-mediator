@@ -120,7 +120,19 @@
           "type": "number"
         },
         {
-          "param": "ritaPath",
+          "param": "ritaAuthenticationPort",
+          "displayName": "RITA Authentication Port Number",
+          "description": "The port number of sending RITA Authentication Requests. e.g 8080",
+          "type": "number"
+        },
+        {
+          "param": "ritaAuthenticationPath",
+          "displayName": "RITA Authentication Path for Requesting Tokens",
+          "description": "The the path to the correct endpoint for requesting OAuth 2.0 authentication tokens.",
+          "type": "string"
+        },
+        {
+          "param": "ritaPersonDetailsPath",
           "displayName": "RITA Person Details By ULN Path",
           "description": "The the path to the correct endpoint for searching for clients details in RITA from the HIM.",
           "type": "string"

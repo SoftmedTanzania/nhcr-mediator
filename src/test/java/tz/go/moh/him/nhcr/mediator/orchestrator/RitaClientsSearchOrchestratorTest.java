@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -16,6 +17,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 /**
  * Contains tests for the {@link ClientsSearchOrchestrator} class.
@@ -71,7 +75,7 @@ public class RitaClientsSearchOrchestratorTest extends BaseOrchestratorTest {
                     }.get();
             int responseStatus = 0;
             String response = null;
-            
+
             for (Object o : out) {
                 if (o instanceof FinishRequest) {
                     responseStatus = ((FinishRequest) o).getResponseStatus();
@@ -85,7 +89,7 @@ public class RitaClientsSearchOrchestratorTest extends BaseOrchestratorTest {
 
             InputStream successfulResponseStream = RitaClientsSearchOrchestratorTest.class.getClassLoader().getResourceAsStream("successful_client_search_results.json");
             Assert.assertNotNull(successfulResponseStream);
-            Assert.assertEquals((IOUtils.toString(successfulResponseStream)),response);
+            Assert.assertEquals((IOUtils.toString(successfulResponseStream)), response);
         }};
     }
 }
