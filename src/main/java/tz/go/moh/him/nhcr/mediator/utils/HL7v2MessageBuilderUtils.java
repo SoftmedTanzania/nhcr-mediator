@@ -20,12 +20,7 @@ import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
 import org.codehaus.plexus.util.StringUtils;
 import tz.go.moh.him.mediator.core.exceptions.ArgumentException;
-import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.ClientAddress;
-import tz.go.moh.him.nhcr.mediator.domain.ClientConflictResolutions;
-import tz.go.moh.him.nhcr.mediator.domain.ClientId;
-import tz.go.moh.him.nhcr.mediator.domain.ClientInsurance;
-import tz.go.moh.him.nhcr.mediator.domain.ClientProgram;
+import tz.go.moh.him.nhcr.mediator.domain.*;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.group.ZDR_A19_EVNPIDPD1NK1PV1PV2DB1OBXAL1DG1DRGPR1ROLGT1IN1IN2IN3ACCUB1UB2ZXT;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZDR_A19;
 import tz.go.moh.him.nhcr.mediator.hl7v2.v231.message.ZXT_A01;
@@ -48,6 +43,10 @@ public class HL7v2MessageBuilderUtils {
      * The national id.
      */
     public static final String NATIONAL_ID = "NATIONAL_ID";
+    /**
+     * The ULN.
+     */
+    public static final String ULN = "ULN";
     /**
      * The voters id.
      */
@@ -396,11 +395,8 @@ public class HL7v2MessageBuilderUtils {
         //Populating phone number
         pidSegment.getPhoneNumberHome(0).getTelecommunicationUseCode().setValue("PRN");
         pidSegment.getPhoneNumberHome(0).getTelecommunicationEquipmentType().setValue("PH");
-        pidSegment.getPhoneNumberHome(0).getCountryCode().setValue(client.getCountryCode());
-        pidSegment.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber());
-
-        //Populating uln
-        pidSegment.getSSNNumberPatient().setValue(client.getUln());
+        pidSegment.getPhoneNumberHome(0).getCountryCode().setValue(client.getPhoneNumber().getPrefix());
+        pidSegment.getPhoneNumberHome(0).getPhoneNumber().setValue(client.getPhoneNumber().getNumber());
 
         for (ClientId clientId : client.getIds()) {
             if (clientId.getType().equalsIgnoreCase("DRIVERS_LICENSE_ID")) {
@@ -409,6 +405,9 @@ public class HL7v2MessageBuilderUtils {
             } else if (clientId.getType().equalsIgnoreCase("NATIONAL_ID")) {
                 //Populating national ID
                 pidSegment.getNationality().getIdentifier().setValue(clientId.getId());
+            } else if (clientId.getType().equalsIgnoreCase("ULN")) {
+                //Populating uln
+                pidSegment.getSSNNumberPatient().setValue(clientId.getId());
             }
         }
     }
@@ -734,12 +733,17 @@ public class HL7v2MessageBuilderUtils {
 
             // Set phone number and country code
             if (!pid.getPhoneNumberHome(0).isEmpty()) {
-                client.setPhoneNumber(pid.getPhoneNumberHome(0).getPhoneNumber().getValue());
-                client.setCountryCode(pid.getPhoneNumberHome(0).getCountryCode().getValue());
+                PhoneNumber phoneNumber = new PhoneNumber();
+                phoneNumber.setPrefix(pid.getPhoneNumberHome(0).getCountryCode().getValue());
+                phoneNumber.setNumber(pid.getPhoneNumberHome(0).getPhoneNumber().getValue());
+
+                client.setPhoneNumber(phoneNumber);
             }
 
             // Set the ULN
-            client.setUln(pid.getSSNNumberPatient().getValue());
+            if (!pid.getSSNNumberPatient().isEmpty()) {
+                client.getIds().add(new ClientId(ULN, pid.getSSNNumberPatient().getValue()));
+            }
 
             // Set the other name
             if (pid.getPatientAlias(0) != null) {
