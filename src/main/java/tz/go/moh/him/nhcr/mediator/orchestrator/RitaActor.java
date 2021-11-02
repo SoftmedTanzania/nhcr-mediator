@@ -19,10 +19,9 @@ import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
 import tz.go.moh.him.nhcr.mediator.domain.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils.*;
 
 /**
  * Represents a RITA Clients Search orchestrator.
@@ -140,15 +139,12 @@ public class RitaActor extends BaseOrchestrator {
         }
     }
 
-    private List<Client> convertToClient(RitaResponse ritaResponse) {
-        List<Client> results = new ArrayList<>();
-
+    private Client convertToClient(RitaResponse ritaResponse) {
         Client client = new Client();
 
         client.setFirstName(ritaResponse.getFirstName());
         client.setMiddleName(ritaResponse.getMiddleName());
         client.setLastName(ritaResponse.getLastName());
-        client.setUln(String.valueOf(ritaResponse.getPin()));
 
         if (ritaResponse.getSex().equalsIgnoreCase("F"))
             client.setSex("Female");
@@ -158,25 +154,51 @@ public class RitaActor extends BaseOrchestrator {
 
         client.setDeathStatus(!ritaResponse.getPersonStatus().equalsIgnoreCase("ALIVE"));
 
+
+        List<ClientId> clientIds = new ArrayList<>();
+        if (ritaResponse.getNin() != null) {
+            ClientId nationalId = new ClientId();
+            nationalId.setId(String.valueOf(ritaResponse.getNin()));
+            nationalId.setType(NATIONAL_ID);
+
+            clientIds.add(nationalId);
+        }
+
+        if (ritaResponse.getPin() != null) {
+            ClientId uln = new ClientId();
+            uln.setId(String.valueOf(ritaResponse.getPin()));
+            uln.setType(ULN);
+
+            clientIds.add(uln);
+        }
+
+        if (ritaResponse.getVoterId() != null) {
+            ClientId voterId = new ClientId();
+            voterId.setId(String.valueOf(ritaResponse.getVoterId()));
+            voterId.setType(VOTERS_ID);
+
+            clientIds.add(voterId);
+        }
+
+        client.setIds(clientIds);
+
         if (ritaResponse.getMotherPin() != null) {
             ClientLinkage motherLinkage = new ClientLinkage();
             motherLinkage.setId(ritaResponse.getMotherPin());
-            motherLinkage.setSourceOfId("ULN");
+            motherLinkage.setSourceOfId(ULN);
             motherLinkage.setTypeOfLinkage("Mother");
-            client.setFamilyLinkages(motherLinkage);
+            client.setFamilyLinkages(Arrays.asList(motherLinkage));
         }
 
         if (ritaResponse.getFatherPin() != null) {
             ClientLinkage fatherLinkage = new ClientLinkage();
             fatherLinkage.setId(ritaResponse.getFatherPin());
-            fatherLinkage.setSourceOfId("ULN");
+            fatherLinkage.setSourceOfId(ULN);
             fatherLinkage.setTypeOfLinkage("Father");
-            client.setOtherLinkages(fatherLinkage);
+            client.setOtherLinkages(Arrays.asList(fatherLinkage));
         }
 
-        results.add(client);
-
-        return results;
+        return client;
     }
 
     private RitaAuthenticationResponse getRitaAuthenticationToken() {

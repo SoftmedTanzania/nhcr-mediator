@@ -10,8 +10,11 @@
       "middleName": "mname",
       "lastName": "lname",
       "otherName": "oname",
-      "uln": "981426-6090",
       "ids": [
+        {
+          "id": "981426-6090",
+          "type": "ULN"
+        },
         {
           "id": "12345",
           "type": "NATIONAL_ID"
@@ -75,18 +78,20 @@
         "region": "Arusha",
         "council": "Arusha Urban"
       },
-      "countryCode": "255",
-      "phoneNumber": "0754886287",
-      "familyLinkages": {
+      "phoneNumber": {
+        "prefix": "255",
+        "number": "754886287"
+      },
+      "familyLinkages": [{
         "id": "12232131",
         "sourceOfId": "NATIONAL_ID",
         "typeOfLinkage": "Parent"
-      },
-      "otherLinkages": {
+      }],
+      "otherLinkages": [{
         "id": "12232131",
         "sourceOfId": "NATIONAL_ID",
         "typeOfLinkage": "Treatment Supporter"
-      },
+      }],
       "placeEncountered": "101335-8"
     }
   ]

@@ -32,6 +32,13 @@ public class EmrClientsSearchMessage extends EmrMessage {
     @JsonProperty("offset")
     private String offset;
 
+    /**
+     * fingerPrint
+     */
+    @SerializedName("fingerPrint")
+    @JsonProperty("fingerPrint")
+    private FingerPrint fingerPrint;
+
     public String getId() {
         return id;
     }
@@ -63,4 +70,45 @@ public class EmrClientsSearchMessage extends EmrMessage {
     public void setOffset(String offset) {
         this.offset = offset;
     }
+
+    public FingerPrint getFingerPrint() {
+        return fingerPrint;
+    }
+
+    public void setFingerPrint(FingerPrint fingerPrint) {
+        this.fingerPrint = fingerPrint;
+    }
+
+    public class FingerPrint {
+        /**
+         * finger Print Image
+         */
+        @SerializedName("image")
+        @JsonProperty("image")
+        private String image;
+
+        /**
+         * finger Print Code e.g (R1, R2, R3, R4, R5, L1, L2, L3, L4, L5)
+         */
+        @SerializedName("code")
+        @JsonProperty("code")
+        private String code;
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+    }
+
 }

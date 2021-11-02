@@ -107,7 +107,7 @@ public class ClientsSearchOrchestrator extends BaseOrchestrator {
         clients = HL7v2MessageBuilderUtils.parseAdrA19Message(response);
 
         if (clients.size() > 0) {
-            request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients), "text/json", HttpStatus.SC_OK), getSelf());
+            request.getRequestHandler().tell(new FinishRequest(gson.toJson(clients.get(0)), "text/json", HttpStatus.SC_OK), getSelf());
         } else {
             if (message.getType().equalsIgnoreCase("ULN")) {
                 log.info("Sending data to Rita Client Search Actor");

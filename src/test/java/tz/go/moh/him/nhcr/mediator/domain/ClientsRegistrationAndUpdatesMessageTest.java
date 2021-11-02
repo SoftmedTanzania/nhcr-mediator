@@ -12,7 +12,9 @@ import tz.go.moh.him.nhcr.mediator.utils.gsonTypeAdapter.AttributePostOrUpdateSe
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Contains tests for the {@link EmrClientsRegistrationAndUpdatesMessage} class.
@@ -67,10 +69,11 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertEquals("mname", client.getMiddleName());
         Assert.assertEquals("lname", client.getLastName());
         Assert.assertEquals("oname", client.getOtherName());
-        Assert.assertEquals("981426-6090", client.getUln());
+        Assert.assertEquals("981426-6090", client.getIds().get(0).getId());
+        Assert.assertEquals("ULN", client.getIds().get(0).getType());
 
-        Assert.assertEquals("12345", client.getIds().get(0).getId());
-        Assert.assertEquals("NATIONAL_ID", client.getIds().get(0).getType());
+        Assert.assertEquals("12345", client.getIds().get(1).getId());
+        Assert.assertEquals("NATIONAL_ID", client.getIds().get(1).getType());
 
         Assert.assertEquals("12345", client.getPrograms().get(0).getId());
         Assert.assertEquals("CTC", client.getPrograms().get(0).getAssigningAuthority());
@@ -84,12 +87,12 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertEquals("Kiteto", client.getPermanentAddress().getCouncil());
         Assert.assertEquals("Ayasanda", client.getPermanentAddress().getWard());
         Assert.assertEquals("Robayambao", client.getPermanentAddress().getVillage());
-        Assert.assertEquals("255", client.getCountryCode());
-        Assert.assertEquals("0754886287", client.getPhoneNumber());
+        Assert.assertEquals("255", client.getPhoneNumber().getPrefix());
+        Assert.assertEquals("754886287", client.getPhoneNumber().getNumber());
 
-        Assert.assertEquals("12232131", client.getFamilyLinkages().getId());
-        Assert.assertEquals("NATIONAL_ID", client.getFamilyLinkages().getSourceOfId());
-        Assert.assertEquals("Parent", client.getFamilyLinkages().getTypeOfLinkage());
+        Assert.assertEquals("12232131", client.getFamilyLinkages().get(0).getId());
+        Assert.assertEquals("NATIONAL_ID", client.getFamilyLinkages().get(0).getSourceOfId());
+        Assert.assertEquals("Parent", client.getFamilyLinkages().get(0).getTypeOfLinkage());
 
         Assert.assertEquals("101335-8", client.getPlaceEncountered());
 
@@ -114,12 +117,19 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         client.setMiddleName("mname");
         client.setLastName("lname");
         client.setOtherName("oname");
-        client.setUln("981426-6090");
 
+        List<ClientId> clientIds = new ArrayList<>();
         ClientId nationalId = new ClientId();
         nationalId.setId("12345");
         nationalId.setType("NATIONAL_ID");
-        client.setIds(Arrays.asList(nationalId));
+        clientIds.add(nationalId);
+
+        ClientId uln = new ClientId();
+        nationalId.setId("981426-6090");
+        nationalId.setType("ULN");
+        clientIds.add(uln);
+
+        client.setIds(clientIds);
 
         ClientProgram ctcProgram = new ClientProgram();
         ctcProgram.setId("12345");
@@ -148,10 +158,13 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         linkage.setId("12232131");
         linkage.setSourceOfId("NATIONAL_ID");
         linkage.setTypeOfLinkage("Parent");
-        client.setFamilyLinkages(linkage);
+        client.setFamilyLinkages(Arrays.asList(linkage));
 
-        client.setCountryCode("255");
-        client.setPhoneNumber("0754886287");
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setNumber("754886287");
+        phoneNumber.setPrefix("255");
+
+        client.setPhoneNumber(phoneNumber);
         client.setPlaceEncountered("101335-8");
         emrClientsRegistrationAndUpdatesMessage.setClients(Arrays.asList(client));
 
@@ -178,7 +191,7 @@ public class ClientsRegistrationAndUpdatesMessageTest {
         Assert.assertTrue(json.contains("Ayasanda"));
         Assert.assertTrue(json.contains("Robayambao"));
         Assert.assertTrue(json.contains("255"));
-        Assert.assertTrue(json.contains("0754886287"));
+        Assert.assertTrue(json.contains("754886287"));
         Assert.assertTrue(json.contains("12232131"));
         Assert.assertTrue(json.contains("NATIONAL_ID"));
         Assert.assertTrue(json.contains("Parent"));

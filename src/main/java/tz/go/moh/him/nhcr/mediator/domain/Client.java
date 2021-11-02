@@ -50,13 +50,6 @@ public class Client {
     private String otherName;
 
     /**
-     * Client's uln
-     */
-    @SerializedName("uln")
-    @JsonProperty("uln")
-    private String uln;
-
-    /**
      * Client's ids list
      */
     @SerializedName("ids")
@@ -99,32 +92,25 @@ public class Client {
     private ClientAddress placeOfBirth;
 
     /**
-     * Client's Phone number country code
-     */
-    @SerializedName("countryCode")
-    @JsonProperty("countryCode")
-    private String countryCode;
-
-    /**
      * Client's Phone number
      */
     @SerializedName("phoneNumber")
     @JsonProperty("phoneNumber")
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     /**
      * Client's Family Linkage e.g Parent, Sibling e.t.c
      */
     @SerializedName("familyLinkages")
     @JsonProperty("familyLinkages")
-    private ClientLinkage familyLinkages;
+    private List<ClientLinkage> familyLinkages;
 
     /**
      * Client's Other Linkage Next of Kin
      */
     @SerializedName("otherLinkages")
     @JsonProperty("otherLinkages")
-    private ClientLinkage otherLinkages;
+    private List<ClientLinkage> otherLinkages;
 
     /**
      * Client's Sex
@@ -217,14 +203,6 @@ public class Client {
         this.otherName = otherName;
     }
 
-    public String getUln() {
-        return uln;
-    }
-
-    public void setUln(String uln) {
-        this.uln = uln;
-    }
-
     public List<ClientId> getIds() {
         return ids;
     }
@@ -273,35 +251,51 @@ public class Client {
         this.placeOfBirth = placeOfBirth;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public ClientInsurance getClientInsurance() {
+        return clientInsurance;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setClientInsurance(ClientInsurance clientInsurance) {
+        this.clientInsurance = clientInsurance;
     }
 
-    public String getPhoneNumber() {
+    public ClientAddress getPermanentClientAddress() {
+        return permanentClientAddress;
+    }
+
+    public void setPermanentClientAddress(ClientAddress permanentClientAddress) {
+        this.permanentClientAddress = permanentClientAddress;
+    }
+
+    public ClientAddress getResidentialClientAddress() {
+        return residentialClientAddress;
+    }
+
+    public void setResidentialClientAddress(ClientAddress residentialClientAddress) {
+        this.residentialClientAddress = residentialClientAddress;
+    }
+
+    public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public ClientLinkage getFamilyLinkages() {
+    public List<ClientLinkage> getFamilyLinkages() {
         return familyLinkages;
     }
 
-    public void setFamilyLinkages(ClientLinkage familyLinkages) {
+    public void setFamilyLinkages(List<ClientLinkage> familyLinkages) {
         this.familyLinkages = familyLinkages;
     }
 
-    public ClientLinkage getOtherLinkages() {
+    public List<ClientLinkage> getOtherLinkages() {
         return otherLinkages;
     }
 
-    public void setOtherLinkages(ClientLinkage otherLinkages) {
+    public void setOtherLinkages(List<ClientLinkage> otherLinkages) {
         this.otherLinkages = otherLinkages;
     }
 
