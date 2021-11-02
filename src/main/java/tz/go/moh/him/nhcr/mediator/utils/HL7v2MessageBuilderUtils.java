@@ -8,13 +8,7 @@ import ca.uhn.hl7v2.model.DataTypeException;
 import ca.uhn.hl7v2.model.v231.datatype.XAD;
 import ca.uhn.hl7v2.model.v231.message.ADT_A04;
 import ca.uhn.hl7v2.model.v231.message.QRY_A19;
-import ca.uhn.hl7v2.model.v231.segment.EVN;
-import ca.uhn.hl7v2.model.v231.segment.IN1;
-import ca.uhn.hl7v2.model.v231.segment.MRG;
-import ca.uhn.hl7v2.model.v231.segment.MSH;
-import ca.uhn.hl7v2.model.v231.segment.PID;
-import ca.uhn.hl7v2.model.v231.segment.QRD;
-import ca.uhn.hl7v2.model.v231.segment.QRF;
+import ca.uhn.hl7v2.model.v231.segment.*;
 import ca.uhn.hl7v2.parser.CustomModelClassFactory;
 import ca.uhn.hl7v2.parser.ModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
@@ -295,13 +289,16 @@ public class HL7v2MessageBuilderUtils {
         Date dob = DateUtils.checkDateFormatStrings(client.getDob());
         pidSegment.getDateTimeOfBirth().getTimeOfAnEvent().setValue(nhcrDateFormat.format(dob));
 
-        //Populating the client death status.
-        pidSegment.getPatientDeathIndicator().setValue(client.isDeathStatus() ? "Y" : "N");
+        if (client.getDeathDate() != null && !client.getDeathDate().isEmpty()) {
+            //Populating the client death status.
+            pidSegment.getPatientDeathIndicator().setValue("Y");
 
-        if (client.isDeathStatus()) {
             //Populating the client death date.
             Date deathDate = DateUtils.checkDateFormatStrings(client.getDeathDate());
             pidSegment.getPatientDeathDateAndTime().getTimeOfAnEvent().setValue(nhcrDateFormat.format(deathDate));
+        } else {
+            //Populating the client death status.
+            pidSegment.getPatientDeathIndicator().setValue("N");
         }
 
         //Populating the client sex.
@@ -718,9 +715,6 @@ public class HL7v2MessageBuilderUtils {
                     throw new HL7Exception("Unable to parse the date of birth");
                 }
             }
-
-            //Set Client Death Status
-            client.setDeathStatus(pid.getPatientDeathIndicator().getValue().equalsIgnoreCase("Y"));
 
             // Set Death Date
             if (pid.getPatientDeathDateAndTime() != null && !pid.getPatientDeathDateAndTime().getTimeOfAnEvent().isEmpty()) {

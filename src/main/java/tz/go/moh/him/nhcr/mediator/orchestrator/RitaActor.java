@@ -152,8 +152,6 @@ public class RitaActor extends BaseOrchestrator {
             client.setSex("Male");
         client.setDob(ritaResponse.getDateOfBirth());
 
-        client.setDeathStatus(!ritaResponse.getPersonStatus().equalsIgnoreCase("ALIVE"));
-
 
         List<ClientId> clientIds = new ArrayList<>();
         if (ritaResponse.getNin() != null) {
