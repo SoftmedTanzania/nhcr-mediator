@@ -14,7 +14,7 @@ public class EmrResponse {
     /**
      * The List of failed clients mrns.
      */
-    private List<FailedClientsMrn> FailedClientsMrns;
+    private List<FailedClientsMrn> failedClientsMrns;
 
     public Summary getSummary() {
         return summary;
@@ -25,11 +25,11 @@ public class EmrResponse {
     }
 
     public List<FailedClientsMrn> getFailedClientsMrns() {
-        return FailedClientsMrns;
+        return failedClientsMrns;
     }
 
     public void setFailedClientsMrns(List<FailedClientsMrn> FailedClientsMrns) {
-        this.FailedClientsMrns = FailedClientsMrns;
+        this.failedClientsMrns = FailedClientsMrns;
     }
 
     public static class Summary {
