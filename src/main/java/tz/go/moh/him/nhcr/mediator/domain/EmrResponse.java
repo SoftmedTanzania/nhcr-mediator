@@ -16,6 +16,12 @@ public class EmrResponse {
      */
     private List<FailedClientsMrn> failedClientsMrns;
 
+
+    /**
+     * The List of Successful clients mrns.
+     */
+    private List<SuccessfulClientsMrn> successfulClientsMrns;
+
     public Summary getSummary() {
         return summary;
     }
@@ -30,6 +36,14 @@ public class EmrResponse {
 
     public void setFailedClientsMrns(List<FailedClientsMrn> FailedClientsMrns) {
         this.failedClientsMrns = FailedClientsMrns;
+    }
+
+    public List<SuccessfulClientsMrn> getSuccessfulClientsMrns() {
+        return successfulClientsMrns;
+    }
+
+    public void setSuccessfulClientsMrns(List<SuccessfulClientsMrn> successfulClientsMrns) {
+        this.successfulClientsMrns = successfulClientsMrns;
     }
 
     public static class Summary {
@@ -107,6 +121,34 @@ public class EmrResponse {
 
         public void setError(String error) {
             this.error = error;
+        }
+    }
+
+    public static class SuccessfulClientsMrn {
+        /**
+         * The mrn of the failed client
+         */
+        private String mrn;
+
+        /**
+         * The CR_CID message
+         */
+        private String crCid;
+
+        public String getMrn() {
+            return mrn;
+        }
+
+        public void setMrn(String mrn) {
+            this.mrn = mrn;
+        }
+
+        public String getCrCid() {
+            return crCid;
+        }
+
+        public void setCrCid(String crCid) {
+            this.crCid = crCid;
         }
     }
 }
