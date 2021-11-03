@@ -66,6 +66,7 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
         // Create a Parser
         Parser parser = context.getPipeParser();
 
+        List<EmrResponse.SuccessfulClientsMrn> successfulClientsMrns = new ArrayList<>();
         List<EmrResponse.FailedClientsMrn> failedClientsMrns = new ArrayList<>();
 
         String securityToken = request.getHeaders().get("x-nhcr-token");
@@ -116,6 +117,10 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
 
                     failedClientsMrns.add(failedClientsMrn);
                     numberOfFailed++;
+                } else {
+                    EmrResponse.SuccessfulClientsMrn successfulClientsMrn = new EmrResponse.SuccessfulClientsMrn();
+                    successfulClientsMrn.setMrn(client.getMrn());
+                    successfulClientsMrns.add(successfulClientsMrn);
                 }
             }
         }
@@ -127,6 +132,11 @@ public class ClientRegistrationAndUpdatesOrchestrator extends BaseOrchestrator {
         if (failedClientsMrns.size() > 0) {
             emrResponse.setFailedClientsMrns(failedClientsMrns);
             httpStatusCode = HttpStatus.SC_BAD_REQUEST;
+        }
+
+        if (successfulClientsMrns.size() > 0) {
+            emrResponse.setSuccessfulClientsMrns(successfulClientsMrns);
+            httpStatusCode = HttpStatus.SC_OK;
         }
 
         request.getRequestHandler().tell(new FinishRequest(gson.toJson(emrResponse), "text/json", httpStatusCode), getSelf());
