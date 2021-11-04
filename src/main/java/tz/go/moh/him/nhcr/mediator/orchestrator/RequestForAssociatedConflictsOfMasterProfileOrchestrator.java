@@ -164,7 +164,7 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends Ba
 
             conflictsList.setAssociatedConflicts(conflicts);
 
-            request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_OK), getSelf());
+            request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflictsList), "text/json", HttpStatus.SC_OK), getSelf());
         } else {
             request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());
         }
