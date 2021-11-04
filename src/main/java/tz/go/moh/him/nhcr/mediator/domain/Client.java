@@ -244,30 +244,6 @@ public class Client {
         this.placeOfBirth = placeOfBirth;
     }
 
-    public ClientInsurance getClientInsurance() {
-        return clientInsurance;
-    }
-
-    public void setClientInsurance(ClientInsurance clientInsurance) {
-        this.clientInsurance = clientInsurance;
-    }
-
-    public ClientAddress getPermanentClientAddress() {
-        return permanentClientAddress;
-    }
-
-    public void setPermanentClientAddress(ClientAddress permanentClientAddress) {
-        this.permanentClientAddress = permanentClientAddress;
-    }
-
-    public ClientAddress getResidentialClientAddress() {
-        return residentialClientAddress;
-    }
-
-    public void setResidentialClientAddress(ClientAddress residentialClientAddress) {
-        this.residentialClientAddress = residentialClientAddress;
-    }
-
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
