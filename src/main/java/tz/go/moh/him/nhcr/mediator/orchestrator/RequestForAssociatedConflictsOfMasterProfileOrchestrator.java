@@ -9,11 +9,17 @@ import ca.uhn.hl7v2.parser.Parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.http.HttpStatus;
+import org.javers.core.Changes;
+import org.javers.core.Javers;
+import org.javers.core.JaversBuilder;
+import org.javers.core.diff.Change;
+import org.javers.core.diff.Diff;
+import org.javers.core.diff.changetype.PropertyChange;
+import org.javers.core.metamodel.object.ValueObjectId;
 import org.openhim.mediator.engine.MediatorConfig;
 import org.openhim.mediator.engine.messages.FinishRequest;
 import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
-import tz.go.moh.him.nhcr.mediator.domain.Client;
-import tz.go.moh.him.nhcr.mediator.domain.EmrRequestForAssociatedConflictsOfMasterProfileMessage;
+import tz.go.moh.him.nhcr.mediator.domain.*;
 import tz.go.moh.him.nhcr.mediator.utils.HL7v2MessageBuilderUtils;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
@@ -21,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import static org.javers.core.diff.ListCompareAlgorithm.LEVENSHTEIN_DISTANCE;
 
 /**
  * Represents the Request For Conflicts For Associated Conflicts Of Master Profile orchestrator.
@@ -40,6 +48,49 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends Ba
         super(config);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
+    }
+
+    /**
+     * Compares two clients objects and identifies mismatching field names
+     *
+     * @param associatedConflicts the associated conflicts to be compared
+     * @return A list of strings containing the mismatching field names
+     * @throws IllegalAccessException thrown in-case an error occurs
+     */
+    public static List<String> difference(List<Client> associatedConflicts) throws IllegalAccessException {
+        //given
+        Javers javers = JaversBuilder.javers()
+                .withListCompareAlgorithm(LEVENSHTEIN_DISTANCE)
+                .build();
+
+        List<String> conflictingFields = new ArrayList<>();
+        for (int i = 0; i < associatedConflicts.size() - 1; i++) {
+            //when
+            Diff diff = javers.compare(associatedConflicts.get(i), associatedConflicts.get(i + 1));
+
+            System.out.println("diff pretty print:");
+            System.out.println(diff.prettyPrint());
+
+            Changes changes = diff.getChanges();
+            for (Change change : changes) {
+                String fieldName = null;
+                Object object = change.getAffectedObject().get();
+                if (object instanceof ClientProgram) {
+                    fieldName = ((ClientProgram) object).getAssigningAuthority();
+                } else if (object instanceof ClientId) {
+                    fieldName = ((ClientId) object).getType();
+                } else if (object instanceof ClientAddress) {
+                    fieldName = ((ValueObjectId) change.getAffectedGlobalId()).getFragment();
+                } else if (change instanceof PropertyChange) {
+                    fieldName = ((PropertyChange) change).getPropertyName();
+                }
+                if (fieldName != null && !conflictingFields.contains(fieldName) && !fieldName.equals("programs")) {
+                    conflictingFields.add(fieldName);
+                }
+            }
+        }
+
+        return conflictingFields;
     }
 
     /**
@@ -105,6 +156,14 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends Ba
         conflicts = HL7v2MessageBuilderUtils.parseAdrA19Message(response);
 
         if (conflicts.size() > 0) {
+            Conflicts conflictsList = new Conflicts();
+
+            //Comparing the conflicts to identify the conflicting fields in the clients profiles
+            List<String> conflictingFields = difference(conflicts);
+            conflictsList.setConflictingFields(conflictingFields);
+
+            conflictsList.setAssociatedConflicts(conflicts);
+
             request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_OK), getSelf());
         } else {
             request.getRequestHandler().tell(new FinishRequest(gson.toJson(conflicts), "text/json", HttpStatus.SC_NOT_FOUND), getSelf());

@@ -12,13 +12,12 @@ import org.openhim.mediator.engine.messages.MediatorHTTPRequest;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import tz.go.moh.him.mediator.core.serialization.JsonSerializer;
+import tz.go.moh.him.nhcr.mediator.domain.Client;
 import tz.go.moh.him.nhcr.mediator.utils.MllpUtils;
 
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains tests for the {@link RequestForAssociatedConflictsOfMasterProfileOrchestrator} class.
@@ -144,5 +143,28 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestratorTest extend
             Assert.assertTrue(Arrays.stream(out).anyMatch(c -> c instanceof FinishRequest));
             Assert.assertEquals(500, responseStatus);
         }};
+    }
+
+    /**
+     * Tests getting mismatching field names
+     *
+     * @throws Exception if an exception occurs
+     */
+    @Test
+    public void testGettingDifferenceBetweenTwoObjects() throws Exception {
+        InputStream stream = RequestForAssociatedConflictsOfMasterProfileOrchestratorTest.class.getClassLoader().getResourceAsStream("associated_conflicts.json");
+        List<Client> associatedConflicts = Arrays.asList(new JsonSerializer().deserialize(IOUtils.toString(stream), Client[].class));
+
+        List<String> conflictingFields = RequestForAssociatedConflictsOfMasterProfileOrchestrator.difference(associatedConflicts);
+
+        Assert.assertTrue(conflictingFields.contains("CTC"));
+        Assert.assertTrue(conflictingFields.contains("CR_CID"));
+        Assert.assertTrue(conflictingFields.contains("placeOfBirth"));
+        Assert.assertTrue(conflictingFields.contains("firstName"));
+        Assert.assertTrue(conflictingFields.contains("middleName"));
+        Assert.assertTrue(conflictingFields.contains("lastName"));
+        Assert.assertTrue(conflictingFields.contains("ids"));
+        Assert.assertTrue(conflictingFields.contains("deathDate"));
+        Assert.assertTrue(conflictingFields.size() == 14);
     }
 }
