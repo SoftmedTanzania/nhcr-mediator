@@ -84,7 +84,7 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestrator extends Ba
                 } else if (change instanceof PropertyChange) {
                     fieldName = ((PropertyChange) change).getPropertyName();
                 }
-                if (fieldName != null && !conflictingFields.contains(fieldName) && !fieldName.equals("programs")) {
+                if (fieldName != null && !conflictingFields.contains(fieldName) && !fieldName.equals("programs")&& !fieldName.equals("CR_CID")&& !fieldName.equals("ENT_ID")) {
                     conflictingFields.add(fieldName);
                 }
             }
