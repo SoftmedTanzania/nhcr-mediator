@@ -158,13 +158,12 @@ public class RequestForAssociatedConflictsOfMasterProfileOrchestratorTest extend
         List<String> conflictingFields = RequestForAssociatedConflictsOfMasterProfileOrchestrator.difference(associatedConflicts);
 
         Assert.assertTrue(conflictingFields.contains("CTC"));
-        Assert.assertTrue(conflictingFields.contains("CR_CID"));
         Assert.assertTrue(conflictingFields.contains("placeOfBirth"));
         Assert.assertTrue(conflictingFields.contains("firstName"));
         Assert.assertTrue(conflictingFields.contains("middleName"));
         Assert.assertTrue(conflictingFields.contains("lastName"));
         Assert.assertTrue(conflictingFields.contains("ids"));
         Assert.assertTrue(conflictingFields.contains("deathDate"));
-        Assert.assertTrue(conflictingFields.size() == 14);
+        Assert.assertTrue(conflictingFields.size() == 12);
     }
 }
